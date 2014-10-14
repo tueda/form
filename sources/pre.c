@@ -5723,9 +5723,11 @@ int writeToChannel(int wtype, UBYTE *s, HANDLERS *h)
 				to[-2] = '&';
 			}
 		}
+		if ( *fstring == LINEFEED ) goto linefeed;
 		if ( *fstring == '\\' ) {
 			fstring++;
 			if ( *fstring == 'n' ) {
+linefeed:
 				num = to - Out;
 				WriteString(wtype,Out,num);
 				to = Out;

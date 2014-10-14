@@ -220,8 +220,17 @@ va_dcl
 		}
 */
 		else if ( *s != '%' ) {
+			if ( *s == LINEFEED ) {
+				s++;
+				goto linefeed;
+			}
+			if ( *s == '\\' && s[1] == 'n' ) {
+				s += 2;
+				goto linefeed;
+			}
 			*t++ = *s++;
 			if ( t >= stopper ) {
+linefeed:
 				num = t - Out;
 				WriteString(ERROROUT,(UBYTE *)Out,num);
 				num = 0; t = Out;
@@ -335,6 +344,13 @@ va_dcl
 			else if ( *s == 's' ) {
 				u = va_arg(ap,char *);
 				while ( *u ) {
+					if ( *u == LINEFEED ) {
+						u++;
+						num = t - Out;
+						WriteString(ERROROUT,(UBYTE *)Out,num);
+						t = Out;
+						continue;
+					}
 					if ( t >= stopper ) {
 						num = t - Out;
 						WriteString(ERROROUT,(UBYTE *)Out,num);
