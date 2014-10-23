@@ -1530,8 +1530,8 @@ int AddComString(int n, WORD *array, UBYTE *thestring, int par)
 	zeroes = size*sizeof(WORD)-numchars;
 	s = thestring;
 	while ( *s ) {
-		if ( *s == '\\' ) s++;
-		else if ( par == 1 && ( ( *s == '%' &&
+/*		if ( *s == '\\' ) s++;
+		else */if ( par == 1 && ( ( *s == '%' &&
 		s[1] != 't' && s[1] != 'T' && s[1] != '$' &&
 		s[1] != 'w' && s[1] != 'W' && s[1] != 'r' && s[1] != 0 ) || *s == '#'
 		|| *s == '@' || *s == '&' ) ) {
