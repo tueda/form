@@ -3231,6 +3231,10 @@ LONG Timer(int par)
 /*
 	And include -lrt in the link statement (on blade02)
 */
+#elif defined(WITHMACHCLOCK)
+#include <mach/mach_init.h>
+#include <mach/thread_act.h>
+#include <mach/mach_port.h>
 #endif
 
 LONG Timer(int par)
@@ -3260,6 +3264,28 @@ LONG Timer(int par)
 		return (LONG)t.tv_sec * 1000 + (LONG)t.tv_nsec / 1000000;
 	}
 	return(0);
+#elif defined(WITHMACHCLOCK)
+	if ( par == 0 ) {
+		/*
+		 * See http://stackoverflow.com/a/25843585.
+		 */
+		LONG t;
+		thread_port_t thread = mach_thread_self();
+		thread_basic_info_data_t info;
+		mach_msg_type_number_t count = THREAD_BASIC_INFO_COUNT;
+		int kr = thread_info(thread, THREAD_BASIC_INFO, (thread_info_t)&info, &count);
+		if ( kr != KERN_SUCCESS ) {
+			MesPrint("Error in getting timing information");
+			t = 0;
+		}
+		else {
+			t = ((LONG)info.user_time.seconds + (LONG)info.system_time.seconds) * 1000
+			  + ((LONG)info.user_time.microseconds + (LONG)info.system_time.microseconds);
+		}
+		mach_port_deallocate(mach_task_self(), thread);
+		return t;
+	}
+	return 0;
 #else
 	struct rusage rusage;
 	if ( par == 1 ) {

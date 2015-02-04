@@ -292,6 +292,11 @@ AH_VERBATIM([WITHPOSIXCLOCK],
 #ifdef WITHPTHREADS
 #undef WITHPOSIXCLOCK
 #endif])
+AH_VERBATIM([WITHMACHCLOCK],
+[/* Define to use Mach API for thread clock. */
+#ifdef WITHPTHREADS
+#undef WITHMACHCLOCK
+#endif])
 thread_clock_ok=no
 AS_IF([test "x$enable_threaded" != xno],
 	[flag=:
@@ -400,10 +405,22 @@ clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t);
 #define WITHPOSIXCLOCK /**/
 #endif
 END
-			thread_clock_ok=yes],
-			[AC_MSG_WARN([POSIX thread clock is not available.])])])
+			thread_clock_ok=yes])])
+	# Darwin/OSX has thread_info().
+	AS_IF([$flag && test "x$with_api" = xposix && test "x$thread_clock_ok" = xno && test "x$print_os" = xOSX],
+		[AC_MSG_NOTICE([Mach API will be used for thread clock.])
+		cat >>confdefs.h <<END
+#ifdef WITHPTHREADS
+#define WITHMACHCLOCK /**/
+#endif
+END
+		thread_clock_ok=yes])
 	# Windows has GetThreadTimes().
-	$flag && test "x$with_api" = xwindows && thread_clock_ok=yes
+	AS_IF([$flag && test "x$with_api" = xwindows],
+		[AC_MSG_NOTICE([Windows API will be used for thread clock.])
+		thread_clock_ok=yes])
+	AS_IF([$flag && test "x$thread_clock_ok" = xno],
+		[AC_MSG_WARN([thread clock is not available.])])
 	AS_IF([$flag],
 		[enable_threaded=yes],
 		[AS_IF([test "x$enable_threaded" = xyes],

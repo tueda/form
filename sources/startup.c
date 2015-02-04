@@ -1680,7 +1680,7 @@ VOID Terminate(int errorcode)
 
 VOID PrintRunningTime()
 {
-#if (defined(WITHPTHREADS) && (defined(WITHPOSIXCLOCK) || defined(WINDOWS))) || defined(WITHMPI)
+#if (defined(WITHPTHREADS) && (defined(WITHPOSIXCLOCK) || defined(WITHMACHCLOCK) || defined(WINDOWS))) || defined(WITHMPI)
 	LONG mastertime;
 	LONG workertime;
 	LONG wallclocktime;
@@ -1717,7 +1717,7 @@ VOID PrintRunningTime()
 
 LONG GetRunningTime()
 {
-#if defined(WITHPTHREADS) && (defined(WITHPOSIXCLOCK) || defined(WINDOWS))
+#if defined(WITHPTHREADS) && (defined(WITHPOSIXCLOCK) || defined(WITHMACHCLOCK) || defined(WINDOWS))
 	LONG mastertime;
 	LONG workertime;
 	if ( AB[0] != 0 ) {
