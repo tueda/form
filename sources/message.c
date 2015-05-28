@@ -105,6 +105,7 @@ int MesWork()
 	%b	array of size n UBYTEs (two parameters, first is int, second UBYTE *)
 	%C	array of size n chars (two parameters, first is int, second char *)
 	%d	word;
+	%Dw workspace size (AN.currentWorkSpace)
 	%l  long;
 	%L  long long *;
 	%s	string;
@@ -686,6 +687,10 @@ dollarzero:				*t++ = '0'; *t = 0;
 			else if ( *s == 'w' ) {	}
 			else if ( *s == 'W' ) {	}
 #endif
+			else if ( *s == 'D' && s[1] == 'w' ) {
+				t = LongCopy(AN.currentWorkSpace,t);
+				s++;
+			}
 			else if ( FG.cTable[(int)*s] == 1 ) {
 				x = *s++ - '0';
 				while ( FG.cTable[(int)*s] == 1 )
