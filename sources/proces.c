@@ -3221,6 +3221,7 @@ CommonEnd:
 					AN.currentTerm = term;
 					AN.numlistinprint = (C->lhs[level][1] - C->lhs[level][2] - 3)/2;
 					AN.listinprint = C->lhs[level]+3+C->lhs[level][2];
+					AN.currentWorkSpace = AT.WorkTop - AT.WorkPointer;
 					MLOCK(ErrorMessageLock);
 					AO.ErrorBlock = 1;
 					MesPrint((char *)(C->lhs[level]+3));

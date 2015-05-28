@@ -2114,6 +2114,7 @@ struct N_const {
 	int		polysortflag;
     int     nogroundlevel;         /* () Used to see whether pattern matching at groundlevel */
 	int		subsubveto;            /* () Sabotage combining subexpressions in TestSub */
+	int     currentWorkSpace;      /* () Used in proces.c and message.c */
 	WORD	MaxRenumScratch;       /* () used in reshuf.c */
     WORD    oldtype;               /* (N) WildCard info at pattern matching */
     WORD    oldvalue;              /* (N) WildCard info at pattern matching */
@@ -2143,29 +2144,29 @@ struct N_const {
 #ifdef WITHPTHREADS
 #ifdef WHICHSUBEXPRESSION
 #ifdef WITHZLIB
-	PADPOSITION(54,11,23,24,sizeof(SHvariables));
+	PADPOSITION(54,11,24,24,sizeof(SHvariables));
 #else
-	PADPOSITION(52,11,23,24,sizeof(SHvariables));
+	PADPOSITION(52,11,24,24,sizeof(SHvariables));
 #endif
 #else
 #ifdef WITHZLIB
-	PADPOSITION(53,9,23,22,sizeof(SHvariables));
+	PADPOSITION(53,9,24,22,sizeof(SHvariables));
 #else
-	PADPOSITION(51,9,23,22,sizeof(SHvariables));
+	PADPOSITION(51,9,24,22,sizeof(SHvariables));
 #endif
 #endif
 #else
 #ifdef WHICHSUBEXPRESSION
 #ifdef WITHZLIB
-	PADPOSITION(52,9,23,24,sizeof(SHvariables));
+	PADPOSITION(52,9,24,24,sizeof(SHvariables));
 #else
-	PADPOSITION(50,9,23,24,sizeof(SHvariables));
+	PADPOSITION(50,9,24,24,sizeof(SHvariables));
 #endif
 #else
 #ifdef WITHZLIB
-	PADPOSITION(51,7,23,22,sizeof(SHvariables));
+	PADPOSITION(51,7,24,22,sizeof(SHvariables));
 #else
-	PADPOSITION(49,7,23,22,sizeof(SHvariables));
+	PADPOSITION(49,7,24,22,sizeof(SHvariables));
 #endif
 #endif
 #endif
