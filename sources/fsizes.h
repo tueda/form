@@ -161,4 +161,4 @@
 #define NPAIR1 38
 #define NPAIR2 89
 
-#define MAXLINELENGTH 256
+#define MAXLINELENGTH 65536
