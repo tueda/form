@@ -576,9 +576,6 @@ ALLPRIVATES *InitializeOneThread(int identity)
 	AT.WorkTop = AT.WorkSpace + AM.WorkSize;
 	AT.WorkPointer = AT.WorkSpace;
 
-	AT.n_coef = (WORD *)Malloc1(sizeof(WORD)*4*AM.MaxTal+2,"maxnumbersize");
-	AT.n_llnum = AT.n_coef + 2*AM.MaxTal;
-
 	AT.Nest = (NESTING)Malloc1((LONG)sizeof(struct NeStInG)*AM.maxFlevels,"functionlevels");
 	AT.NestStop = AT.Nest + AM.maxFlevels;
 	AT.NestPoin = AT.Nest;
@@ -609,7 +606,6 @@ ALLPRIVATES *InitializeOneThread(int identity)
 	             the FoStage4[2]
 */
 	if ( AT.WorkSpace == 0 ||
-	     AT.n_coef == 0 ||
 	     AT.Nest == 0 ||
 	     AT.WildMask == 0 ||
 	     AT.RepCount == 0 ||
@@ -1096,6 +1092,7 @@ int LoadOneThread(int from, int identity, THREADBUCKET *thr, int par)
 	AN.ncmod = AC.ncmod;
 	AT.BrackBuf = AT0.BrackBuf;
 	AT.bracketindexflag = AT0.bracketindexflag;
+	AN.PolyFunTodo = 0;
 /*
 	The relevant variables and the term are in their place.
 	There is nothing more to do.
@@ -1359,6 +1356,7 @@ void *RunThread(void *dummy)
 					if ( ( AC.modmode & ALSOFUNARGS ) != 0 ) MarkDirty(term,DIRTYFLAG);
 					else if ( AR.PolyFun ) PolyFunDirty(BHEAD term);
 				  }
+				  else if ( AC.PolyRatFunChanged ) PolyFunDirty(BHEAD term);
 				  if ( ( AP.PreDebug & THREADSDEBUG ) != 0 ) {
 					MLOCK(ErrorMessageLock);
 					MesPrint("Thread %w executing term:");
@@ -1635,6 +1633,7 @@ bucketstolen:;
 					if ( ( AC.modmode & ALSOFUNARGS ) != 0 ) MarkDirty(term,DIRTYFLAG);
 					else if ( AR.PolyFun ) PolyFunDirty(BHEAD term);
 				  }
+				  else if ( AC.PolyRatFunChanged ) PolyFunDirty(BHEAD term);
 				  if ( ( AR.PolyFunType == 2 ) && ( AC.PolyRatFunChanged == 0 )
 						&& ( e->status == LOCALEXPRESSION || e->status == GLOBALEXPRESSION ) ) {
 						PolyFunClean(BHEAD term);
@@ -1672,6 +1671,7 @@ bucketstolen:;
 					if ( ( AC.modmode & ALSOFUNARGS ) != 0 ) MarkDirty(term,DIRTYFLAG);
 					else if ( AR.PolyFun ) PolyFunDirty(BHEAD term);
 				  }
+				  else if ( AC.PolyRatFunChanged ) PolyFunDirty(BHEAD term);
 				  if ( ( AR.PolyFunType == 2 ) && ( AC.PolyRatFunChanged == 0 )
 						&& ( e->status == LOCALEXPRESSION || e->status == GLOBALEXPRESSION ) ) {
 						PolyFunClean(BHEAD term);
@@ -1799,6 +1799,7 @@ bucketstolen:;
 						if ( ( AC.modmode & ALSOFUNARGS ) != 0 ) MarkDirty(term,DIRTYFLAG);
 						else if ( AR.PolyFun ) PolyFunDirty(BHEAD term);
 					}
+					else if ( AC.PolyRatFunChanged ) PolyFunDirty(BHEAD term);
 					if ( ( AR.PolyFunType == 2 ) && ( AC.PolyRatFunChanged == 0 )
 						&& ( e->status == LOCALEXPRESSION || e->status == GLOBALEXPRESSION ) ) {
 						PolyFunClean(BHEAD term);
@@ -1911,7 +1912,12 @@ void *RunSortBot(void *dummy)
 				AR.PolyFunVar = AB[0]->R.PolyFunVar;
 				AR.PolyFunPow = AB[0]->R.PolyFunPow;
 				AR.SortType = AC.SortType;
-				AT.SS->PolyFlag = AR.PolyFun ? AR.PolyFunType: 0;
+				if ( AR.PolyFun == 0 ) { AT.SS->PolyFlag = 0; }
+				else if ( AR.PolyFunType == 1 ) { AT.SS->PolyFlag = 1; }
+				else if ( AR.PolyFunType == 2 ) {
+					if ( AR.PolyFunExp == 2 ) AT.SS->PolyFlag = 1;
+					else                      AT.SS->PolyFlag = 2;
+				}
 				AT.SS->PolyWise = 0;
 				AN.ncmod = AC.ncmod;
 				LOCK(AT.SB.MasterBlockLock[1]);
@@ -2785,7 +2791,7 @@ Found2:;
 		we have already 1+dd terms
 */
 		while ( ( dd < thrbufsiz ) &&
-			( tt - thr->threadbuffer ) < ( thr->threadbuffersize - AM.MaxTer - 2 ) ) {
+			( tt - thr->threadbuffer ) < ( thr->threadbuffersize - AM.MaxTer/((LONG)sizeof(WORD)) - 2 ) ) {
 /*
 			First check:
 */
@@ -3550,7 +3556,12 @@ int MasterMerge()
 	if ( numberofworkers > 2 ) return(SortBotMasterMerge());
 #endif
 	fin = &S->file;
-	S->PolyFlag = AR0.PolyFun ? AR0.PolyFunType: 0;
+	if ( AR0.PolyFun == 0 ) { S->PolyFlag = 0; }
+	else if ( AR0.PolyFunType == 1 ) { S->PolyFlag = 1; }
+	else if ( AR0.PolyFunType == 2 ) {
+		if ( AR0.PolyFunExp == 2 ) S->PolyFlag = 1;
+		else                      S->PolyFlag = 2;
+	}
 	S->TermsLeft = 0;
 	coef = AN0.SoScratC;
 	poin = S->poina; poin2 = S->poin2a;
@@ -4180,8 +4191,8 @@ int SortBotMerge(PHEAD0)
 */
 					to = Bin1->T.SB.MasterStart[1];
 					from = Bin1->T.SB.MasterStop[Bin1->T.SB.MasterNumBlocks];
-					while ( from > term1 ) *--to = *--from;
-					term1 = to;
+					while ( from > next ) *--to = *--from;
+					next = to;
 					blin1 = 1;
 				}
 				else {
@@ -4190,7 +4201,7 @@ int SortBotMerge(PHEAD0)
 				LOCK(Bin1->T.SB.MasterBlockLock[blin1]);
 				Bin1->T.SB.MasterBlock = blin1;
 			}
-			term1 += im;
+			term1 = next;
 /*
 			#] One is smallest : 
 */
@@ -4222,8 +4233,8 @@ next2:		im = *term2;
 */
 					to = Bin2->T.SB.MasterStart[1];
 					from = Bin2->T.SB.MasterStop[Bin2->T.SB.MasterNumBlocks];
-					while ( from > term2 ) *--to = *--from;
-					term2 = to;
+					while ( from > next ) *--to = *--from;
+					next = to;
 					blin2 = 1;
 				}
 				else {
@@ -4232,7 +4243,7 @@ next2:		im = *term2;
 				LOCK(Bin2->T.SB.MasterBlockLock[blin2]);
 				Bin2->T.SB.MasterBlock = blin2;
 			}
-			term2 += im;
+			term2 = next;
 /*
 			#] Two is smallest : 
 */
@@ -4392,8 +4403,8 @@ cancelled:;		/* Now we need two new terms */
 */
 					to = Bin1->T.SB.MasterStart[1];
 					from = Bin1->T.SB.MasterStop[Bin1->T.SB.MasterNumBlocks];
-					while ( from > term1 ) *--to = *--from;
-					term1 = to;
+					while ( from > next ) *--to = *--from;
+					next = to;
 					blin1 = 1;
 				}
 				else {
@@ -4402,7 +4413,7 @@ cancelled:;		/* Now we need two new terms */
 				LOCK(Bin1->T.SB.MasterBlockLock[blin1]);
 				Bin1->T.SB.MasterBlock = blin1;
 			}
-			term1 += im;
+			term1 = next;
 			goto next2;
 /*
 			#] Equal : 
@@ -4440,8 +4451,8 @@ cancelled:;		/* Now we need two new terms */
 */
 					to = Bin1->T.SB.MasterStart[1];
 					from = Bin1->T.SB.MasterStop[Bin1->T.SB.MasterNumBlocks];
-					while ( from > term1 ) *--to = *--from;
-					term1 = to;
+					while ( from > next ) *--to = *--from;
+					next = to;
 					blin1 = 1;
 				}
 				else {
@@ -4450,7 +4461,7 @@ cancelled:;		/* Now we need two new terms */
 				LOCK(Bin1->T.SB.MasterBlockLock[blin1]);
 				Bin1->T.SB.MasterBlock = blin1;
 			}
-			term1 += im;
+			term1 = next;
 		}
 /*
 			#] Tail in one : 
@@ -4484,8 +4495,8 @@ cancelled:;		/* Now we need two new terms */
 */
 					to = Bin2->T.SB.MasterStart[1];
 					from = Bin2->T.SB.MasterStop[Bin2->T.SB.MasterNumBlocks];
-					while ( from > term2 ) *--to = *--from;
-					term2 = to;
+					while ( from > next ) *--to = *--from;
+					next = to;
 					blin2 = 1;
 				}
 				else {
@@ -4494,7 +4505,7 @@ cancelled:;		/* Now we need two new terms */
 				LOCK(Bin2->T.SB.MasterBlockLock[blin2]);
 				Bin2->T.SB.MasterBlock = blin2;
 			}
-			term2 += im;
+			term2 = next;
 		}
 /*
 			#] Tail in two : 

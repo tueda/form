@@ -39,6 +39,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <map>
+#include <algorithm>
 
 //#define DEBUG
 //#define DEBUGALL
@@ -468,10 +470,10 @@ const poly polygcd::chinese_remainder (const poly &a1, const poly &m1, const pol
 
 /*
   	#] chinese_remainder : 
-	 	#[ substitute_last :
+ 		#[ substitute :
 */
 
-/**  Substitute the last variable of a polynomial
+/**  Substitute a variable of a polynomial with a number.
  *
  *   Description
  *   ===========
@@ -480,10 +482,10 @@ const poly polygcd::chinese_remainder (const poly &a1, const poly &m1, const pol
  *
  *   Notes
  *   =====
- *   - x must be the last variable (in lexicographical order) of the
- *     polynomial, so that one doesn't have to bother with sorting.
+ *   - if x is not the last variable (in lexicographical order) of the
+ *     polynomial, the polynomial has to be normalised after.
  */
-const poly polygcd::substitute_last(const poly &a, int x, int c) {
+const poly polygcd::substitute(const poly &a, int x, int c) {
 
 	POLY_GETIDENTITY(a);
 
@@ -508,8 +510,8 @@ const poly polygcd::substitute_last(const poly &a, int x, int c) {
 			if (ai==a[0])
 				add=true;
 			else {
-				for (int i=0; i<x; i++)
-					if (a[ai+1+i]!=b[bi+1+i]) {
+				for (int i=0; i<AN.poly_num_vars; i++)
+					if (i!=x && a[ai+1+i]!=b[bi+1+i]) {
 						zero=true;
 						add=true;
 						break;
@@ -561,13 +563,12 @@ const poly polygcd::substitute_last(const poly &a, int x, int c) {
 }
 
 /*
-  	#] substitute_last : 
+ 		#] substitute : 
  		#[ sparse_interpolation helper functions :
 */
 
 // Returns a list of size #terms(a) with entries PROD(ci^powi, i=2..n)
 const vector<int> polygcd::sparse_interpolation_get_mul_list (const poly &a, const vector<int> &x, const vector<int> &c) {
-
 	// cache size for variable x is bounded by the degree in x, twice
 	// the number of terms of the polynomial and a constant
 	vector<vector<WORD> > cache(c.size());
@@ -668,24 +669,40 @@ const poly polygcd::sparse_interpolation_fix_poly (const poly &a, int x) {
  *     matrix doesnot exist, because there are not enough different
  *     numbers. In that case, we should resort to random equations of
  *     which enough exist. [TODO]
+ *   - Non-monic cases are handled inefficiently. Implement LINZIP? [TODO]
  * 
  *   [for details, see "Algorithms for Computer Algebra", pp. 311-313; and
  *    R.E. Zippel, "Probabilistic Algorithms for Sparse Polynomials", PhD thesis]
  */
-const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly &b, const vector<int> &x, const poly &lc, const poly &s) {
+const poly polygcd::gcd_modular_sparse_interpolation (const poly &origa, const poly &origb, const vector<int> &x, const poly &s) {
 
 #ifdef DEBUG
 	cout << "*** [" << thetime() << "]  CALL: gcd_modular_sparse_interpolation("
-			 << a << "," << b << "," << x << "," << lc << "," << s <<")" << endl;
+			 << a << "," << b << "," << x << "," << "," << s <<")" << endl;
 #endif
 
-	POLY_GETIDENTITY(a);
-			
+	POLY_GETIDENTITY(origa);
+
+	// strip multivariate content
+	poly conta(content_multivar(origa,x.back()));
+	poly contb(content_multivar(origb,x.back()));
+	poly gcdconts(gcd_Euclidean(conta,contb));
+	const poly& a = conta.is_one() ? origa : origa/conta;
+	const poly& b = contb.is_one() ? origb : origb/contb;
+
+	// for non-monic cases, we need to normalize with the gcd of the lcoeffs of a poly in x[0]
+	// or else the shape fitting does not work.
+	// FIXME: the current implementation still rejects some valid shapes.
+	poly lcgcd(BHEAD 1, a.modp);
+	if (!s.lcoeff_univar(x[0]).is_integer()) {
+		lcgcd = gcd_modular_dense_interpolation(a.lcoeff_univar(x[0]), b.lcoeff_univar(x[0]), x, poly(BHEAD 0));
+	}
+
 	// reduce polynomials
 	poly ared(sparse_interpolation_reduce_poly(a,x));
 	poly bred(sparse_interpolation_reduce_poly(b,x));
-	poly lcred(sparse_interpolation_reduce_poly(lc,x));
 	poly sred(sparse_interpolation_reduce_poly(s,x));
+	poly lred(sparse_interpolation_reduce_poly(lcgcd,x));
 
 	// set all coefficients to 1
 	int N=0;
@@ -723,7 +740,7 @@ const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly 
 	// get the lists to multiply the polynomials with every iteration
 	vector<int> amul(sparse_interpolation_get_mul_list(a,x,c));
 	vector<int> bmul(sparse_interpolation_get_mul_list(b,x,c));
-	vector<int> lcmul(sparse_interpolation_get_mul_list(lc,x,c));
+	vector<int> lmul(sparse_interpolation_get_mul_list(lcgcd,x,c));
 
 	vector<vector<vector<LONG> > > M;
 	vector<vector<LONG> > V;
@@ -746,9 +763,12 @@ const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly 
 
 		poly amodI(sparse_interpolation_fix_poly(ared,x[0]));
 		poly bmodI(sparse_interpolation_fix_poly(bred,x[0]));
-		poly lcmodI(sparse_interpolation_fix_poly(lcred,x[0]));
+		poly lmodI(sparse_interpolation_fix_poly(lred,x[0]));
 
-		poly gcd(lcmodI * gcd_Euclidean(amodI,bmodI));
+		// A fix for non-monic gcds. This could be slow if lmodI has many terms,
+		// since it overfits the gcd now. Another gcd has to be run to remove the
+		// extra terms.
+		poly gcd(lmodI * gcd_Euclidean(amodI,bmodI));
 
 		// if correct gcd
 		if (!gcd.is_zero() && gcd[2+x[0]]==sred[2+x[0]]) {
@@ -784,8 +804,8 @@ const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly 
 		// multiply polynomials by the lists to obtain new ones
 		sparse_interpolation_mul_poly(ared,amul);
 		sparse_interpolation_mul_poly(bred,bmul);
-		sparse_interpolation_mul_poly(lcred,lcmul);
 		sparse_interpolation_mul_poly(sred,smul);
+		sparse_interpolation_mul_poly(lred,lmul);
 	}
 
 	// solve the linear equations
@@ -837,15 +857,22 @@ const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly 
 	res[0]=ri;                                    // total length
 	res.setmod(a.modp,1);
 
-	// consistency check
-	if (!poly::divides(res,a) || !poly::divides(res,b)) res = poly(BHEAD 0);
+	if (!poly::divides(res, lcgcd * a) || !poly::divides(res, lcgcd * b)) {
+		return poly(BHEAD 0); // bad shape
+	} else {
+		// refine gcd
+		if (!poly::divides(res, a))
+			res = gcd_modular_dense_interpolation(res, a, x, poly(BHEAD 0));
+		if (!poly::divides(res, b))
+			res = gcd_modular_dense_interpolation(res, b, x, poly(BHEAD 0));
+	}
 
 #ifdef DEBUG
 	cout << "*** [" << thetime() << "]  RES : gcd_modular_sparse_interpolation("
-			 << a << "," << b << "," << x << "," << lc << "," << s <<") = " << res << endl;
+			 << a << "," << b << "," << x << "," << "," << s <<") = " << res << endl;
 #endif
 	
-	return res;
+	return gcdconts * res;
 }
 
 /*
@@ -871,99 +898,101 @@ const poly polygcd::gcd_modular_sparse_interpolation (const poly &a, const poly 
  *   [for details, see "Algorithms for Computer Algebra", pp. 300-311]
  */
 
-const poly polygcd::gcd_modular_dense_interpolation (const poly &a, const poly &b, const vector<int> &x, const poly &lc, const poly &s) {
+const poly polygcd::gcd_modular_dense_interpolation (const poly &a, const poly &b, const vector<int> &x, const poly &s) {
 	
 #ifdef DEBUG
-	cout << "*** [" << thetime() << "]  CALL: gcd_modular_dense_interpolation(" << a << "," << b << "," << x << "," << lc << "," << s <<")" << endl;
+	cout << "*** [" << thetime() << "]  CALL: gcd_modular_dense_interpolation(" << a << "," << b << "," << x << "," << "," << s <<")" << endl;
 #endif
+
+	POLY_GETIDENTITY(a);
 
 	// if univariate, then use Euclidean algorithm
 	if (x.size() == 1) {
-		poly res(lc * gcd_Euclidean(a,b));
-		return res;
+		return gcd_Euclidean(a,b);
 	}
 
 	// if shape is known, use sparse interpolation
 	if (!s.is_zero()) {
-		poly res = gcd_modular_sparse_interpolation (a,b,x,lc,s);
+		poly res = gcd_modular_sparse_interpolation (a,b,x,s);
 		if (!res.is_zero()) return res;
 		// apparently the shape was not correct. continue.
 	}
 
-	POLY_GETIDENTITY(a);
-
 	// divide out multivariate content in last variable
-	int X = x[x.size()-1];
+	int X = x.back();
 
 	poly conta(content_multivar(a,X));
 	poly contb(content_multivar(b,X));
 	poly gcdconts(gcd_Euclidean(conta,contb));
-	poly ppa(a/conta);
-	poly ppb(b/contb);
-	poly pplc(lc/gcdconts);
+	const poly& ppa = conta.is_one() ? a : poly(a/conta);
+	const poly& ppb = contb.is_one() ? b : poly(b/contb);
 
 	// gcd of leading coefficients
 	poly lcoeffa(ppa.lcoeff_multivar(X));
 	poly lcoeffb(ppb.lcoeff_multivar(X));
 	poly gcdlcoeffs(gcd_Euclidean(lcoeffa,lcoeffb));
 
-	int l = MiN(ppa.degree(x[0]), ppb.degree(x[0]));
-	poly oldres(BHEAD 0);
+	// calculate the degree bound for each variable
+	int m = MiN(ppa.degree(x[x.back() - 2]),ppb.degree(x[x.back() - 2]));
+
 	poly res(BHEAD 0);
+	poly oldres(BHEAD 0);
 	poly newshape(BHEAD 0);
 	poly modpoly(BHEAD 1,a.modp);
 	
 	while (true) {
 		// generate random constants and substitute it
 		int c = 1 + wranf(BHEAD0) % (a.modp-1);
-		if (substitute_last(gcdlcoeffs,X,c).is_zero()) continue;
-		if (substitute_last(modpoly,X,c).is_zero()) continue;
+		if (substitute(gcdlcoeffs,X,c).is_zero()) continue;
+		if (substitute(modpoly,X,c).is_zero()) continue;
 		
-		poly amodc(substitute_last(ppa,X,c));
-		poly bmodc(substitute_last(ppb,X,c));
-		poly lcmodc(substitute_last(pplc,X,c));
+		poly amodc(substitute(ppa,X,c));
+		poly bmodc(substitute(ppb,X,c));
 
 		// calculate gcd recursively
-		poly gcdmodc(gcd_modular_dense_interpolation(amodc,bmodc,vector<int>(x.begin(),x.end()-1),lcmodc,newshape));
-		if (gcdmodc.is_zero()) return poly(BHEAD 0);
+		poly gcdmodc(gcd_modular_dense_interpolation(amodc,bmodc,vector<int>(x.begin(),x.end()-1), newshape));
+		int n = gcdmodc.degree(x[x.back() - 2]);
 
 		// normalize
-		gcdmodc = (gcdmodc * substitute_last(gcdlcoeffs,X,c)) / gcdmodc.integer_lcoeff();
-
-		int m = gcdmodc.degree(x[0]);
-		poly simple(poly::simple_poly(BHEAD X,c,1,a.modp));
+		gcdmodc = (gcdmodc * substitute(gcdlcoeffs,X,c)) / gcdmodc.integer_lcoeff();
+		poly simple(poly::simple_poly(BHEAD X,c,1,a.modp)); // (X-c) mod p
 
 		// if power is smaller, the old one was wrong
-		if (res.is_zero() || m < l) {
-			l = m;
-			oldres = res;
+		if ((res.is_zero() && n == m) || n < m) {
+			m = n;
 			res = gcdmodc;
-			newshape = gcdmodc;
+			newshape = gcdmodc; // set a new shape (interpolation does not change it)
 			modpoly = simple;
 		}
-		else if (m == l) {
+		else if (n == m) {
 			oldres = res;
 			// equal powers, so interpolate results
-			poly coeff_poly(substitute_last(modpoly,X,c));
+			poly coeff_poly(substitute(modpoly,X,c));
 			WORD coeff_word = coeff_poly[2+AN.poly_num_vars] * coeff_poly[3+AN.poly_num_vars];
 			if (coeff_word < 0) coeff_word += a.modp;
 
 			GetModInverses(coeff_word, a.modp, &coeff_word, NULL);
 			
-			res += poly(BHEAD coeff_word, a.modp, 1) * modpoly * (gcdmodc - substitute_last(res,X,c));
+			res.setmod(a.modp); // make sure the mod is set before substituting
+			res += poly(BHEAD coeff_word, a.modp, 1) * modpoly * (gcdmodc - substitute(res,X,c));
 			modpoly *= simple;
 		}
 
 		// check whether this is the complete gcd
-		if (res==oldres) {
+		if (!res.is_zero() && res == oldres) {
 			poly nres = res / content_multivar(res, X);
 			if (poly::divides(nres,ppa) && poly::divides(nres,ppb)) {
 #ifdef DEBUG
 				cout << "*** [" << thetime() << "]  RES : gcd_modular_dense_interpolation(" << a << "," << b << ","
-						 << x << "," << lc << "," << s <<") = " << gcdconts * nres << endl;
+						 << x << "," << "," << s <<") = " << gcdconts * nres << endl;
 #endif
 				return gcdconts * nres;
 			}
+
+			// At this point, the gcd may be too large due to bad luck
+			// TODO: create an efficient fail state that tries to find a smaller
+			// polynomial without interpolating bad ones?
+			newshape = poly(BHEAD 0); // reset the shape, important!
 		}
 	}
 }
@@ -982,12 +1011,6 @@ const poly polygcd::gcd_modular_dense_interpolation (const poly &a, const poly &
  *   this prime. It continues choosing more primes and constructs a
  *   final result with the Chinese Remainder Algorithm.
  *
- *   The leading coefficient problem is solved by multiplying both
- *   polynomials with lc=gcd(lcoeff(a),lcoeff(b)). A gcd with a
- *   leading coefficient lc can be constructed. This leading
- *   coefficient is passed to the other methods and reduced along the
- *   way.
- *
  *   Notes
  *   =====
  *   - Necessary condition: icont(a) = icont(b) = 0
@@ -1003,10 +1026,14 @@ const poly polygcd::gcd_modular (const poly &origa, const poly &origb, const vec
 
 	POLY_GETIDENTITY(origa);
 
+	if (origa.is_zero()) return origa.modp==0 ? origb : origb / origb.integer_lcoeff();
+	if (origb.is_zero()) return origa.modp==0 ? origa : origa / origa.integer_lcoeff();
+	if (origa==origb) return origa.modp==0 ? origa : origa / origa.integer_lcoeff();
+
 	poly ac = integer_content(origa);
 	poly bc = integer_content(origb);
-	poly a(origa / ac);
-	poly b(origb / bc);
+	const poly& a = ac.is_one() ? origa : poly(origa/ac);
+	const poly& b = bc.is_one() ? origb : poly(origb/bc);
 	poly ic = integer_gcd(ac, bc);
 	poly g = integer_gcd(a.integer_lcoeff(), b.integer_lcoeff());
 
@@ -1022,7 +1049,7 @@ const poly polygcd::gcd_modular (const poly &origa, const poly &origb, const vec
 		if (poly(a.integer_lcoeff(),p).is_zero()) continue;
 		if (poly(b.integer_lcoeff(),p).is_zero()) continue;
 
-		poly c(gcd_modular_dense_interpolation(poly(a,p),poly(b,p),x,poly(g,p),poly(d,p)));
+		poly c(gcd_modular_dense_interpolation(poly(a,p),poly(b,p),x,poly(d,p)));
 		c = (c * poly(g,p)) / c.integer_lcoeff(); // normalize so that lcoeff(c) = g mod p
 
 		if (c.is_zero()) {
@@ -1279,6 +1306,167 @@ const poly polygcd::gcd_heuristic (const poly &a, const poly &b, const vector<in
 
 /*
   	#] gcd_heuristic : 
+  	#[ bracket :
+*/
+
+const map<vector<int>,poly> polygcd::full_bracket(const poly &a, const vector<int>& filter) {
+	POLY_GETIDENTITY(a);
+
+	map<vector<int>,poly> bracket;
+	for (int ai=1; ai<a[0]; ai+=a[ai]) {
+		vector<int> varpattern(AN.poly_num_vars);
+		for (int i=0; i<AN.poly_num_vars; i++)
+			if (filter[i] == 1 && a[ai + i + 1] > 0)
+				varpattern[i] = a[ai + i + 1];
+
+		// create monomial
+		poly mon(BHEAD 1);
+		mon.setmod(a.modp);
+		mon[0] = a[ai] + 1;
+		for (int i=0; i<a[ai]; i++)
+			if (i > 0 && i <= AN.poly_num_vars && varpattern[i - 1])
+				mon[1+i] = 0;
+			else
+				mon[1+i] = a[ai+i];
+
+		map<vector<int>,poly>::iterator i = bracket.find(varpattern);
+		if (i == bracket.end()) {
+			bracket.insert(std::make_pair(varpattern, mon));
+		} else {
+			i->second += mon;
+		}
+	}
+
+	return bracket;
+}
+
+const poly polygcd::bracket(const poly &a, const vector<int>& pattern, const vector<int>& filter) {
+	POLY_GETIDENTITY(a);
+
+	poly bracket(BHEAD 0);
+	for (int ai=1; ai<a[0]; ai+=a[ai]) {
+		bool ispat = true;
+		for (int i=0; i<AN.poly_num_vars; i++)
+			if (filter[i] == 1 && pattern[i] != a[ai + i + 1]) {
+				ispat = false;
+				break;
+			}
+
+		if (ispat) {
+			poly mon(BHEAD 1);
+			mon.setmod(a.modp);
+			mon[0] = a[ai] + 1;
+			for (int i=0; i<a[ai]; i++)
+				if (i > 0 && i <= AN.poly_num_vars && pattern[i - 1])
+					mon[1+i] = 0;
+				else
+					mon[1+i] = a[ai+i];
+			bracket += mon;
+		}
+	}
+
+	return bracket;
+}
+
+const map<vector<int>,int> polygcd::bracket_count(const poly &a, const vector<int>& filter) {
+	POLY_GETIDENTITY(a);
+
+	map<vector<int>,int> bracket;
+	for (int ai=1; ai<a[0]; ai+=a[ai]) {
+		vector<int> varpattern(AN.poly_num_vars);
+		for (int i=0; i<AN.poly_num_vars; i++)
+			if (filter[i] == 1 && a[ai + i + 1] > 0)
+				varpattern[i] = a[ai + i + 1];
+
+		map<vector<int>,int>::iterator i = bracket.find(varpattern);
+		if (i == bracket.end()) {
+			bracket.insert(std::make_pair(varpattern, 0));
+		} else {
+			i->second++;
+		}
+	}
+
+	return bracket;
+}
+
+struct BracketInfo {
+	std::vector<int> pattern;
+	int num_terms, dummy;
+	const poly* p;
+
+	BracketInfo(const std::vector<int>& pattern, int num_terms, const poly* p) : pattern(pattern), num_terms(num_terms), p(p) {}
+	bool operator<(const BracketInfo& rhs) const { return num_terms > rhs.num_terms; } // biggest should be first!
+};
+
+/*
+  	#] bracket : 
+  	#[ gcd_linear:
+*/
+
+const poly gcd_linear_helper (const poly &a, const poly &b) {
+	POLY_GETIDENTITY(a);
+
+	for (int i = 0; i < AN.poly_num_vars; i++)
+		if (a.degree(i) == 1) {
+			vector<int> filter(AN.poly_num_vars);
+			filter[i] = 1;
+
+			// bracket the linear variable
+			map<vector<int>,poly> ba = polygcd::full_bracket(a, filter);
+
+			poly subgcd(BHEAD 1);
+			if (ba.size() == 2)
+				subgcd = polygcd::gcd_linear(ba.begin()->second, (++ba.begin())->second);
+			else
+				subgcd = ba.begin()->second;
+
+			poly linfac = a / subgcd;
+			if (poly::divides(linfac,b))
+				return linfac * polygcd::gcd_linear(subgcd, b / linfac);
+
+			return polygcd::gcd_linear(subgcd, b);
+		}
+
+	return poly(BHEAD 0);
+}
+
+/**
+	Performs a faster, recursive gcd algorithm if one of the variables in one of the
+	polynomials is linear. If no terms are linear, fall back to Zippel's method.
+*/
+const poly polygcd::gcd_linear (const poly &a, const poly &b) {
+	POLY_GETIDENTITY(a);
+
+	if (a.is_zero()) return a.modp==0 ? b : b / b.integer_lcoeff();
+	if (b.is_zero()) return a.modp==0 ? a : a / a.integer_lcoeff();
+	if (a==b) return a.modp==0 ? a : a / a.integer_lcoeff();
+
+	if (a.is_integer() || b.is_integer()) {
+		if (a.modp > 0) return poly(BHEAD 1,a.modp,a.modn);
+		return poly(integer_gcd(integer_content(a),integer_content(b)),0,1);
+	}
+
+	poly h = gcd_linear_helper(a, b);
+	if (!h.is_zero()) return h;
+
+	h = gcd_linear_helper(b, a);
+	if (!h.is_zero()) return h;
+
+	vector<int> xa = a.all_variables();
+	vector<int> xb = b.all_variables();
+
+	vector<int> used(AN.poly_num_vars,0);
+	for (int i=0; i<(int)xa.size(); i++) used[xa[i]]++;
+	for (int i=0; i<(int)xb.size(); i++) used[xb[i]]++;
+	vector<int> x;
+	for (int i=0; i<AN.poly_num_vars; i++)
+		if (used[i]) x.push_back(i);
+
+	return gcd_modular(a,b,x);
+}
+
+/*
+  	#] gcd_linear: 
   	#[ gcd :
 */
 
@@ -1323,9 +1511,9 @@ const poly polygcd::gcd (const poly &a, const poly &b) {
 	vector<int> xa = a.all_variables();
 	vector<int> xb = b.all_variables();
 
-	vector<bool> used(AN.poly_num_vars,false);
-	for (int i=0; i<(int)xa.size(); i++) used[xa[i]]=true;
-	for (int i=0; i<(int)xb.size(); i++) used[xb[i]]=true;
+	vector<int> used(AN.poly_num_vars,0);
+	for (int i=0; i<(int)xa.size(); i++) used[xa[i]]++;
+	for (int i=0; i<(int)xb.size(); i++) used[xb[i]]++;
 	vector<int> x;
 	for (int i=0; i<AN.poly_num_vars; i++)
 		if (used[i]) x.push_back(i);
@@ -1353,8 +1541,8 @@ const poly polygcd::gcd (const poly &a, const poly &b) {
 	poly conta(x.size()==1 ? integer_content(a) : content_univar(a,x[0]));
 	poly contb(x.size()==1 ? integer_content(b) : content_univar(b,x[0]));
 	poly gcdconts(x.size()==1 ? integer_gcd(conta,contb) : gcd(conta,contb));
-	poly ppa(a / conta);
-	poly ppb(b / contb);
+	const poly& ppa = conta.is_one() ? a : poly(a/conta);
+	const poly& ppb = contb.is_one() ? b : poly(b/contb);
 	
 	if (ppa == ppb) 
 		return ppa * gcdconts;
@@ -1372,9 +1560,70 @@ const poly polygcd::gcd (const poly &a, const poly &b) {
 	}
 #endif
 	
-	// If gcd==0, the heuristic algorithm failed, so try Zippel's GCD algorithm	
-	if (res.is_zero())
-		res = gcd_modular(ppa,ppb,x);
+	// If gcd==0, the heuristic algorithm failed, so we do more extensive checks.
+	// First, we filter out variables that appear in only one of the expressions.
+	if (res.is_zero()) {
+		bool unusedVars = false;
+		for (unsigned int i = 0; i < used.size(); i++) {
+			if (used[i] == 1) {
+				unusedVars = true;
+				break;
+			}
+		}
+
+		// if there are no unused variables, go to the linear routine directly
+		if (!unusedVars) {
+			res = gcd_linear(ppa,ppb);
+		}
+
+		// if res is not the gcd, it is 0 or larger than the gcd.
+		// we bracket the expression in all the variables that appear only in one expr.
+		// and we refine the gcd.
+		bool diva = !res.is_zero() && poly::divides(res,ppa);
+		bool divb = !res.is_zero() && poly::divides(res,ppb);
+		if (!diva || !divb) {
+			vector<BracketInfo> bracketinfo;
+
+			if (!diva) {
+				map<vector<int>,int> ba = bracket_count(ppa, used);
+				for(map<vector<int>,int>::iterator it = ba.begin(); it != ba.end(); it++)
+					bracketinfo.push_back(BracketInfo(it->first, it->second, &ppa));
+			}
+
+			if (!divb) {
+				map<vector<int>,int> bb = bracket_count(ppb, used);
+				for(map<vector<int>,int>::iterator it = bb.begin(); it != bb.end(); it++)
+					bracketinfo.push_back(BracketInfo(it->first, it->second, &ppb));
+			}
+
+			// sort so that the smallest bracket will be last
+			sort(bracketinfo.begin(), bracketinfo.end());
+
+			if (res.is_zero()) {
+				res = bracket(*bracketinfo.back().p, bracketinfo.back().pattern, used);
+				bracketinfo.pop_back();
+			}
+
+			while (bracketinfo.size() > 0) {
+				poly subpoly(bracket(*bracketinfo.back().p, bracketinfo.back().pattern, used));
+				if (!poly::divides(res,subpoly)) {
+					// if we can filter out more variables, call gcd again
+					if (res.all_variables() != subpoly.all_variables())
+						res = gcd(subpoly,res);
+					else
+						res = gcd_linear(subpoly,res);
+				}
+
+				bracketinfo.pop_back();
+			}
+		}
+
+		if (res.is_zero() || !poly::divides(res,ppa) || !poly::divides(res,ppb)) {
+			MesPrint("Bad gcd found.");
+			std::cout << "Bad gcd:" << res << " for " << ppa << " " << ppb << std::endl;
+			Terminate(1);
+		}
+	}
 
 	res *= gcdconts * poly(BHEAD res.sign());
 

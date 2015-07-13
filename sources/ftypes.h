@@ -357,6 +357,7 @@ typedef int (*TFUN1)();
 #define HAAKJE0 9
 #define FUNCTION 20
 
+#define TMPPOLYFUN 14
 #define ARGFIELD 15
 #define SNUMBER 16
 #define LNUMBER 17
@@ -609,6 +610,9 @@ typedef int (*TFUN1)();
 #define DIRTYFLAG 1
 #define DIRTYSYMFLAG 2
 #define ALLDIRTY (DIRTYFLAG|DIRTYSYMFLAG)
+/*
+#define CLEANPRF 1
+*/
 #define CLEANPRF 4
 
 #define ARGHEAD 2

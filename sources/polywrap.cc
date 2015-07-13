@@ -448,6 +448,7 @@ void poly_ratfun_read (WORD *a, poly &num, poly &den) {
 
 		num *= den_den;
 		den *= den_num;
+
 		poly gcd = polygcd::gcd(num,den);
 		num /= gcd;
 		den /= gcd;
@@ -475,7 +476,6 @@ void poly_sort(PHEAD WORD *a) {
 #ifdef DEBUG
 	cout << "*** [" << thetime() << "]  CALL : poly_sort" << endl;
 #endif
-	
 	if (NewSort(BHEAD0)) { Terminate(-1); }
 	AR.CompareRoutine = (void *)&CompareSymbols;
 	
@@ -656,17 +656,26 @@ int poly_ratfun_normalize (PHEAD WORD *term) {
 		}
 		
 	if (num_polyratfun <= 1) return 0;
+/*
+	When there are polyratfun's with only one variable: rename them
+	temporarily to TMPPOLYFUN.
+*/
+	for (WORD *t=term+1; t<tstop; t+=t[1]) {
+		if (*t == AR.PolyFun && (t[1] == FUNHEAD+t[FUNHEAD]
+			|| t[1] == FUNHEAD+2 ) ) { *t = TMPPOLYFUN; }
+	}
+
 	
 	// Extract all variables in the polyfuns
 	vector<WORD *> e;
 	
-	for (WORD *t=term+1; t<tstop; t+=t[1])
+	for (WORD *t=term+1; t<tstop; t+=t[1]) {
 		if (*t == AR.PolyFun) 
 			for (WORD *t2 = t+FUNHEAD; t2<t+t[1];) {
 				e.push_back(t2);
 				NEXTARG(t2);
 			}		
-
+	}
 	poly::get_variables(BHEAD e, true, true);
 
 	// Check for modulus calculus
@@ -685,7 +694,6 @@ int poly_ratfun_normalize (PHEAD WORD *term) {
 			poly den2(BHEAD 0,modp,1);
 			poly_ratfun_read(t,num2,den2);
 			t += t[1];
-
 			poly gcd1(polygcd::gcd(num1,den2));
 			poly gcd2(polygcd::gcd(num2,den1));
 
@@ -739,7 +747,12 @@ int poly_ratfun_normalize (PHEAD WORD *term) {
 
 	// reset modulo calculation
 	AN.ncmod = AC.ncmod;
-	
+
+	tstop = term + *term; tstop -= ABS(tstop[-1]);
+	for (WORD *t=term+1; t<tstop; t+=t[1]) {
+		if (*t == TMPPOLYFUN ) *t = AR.PolyFun;
+	}
+
 	return 0;
 }
 
@@ -749,6 +762,8 @@ int poly_ratfun_normalize (PHEAD WORD *term) {
 */
 
 void poly_fix_minus_signs (factorized_poly &a) {
+
+	if ( a.factor.empty() ) return;
 
 	POLY_GETIDENTITY(a.factor[0]);
 	

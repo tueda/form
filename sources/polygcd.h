@@ -27,6 +27,7 @@
 /* #] License : */ 
 
 #include <vector>
+#include <map>
 
 class poly; // polynomial class
 class gcd_heuristic_failed {}; // class for throwing exceptions
@@ -62,8 +63,8 @@ namespace polygcd {
 	const poly gcd_heuristic (const poly &a, const poly &b, const std::vector<int> &x, int max_tries=POLYGCD_HEURISTIC_MAX_TRIES);
 	const poly gcd_Euclidean (const poly &a, const poly &b);
 	const poly gcd_modular (const poly &a, const poly &b, const std::vector<int> &x);
-	const poly gcd_modular_dense_interpolation (const poly &a, const poly &b, const std::vector<int> &x, const poly &lc, const poly &s);
-	const poly gcd_modular_sparse_interpolation (const poly &a, const poly &b, const std::vector<int> &x, const poly &lc, const poly &s);
+	const poly gcd_modular_dense_interpolation (const poly &a, const poly &b, const std::vector<int> &x, const poly &s);
+	const poly gcd_modular_sparse_interpolation (const poly &a, const poly &b, const std::vector<int> &x, const poly &s);
 
 	const std::vector<int> sparse_interpolation_get_mul_list (const poly &a, const std::vector<int> &x, const std::vector<int> &c);
 	void sparse_interpolation_mul_poly (poly &a, const std::vector<int> &m);
@@ -71,5 +72,9 @@ namespace polygcd {
 	const poly sparse_interpolation_fix_poly (const poly &a, int x);
 	
 	const poly chinese_remainder (const poly &a1, const poly &m1, const poly &a2, const poly &m2);
-	const poly substitute_last(const poly &a, int x, int c);
+	const poly substitute(const poly &a, int x, int c);
+	const std::map<std::vector<int>,poly> full_bracket(const poly &a, const std::vector<int>& filter);
+	const poly bracket(const poly &a, const std::vector<int>& pattern, const std::vector<int>& filter);
+	const std::map<std::vector<int>,int> bracket_count(const poly &a, const std::vector<int>& filter);
+	const poly gcd_linear (const poly &a, const poly &b);
 }
