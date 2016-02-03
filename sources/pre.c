@@ -500,6 +500,13 @@ UBYTE *GetPreVar(UBYTE *name, int flag)
 	}
 	if ( *t == '_' ) {
 		if ( StrICmp(name,(UBYTE *)"EXTRASYMBOLS_") == 0 ) goto extrashort;
+		if ( StrICmp(name,(UBYTE *)"CAT_") == 0 ) {
+			/*
+			 * The category of the last statements.
+			 */
+			number = AC.compiletype;
+			goto putnumber;
+		}
 		*t = 0;
 		if ( StrICmp(name,(UBYTE *)"UNCHANGED") == 0 ) mode = 1;
 		else if ( StrICmp(name,(UBYTE *)"ZERO") == 0 ) mode = 0;
@@ -513,6 +520,7 @@ UBYTE *GetPreVar(UBYTE *name, int flag)
 			*t++ = '_';
 extrashort:;
 			number = cbuf[AM.sbufnum].numrhs;
+putnumber:
 			t = numintopolynomial;
 			NumCopy(number,t);
 			return(numintopolynomial);
