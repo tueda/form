@@ -69,3 +69,7 @@ doc/manual/version.tex
 
 doc/devref/devref/
 doc/manual/manual/
+
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
