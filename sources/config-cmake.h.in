@@ -1,0 +1,19 @@
+#cmakedefine UNIX
+#cmakedefine WINDOWS
+
+#cmakedefine LINUX
+
+#cmakedefine ILP32
+#cmakedefine LLP64
+#cmakedefine LP64
+
+#ifndef __cplusplus
+#cmakedefine inline ${inline}
+#endif
+
+#cmakedefine HAVE_BOOST_UNORDERED_MAP_HPP
+#cmakedefine HAVE_BOOST_UNORDERED_SET_HPP
+#cmakedefine HAVE_TR1_UNORDERED_MAP
+#cmakedefine HAVE_TR1_UNORDERED_SET
+#cmakedefine HAVE_UNORDERED_MAP
+#cmakedefine HAVE_UNORDERED_SET
