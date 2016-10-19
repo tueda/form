@@ -1,0 +1,30 @@
+configuration:
+  - Debug
+  - Release
+
+environment:
+  matrix:
+#     We require C99.
+#   - generator: "Visual Studio 10 2010 Win64"
+#   - generator: "Visual Studio 11 2012 Win64"
+    - generator: "Visual Studio 12 2013 Win64"
+    - generator: "Visual Studio 14 2015 Win64"
+
+build:
+  project: form.sln
+  verbosity: detailed
+
+before_build:
+  - cmake -G "%generator%" .
+
+#after_build:
+#  - if "%generator%"=="Visual Studio 14 2015 Win64" appveyor PushArtifact Release\form.exe
+
+artifacts:
+  - path: sources\Release\form.exe
+
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
