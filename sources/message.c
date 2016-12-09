@@ -105,6 +105,8 @@ int MesWork()
 	%b	array of size n UBYTEs (two parameters, first is int, second UBYTE *)
 	%C	array of size n chars (two parameters, first is int, second char *)
 	%d	word;
+	%Dts	current term (AN.currentTerm) size usage
+	%Dws	workspace usage (AT.WorkPointer etc.)
 	%l  long;
 	%L  long long *;
 	%s	string;
@@ -686,6 +688,22 @@ dollarzero:				*t++ = '0'; *t = 0;
 			else if ( *s == 'w' ) {	}
 			else if ( *s == 'W' ) {	}
 #endif
+			else if ( s[0] == 'D' && s[1] == 't' && s[2] == 's' ) {
+				if ( AN.currentTerm ) {
+					t = LongCopy(*AN.currentTerm,t);
+					*t++ = '/'; *t = 0;
+					t = LongCopy(AM.MaxTer/sizeof(WORD),t);
+				}
+				s += 2;
+			}
+			else if ( s[0] == 'D' && s[1] == 'w' && s[2] == 's' ) {
+				if ( AT.WorkSpace ) {
+					t = LongCopy(AT.WorkTop-AT.WorkPointer,t);
+					*t++ = '/'; *t = 0;
+					t = LongCopy(AT.WorkTop-AT.WorkSpace,t);
+				}
+				s += 2;
+			}
 			else if ( FG.cTable[(int)*s] == 1 ) {
 				x = *s++ - '0';
 				while ( FG.cTable[(int)*s] == 1 )
