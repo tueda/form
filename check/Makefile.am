@@ -8,7 +8,11 @@ endif
 if BUILD_PARFORM
 TEST_BINS += parform
 endif
+
 TEST_OPTS =
+
+TESTS =
+
 if CONFIG_RUBY
 TESTS_ENVIRONMENT = \
 	PATH="$(top_builddir)/sources:$$PATH" \
@@ -17,6 +21,24 @@ TESTS_ENVIRONMENT = \
 	TEST_BINS="$(TEST_BINS)" \
 	TEST_OPTS="$(TEST_OPTS)" \
 	$(SHELL)
-TESTS = check-help.sh
+else
+TESTS_ENVIRONMENT = \
+	PATH="$(top_builddir)/sources:$$PATH" \
+	TEST_BINS="$(TEST_BINS)" \
+	$(SHELL)
 endif
-EXTRA_DIST = check-help.sh check.rb examples.frm fixes.frm
+
+if CONFIG_RUBY
+TESTS += check-help.sh
+endif
+
+TESTS += benchmark-fu.sh
+
+EXTRA_DIST = \
+	check-help.sh \
+	benchmark-fu.sh \
+	check.rb \
+	examples.frm \
+	features.frm \
+	fixes.frm \
+	aap/fu.frm
