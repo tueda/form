@@ -4530,7 +4530,7 @@ WORD SortWild(WORD *w, WORD nw)
  		#[ CleanUpSort :			VOID CleanUpSort(num)
 */
 /**
- *		Partially or completely frees function sort buffers.
+ *		Partially (num=-1) or completely (num=0) frees function sort buffers.
  */
 
 void CleanUpSort(int num)
@@ -4596,6 +4596,9 @@ void CleanUpSort(int num)
 			MUNLOCK(ErrorMessageLock);
 #endif
 		}
+	}
+	if ( num == 0 ) {
+		if ( AN.SplitScratch ) M_free(AN.SplitScratch,"AN.SplitScratch");
 	}
 }
 

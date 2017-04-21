@@ -1278,9 +1278,9 @@ WORD IniVars()
 	AC.NamesFlag = AM.gNamesFlag = 0;
 	AC.CodesFlag = AM.gCodesFlag = 0;
 	AC.extrasymbols = AM.gextrasymbols = AM.ggextrasymbols = 0;
-	AC.extrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
-	AM.gextrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
-	AM.ggextrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
+	if (!AC.extrasym) AC.extrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
+	if (!AM.gextrasym) AM.gextrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
+	if (!AM.ggextrasym) AM.ggextrasym = (UBYTE *)Malloc1(2*sizeof(UBYTE),"extrasym");
 	AC.extrasym[0] = AM.gextrasym[0] = AM.ggextrasym[0] = 'Z';
 	AC.extrasym[1] = AM.gextrasym[1] = AM.ggextrasym[1] = 0;
 	AC.TokensWriteFlag = AM.gTokensWriteFlag = 0;

@@ -944,6 +944,21 @@ P;
 assert succeeded?
 assert result("F") =~ expr("rat(x^10 + x^11 + x^12 + x^13 + x^14 + x^15)")
 *--#] Issue114 : 
+*--#[ Issue115_1 :
+* Memory leak at .clear
+.clear
+.end
+assert succeeded?
+*--#] Issue115_1 : 
+*--#[ Issue115_2 :
+S x1,...,x5;
+L F = x1+x2+x5;
+.sort
+multiply replace_(x1,x3+x4);
+.clear
+.end
+assert succeeded?
+*--#] Issue115_2 : 
 *--#[ Issue117_1 :
 * Id not matching when using ?a and symmetric function
 S n1,n2;
