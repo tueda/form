@@ -28,6 +28,8 @@ SRCBASE = \
 	minos.h \
 	module.c \
 	names.c \
+	namespace.cc \
+	namespace.h \
 	normal.c \
 	notation.c \
 	opera.c \

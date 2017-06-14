@@ -1564,6 +1564,9 @@ extern int AddToScratch(FILEHANDLE *,POSITION *,UBYTE *,POSITION *,int);
 extern int DoPreAppendPath(UBYTE *);
 extern int DoPrePrependPath(UBYTE *);
 
+extern int DoPreNamespace(UBYTE *);
+extern int DoPreEndNamespace(UBYTE *);
+
 /*
   	#] Declarations : 
 */

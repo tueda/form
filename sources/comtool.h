@@ -38,12 +38,24 @@
 
 /*
   	#] Includes : 
+  	#[ Declarations :
+*/
+
+/* Reference to a non-null-terminated (sub)string. */
+typedef struct STRING_VIEW_tag {
+	UBYTE *s;
+	UWORD len;
+	PADPOINTER(0,0,1,0);
+} STRING_VIEW;
+
+/*
+  	#] Declarations : 
   	#[ Inline functions :
 */
 
 /**
- * Skips white-spaces in the buffer. Here the white-spaces includes commas,
- * which is treated as a space in FORM.
+ * Skips white-spaces in the buffer. Here the white-spaces include commas,
+ * which are treated as spaces in FORM.
  *
  * @param[in,out]  s  The pointer to the buffer.
  */
@@ -55,17 +67,52 @@ static inline void SkipSpaces(UBYTE **s)
 }
 
 /**
+ * Tokenizes the next bare identifier, [a-zA-Z][0-9a-zA-Z]*.
+ *
+ * @param[in,out]  s  The pointer to the buffer.
+ * @return            The string view for the identifier. Result.s is NULL when
+ *                    not found.
+ */
+static inline STRING_VIEW NextBareIdentifier(UBYTE **s)
+{
+	STRING_VIEW v;
+	SkipSpaces(s);
+	if ( FG.cTable[**s] == 0 ) {
+		UBYTE *p = *s;
+		p++;
+		while ( FG.cTable[*p] <= 1 ) p++;
+		if ( *p == '_' ) {
+			/* Don't allow '_' here. */
+			goto NotFound;
+		}
+		else {
+			v.s = *s;
+			v.len = p - *s;
+			*s = p;  /* Update the position. */
+		}
+	}
+	else {
+NotFound:
+		v.s = NULL;
+		v.len = 0;
+	}
+	return v;
+}
+
+/**
  * Checks if the next word in the buffer is the given keyword, with ignoring
  * case. If found, the pointer is moved such that the keyword is consumed in the
  * buffer, and this function returns a non-zero value.
  *
- * @param[in,out]  s    The pointer to the buffer. Changed if the keyword found.
+ * @param[in,out]  s    The pointer to the buffer.
  * @param          opt  The optional keyword.
  * @return              1 if the keyword found, otherwise 0.
  */
 static inline int ConsumeOption(UBYTE **s, const char *opt)
 {
-	const char *p = (const char *)*s;
+	const char *p;
+	SkipSpaces(s);
+	p = (const char *)*s;
 	while ( *p && *opt && tolower(*p) == tolower(*opt) ) {
 		p++;
 		opt++;
@@ -76,9 +123,8 @@ static inline int ConsumeOption(UBYTE **s, const char *opt)
 		if ( !*p || !(FG.cTable[(unsigned char)*p] == 0 ||
 		              FG.cTable[(unsigned char)*p] == 1 || *p == '_' ||
 		              *p == '$') ) {
-			/* Consume the option. Skip the trailing spaces. */
+			/* Consume the option. */
 			*s = (UBYTE *)p;
-			SkipSpaces(s);
 			return(1);
 		}
 	}

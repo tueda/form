@@ -47,6 +47,9 @@
 #ifdef _MSC_VER
 #include <wchar.h>  /* off_t */
 #endif
+
+#include "namespace.h"
+
 /*
   	#[ sav&store :
 */
@@ -1505,6 +1508,7 @@ struct P_const {
     LIST LoopList;                 /* (P) List of do loops */
     LIST ProcList;                 /* (P) List of procedures */
     INSIDEINFO inside;             /*     Information during #inside/#endinside */
+    NAMESPACE PreNamespace;        /* namespace */
     UBYTE **PreSwitchStrings;      /* (P) The string in a switch */
     UBYTE *preStart;               /* (P) Preprocessor instruction buffer */
     UBYTE *preStop;                /* (P) end of preStart */

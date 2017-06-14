@@ -32,6 +32,7 @@
   	#[ Includes :
 */
 #include "form3.h"
+#include "comtool.h"
 
 static UBYTE pushbackchar = 0;
 static int oldmode = 0;
@@ -64,6 +65,7 @@ static KEYWORD precommands[] = {
 	,{"enddo"        , DoEnddo        , 0, 0}
 	,{"endif"        , DoEndif        , 0, 0}
 	,{"endinside"    , DoEndInside    , 0, 0}
+	,{"endnamespace" , DoPreEndNamespace,0,0}
 	,{"endprocedure" , DoEndprocedure , 0, 0}
 	,{"endswitch"    , DoPreEndSwitch , 0, 0}
 	,{"exchange"     , DoPreExchange  , 0, 0}
@@ -76,6 +78,7 @@ static KEYWORD precommands[] = {
 	,{"include"      , DoInclude      , 0, 0}
 	,{"inside"       , DoInside       , 0, 0}
 	,{"message"      , DoMessage      , 0, 0}
+	,{"namespace"    , DoPreNamespace , 0, 0}
 	,{"opendictionary", DoPreOpenDictionary,0,0}
 	,{"optimize"     , DoOptimize     , 0, 0}
 	,{"pipe"         , DoPipe         , 0, 0}
@@ -6896,5 +6899,63 @@ int DoPrePrependPath(UBYTE *s)
 
 /*
  		#] DoPrePrependPath : 
+ 		#[ DoPreNamespace :
+*/
+
+/**
+ * Starts a new namespace.
+ *
+ * Syntax:
+ *   #namespace <name>
+ */
+int DoPreNamespace(UBYTE *s)
+{
+	if ( AP.PreSwitchModes[AP.PreSwitchLevel] != EXECUTINGPRESWITCH ) return(0);
+	if ( AP.PreIfStack[AP.PreIfLevel] != EXECUTINGIF ) return(0);
+
+	STRING_VIEW v = NextBareIdentifier(&s);
+
+	if ( v.s ) {
+		SkipSpaces(&s);
+		if ( *s ) {
+			MesPrint("@No extra text allowed as part of %#namespace: %s",s);
+			return(-1);
+		}
+		return (PrePushNamespace(&AP.PreNamespace,v.s,v.len));
+	}
+	else {
+		if ( *s ) {
+			MesPrint("@No legal name for %#namespace: %s",s);
+		}
+		else {
+			MesPrint("@No name for %#namespace");
+		}
+		return(-1);
+	}
+}
+
+/*
+ 		#] DoPreNamespace : 
+ 		#[ DoPreEndNamespace :
+*/
+
+/**
+ * Closes the current namespace.
+ *
+ * Syntax:
+ *   #endnamespace
+ */
+int DoPreEndNamespace(UBYTE *s)
+{
+	DUMMYUSE(s);
+
+	if ( AP.PreSwitchModes[AP.PreSwitchLevel] != EXECUTINGPRESWITCH ) return(0);
+	if ( AP.PreIfStack[AP.PreIfLevel] != EXECUTINGIF ) return(0);
+
+	return (PrePopNamespace(&AP.PreNamespace));
+}
+
+/*
+ 		#] DoPreEndNamespace : 
  	# ] PreProcessor :
 */

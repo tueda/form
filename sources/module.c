@@ -362,6 +362,7 @@ VOID FullCleanUp()
 	}
 	RemoveDollars();
 	CleanUp(1);
+	ClearNamespace(&AP.PreNamespace);
 	ResetVariables(2);
 	IniVars();
 }

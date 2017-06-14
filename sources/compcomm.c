@@ -5859,7 +5859,6 @@ int CoArgToExtraSymbol(UBYTE *s)
 		return(1);
 	}
 
-	SkipSpaces(&s);
 	int tonumber = ConsumeOption(&s, "tonumber");
 
 	int ret = DoArgument(s,TYPEARGTOEXTRASYMBOL);

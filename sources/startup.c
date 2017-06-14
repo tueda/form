@@ -1441,6 +1441,7 @@ WORD IniVars()
 	AC.cbufnum = AM.rbufnum;		/* Select the default compiler buffer */
 	AC.HideLevel = 0;
 	AP.PreAssignFlag = 0;
+	InitNamespace(&AP.PreNamespace);
 	return(0);
 }
 
