@@ -617,7 +617,7 @@ STATIC_LDFLAGS=
 MPI_STATIC_LDFLAGS=
 AC_ARG_ENABLE([static-link],
 	[AS_HELP_STRING([--enable-static-link],
-		[link with static libraries @<:@default=no@:>@])],
+		[link with static libraries (release versions) @<:@default=no@:>@])],
 	[AS_IF([test "x$enableval" != xno && test "x$enableval" != xcheck], [enable_static_link=yes])],
 	[enable_static_link=no])
 AS_IF([test "x$enable_static_link" != xno],
@@ -885,27 +885,123 @@ echo
 echo "The following executables can be compiled:"
 atleastone=no
 if test "x$build_form" = xyes; then
-	echo "    form       scalar version"
+	opts=
+	if test "x$enable_native" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}native"
+	fi
+	if test "x$STATIC_LDFLAGS" != x; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}statically linked"
+	fi
+	if test "x$enable_profile" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gprof"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    form       scalar version$opts"
 	atleastone=yes
 fi
 if test "x$build_vorm" = xyes; then
-	echo "    vorm       debugging version"
+	opts=
+	if test "x$enable_coverage" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gcov"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    vorm       debugging version$opts"
 	atleastone=yes
 fi
 if test "x$build_tform" = xyes; then
-	echo "    tform      multi-threaded version"
+	opts=
+	if test "x$enable_native" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}native"
+	fi
+	if test "x$STATIC_LDFLAGS" != x; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}statically linked"
+	fi
+	if test "x$enable_profile" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gprof"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    tform      multi-threaded version$opts"
 	atleastone=yes
 fi
 if test "x$build_tvorm" = xyes; then
-	echo "    tvorm      multi-threaded debugging version"
+	opts=
+	if test "x$enable_coverage" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gcov"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    tvorm      multi-threaded debugging version$opts"
 	atleastone=yes
 fi
 if test "x$build_parform" = xyes; then
-	echo "    parform    parallel version using MPI"
+	opts=
+	if test "x$enable_native" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}native"
+	fi
+	if test "x$MPI_STATIC_LDFLAGS" != x; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}statically linked"
+	fi
+	if test "x$enable_profile" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gprof"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    parform    parallel version using MPI$opts"
 	atleastone=yes
 fi
 if test "x$build_parvorm" = xyes; then
-	echo "    parvorm    parallel debugging version using MPI"
+	opts=
+	if test "x$enable_coverage" = xyes; then
+		if test "x$opts" != x; then
+			opts="${opts}, "
+		fi
+		opts="${opts}gcov"
+	fi
+	if test "x$opts" != x; then
+		opts=" (${opts})"
+	fi
+	echo "    parvorm    parallel debugging version using MPI$opts"
 	atleastone=yes
 fi
 if test $atleastone = no; then
@@ -935,8 +1031,10 @@ fi
 echo
 echo "Type 'make <executable name>' in the source directory to"
 echo "build a specific version. Type 'make' to build all."
+echo
 echo "Type 'make install' to install the executables in"
-echo "$outputdir."
+echo "    $outputdir"
+echo
 if test "x$with_ruby_test" = xyes; then
 	echo "Type 'make check' to run automatic tests."
 else
