@@ -4,7 +4,7 @@ set -o pipefail
 
 case $CI_TARGET in
   *coverage*)
-    pip install cpp-coveralls
+    pip install --user cpp-coveralls
     ;;
 esac
 
