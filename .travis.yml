@@ -86,6 +86,7 @@ matrix:
       env: CI_TARGET=src-release
     - os: linux
       env: CI_TARGET=doc-release
+      addons: { apt: { packages: [] } }
       cache: { directories: [ texlive ] }
     - os: linux
       compiler: gcc
