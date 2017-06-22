@@ -20,6 +20,9 @@ install:
 script:
   - ./scripts/travis-script.sh
 
+after_success:
+  - ./scripts/travis-after_success.sh
+
 # NOTE:
 # - The following combinations give many false positives:
 #   - openmpi-bin + valgrind on precise,
@@ -49,6 +52,12 @@ matrix:
     - os: osx
       compiler: clang
       env: CI_TARGET=parform
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=coverage-vorm
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=coverage-tvorm
     - os: linux
       compiler: gcc
       env: CI_TARGET=valgrind-vorm TEST=examples.frm
