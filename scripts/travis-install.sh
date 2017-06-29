@@ -59,13 +59,11 @@ fi
 if [ "x$TRAVIS_OS_NAME" = xosx ]; then
   case $CI_TARGET in
     *parform*|*parvorm*)
-      brew update
       brew install mpich
       ;;
   esac
   case $CI_TARGET in
     *valgrind*)
-      brew update
       # valgrind 3.11.0
       brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/7a4dabfc1a2acd9f01a1670fde4f0094c4fb6ffa/Formula/valgrind.rb
       ;;
@@ -74,7 +72,6 @@ if [ "x$TRAVIS_OS_NAME" = xosx ]; then
     *coverage*)
       # NOTE: Python needs a manual setup on osx: travis-ci/travis-ci#2312.
       if type pyenv >/dev/null 2>&1; then :;else
-        brew update
         brew install pyenv
       fi
       eval "$(pyenv init -)"
