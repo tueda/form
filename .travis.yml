@@ -14,6 +14,11 @@ addons:
       - libgmp-dev
       - zlib1g-dev
 
+cache:
+  directories:
+    - texlive
+    - $HOME/Library/Caches/Homebrew
+
 install:
   - ./scripts/travis-install.sh
 
@@ -36,8 +41,6 @@ after_script:
 #   mpich + valgrind-3.11.0 on osx.
 # - openmpi + gcov on precise occasionally crashes. We measure the code
 #   coverage of parform with mpich on osx.
-# - It is best to cache ./texlive for doc-*-release:
-#     cache: { directories: [ texlive ] }
 matrix:
   include:
     - os: linux
@@ -106,11 +109,9 @@ matrix:
     - os: linux
       env: CI_TARGET=doc-pdf-release
       addons: { apt: { packages: [] } }
-      cache: { directories: [ texlive ] }
     - os: linux
       env: CI_TARGET=doc-html-release
       addons: { apt: { packages: [] } }
-      cache: { directories: [ texlive ] }
     - os: linux
       compiler: gcc
       env: CI_TARGET=bin-release
