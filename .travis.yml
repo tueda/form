@@ -51,12 +51,15 @@ matrix:
       env: CI_TARGET=parform
       addons: { apt: { packages: [ libgmp-dev, libopenmpi-dev, openmpi-bin, zlib1g-dev ] } }
     - os: osx
+      osx_image: xcode8.1
       compiler: clang
       env: CI_TARGET=form
     - os: osx
+      osx_image: xcode8.1
       compiler: clang
       env: CI_TARGET=tform
     - os: osx
+      osx_image: xcode8.1
       compiler: clang
       env: CI_TARGET=parform
     - os: linux
@@ -66,6 +69,7 @@ matrix:
       compiler: gcc
       env: CI_TARGET=coverage-tvorm
     - os: osx
+      osx_image: xcode8.1
       compiler: gcc
       env: CI_TARGET=coverage-parvorm
     - os: linux
@@ -93,12 +97,15 @@ matrix:
       env: CI_TARGET=valgrind-tvorm TEST=fixes.frm
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: osx
+      osx_image: xcode8.1
       compiler: gcc
       env: CI_TARGET=valgrind-parvorm TEST=examples.frm
     - os: osx
+      osx_image: xcode8.1
       compiler: gcc
       env: CI_TARGET=valgrind-parvorm TEST=features.frm
     - os: osx
+      osx_image: xcode8.1
       compiler: gcc
       env: CI_TARGET=valgrind-parvorm TEST=fixes.frm
     - os: linux
@@ -115,6 +122,7 @@ matrix:
       compiler: gcc
       env: CI_TARGET=bin-release
     - os: osx
+      osx_image: xcode8.1
       compiler: clang
       env: CI_TARGET=bin-release
 

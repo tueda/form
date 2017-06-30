@@ -97,3 +97,9 @@ case $CI_TARGET in
     rm -rf forcer-1.0.0
     ;;
 esac
+
+case $CI_TARGET in
+  *form*|*vorm*)
+    gem install test-unit
+    ;;
+esac
