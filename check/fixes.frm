@@ -1708,3 +1708,37 @@ assert result("F2") =~ expr("1/10 + 29/210*x + 1/21*x^2")
 assert result("Nterms") =~ expr("1351")
 assert result("Zero") =~ expr("0")
 *--#] Issue197 : 
+*--#[ Issue211 :
+* Unexpected code in ReNumber
+#: TermsInSmall 128
+#: LargePatches 16
+#: FilePatches 4
+#: SubTermsInSmall 64
+#: SubLargePatches 8
+#: SubFilePatches 2
+
+CFunction f,g;
+Symbol x,y;
+
+* 128*16=2048 terms cause a sort of the large buffer to disk.
+* multiples of 2048*4=8192 terms cause a stage 4 sort
+#define NTERMS "40001"
+
+#define ARGNTERMS "2001"
+
+Local test1 = <f(1)>+...+<f(`NTERMS')>;
+Local test2 = g(<f(1)>+...+<f(`ARGNTERMS')>);
+.sort
+
+* Cancel all terms, but keep distance so that most terms only cancel in the final sort
+Identify f(x?) = f(x) - f(`NTERMS'-x+1);
+Argument g;
+  Identify f(x?) = f(x) - f(`ARGNTERMS'-x+1);
+EndArgument;
+
+Print;
+.end
+assert succeeded?
+assert result("test1") =~ expr("0")
+assert result("test2") =~ expr("g(0)")
+*--#] Issue211 : 
