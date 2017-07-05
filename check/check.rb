@@ -265,12 +265,17 @@ module FormTest
     begin
       nfiles.times do |i|
         @filename = "#{i + 1}.frm"
-        execute("#{FormTest.cfg.form_cmd} #{@filename}")
+        execute("#{FormTest.cfg.form_cmd} #{extra_parameters(i)} #{@filename}")
         if !finished?
           info.status = "TIMEOUT"
           assert(false, "timeout (= #{timeout} sec) in #{@filename} of #{info.desc}")
         end
         if return_value != 0
+          if extra_parameters(i + 1).include?("-R")
+            # Ignore the error when the next run is for recovery from
+            # a checkpoint.
+            next
+          end
           break
         end
       end
@@ -461,6 +466,20 @@ module FormTest
 
   # The method to be called before the test.
   def prepare
+    # Can be overridden in child classes.
+  end
+
+  # Extra parameters (command line options) for the FORM process.
+  def extra_parameters(index)
+    pars = do_extra_parameters
+    if pars.nil?
+      return ""
+    end
+    pars[index % pars.length]
+  end
+
+  # Define extra parameters.
+  def do_extra_parameters
     # Can be overridden in child classes.
   end
 
@@ -689,6 +708,7 @@ class TestCases
         requires = nil
         pendings = nil
         prepares = nil
+        extra_parameters = nil
 
         infile.each_line do |line|
           line.chop!
@@ -718,6 +738,7 @@ class TestCases
               requires = nil
               pendings = nil
               prepares = nil
+              extra_parameters = nil
               if skipping
                 line = ""
               else
@@ -770,6 +791,10 @@ class TestCases
                 prepares = prepares.join("; ")
                 line += "def prepare; #{prepares} end; "
               end
+              if !extra_parameters.nil?
+                extra_parameters.map { |s| '["' + s + '"]' }.join(" + ")
+                line += "def do_extra_parameters; #{extra_parameters} end; "
+              end
               line += "end"
             end
             level = 0
@@ -815,8 +840,15 @@ class TestCases
               prepares = []
             end
             prepares << $1
-          elsif heredoc.nil? && line =~ /^\*\s*#\s*(require|prepare|pend_if)\s+(.*)/
-            # *#require/prepare/pend_if, commented out in the FORM way
+          elsif heredoc.nil? && line =~ /^\s*#\s*extra_parameter\b\s*(.*)/
+            # #extra_parameter <parameter(s)>
+            line = ""
+            if extra_parameters.nil?
+              extra_parameters = []
+            end
+            extra_parameters << $1
+          elsif heredoc.nil? && line =~ /^\*\s*#\s*(require|pend_if|prepare)\s+(.*)/
+            # *#require/pend_if/prepare/extra_parameter, commented out in the FORM way
             line = ""
           else
             if heredoc.nil?
