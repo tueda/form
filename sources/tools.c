@@ -3366,7 +3366,11 @@ argerror:
  		#[ TimeWallClock :
 */
 
+#ifdef HAVE_GETTIMEOFDAY
+#include <sys/time.h>
+#else
 #include <sys/timeb.h>
+#endif
 
 /**
  * Returns the wall-clock time.
@@ -3379,6 +3383,21 @@ LONG TimeWallClock(WORD par)
 	/*
 	 * NOTE: this function is not thread-safe. Operations on tp are not atomic.
 	 */
+#ifdef HAVE_GETTIMEOFDAY
+	struct timeval t;
+	LONG sec, msec;
+	gettimeofday(&t, NULL);
+	sec = (LONG)t.tv_sec;
+	msec = (LONG)(t.tv_usec/1000);
+	if ( par ) {
+		return (sec-AM.OldSecTime)*100 + (msec-AM.OldMilliTime)/10;
+	}
+	else {
+		AM.OldSecTime   = sec;
+		AM.OldMilliTime = msec;
+		return(0L);
+	}
+#else
 	struct timeb tp;
 	ftime(&tp);
 	if ( par ) {
@@ -3390,6 +3409,7 @@ LONG TimeWallClock(WORD par)
 		AM.OldMilliTime = (LONG)(tp.millitm);
 		return(0L);
 	}
+#endif
 }
 
 /*
