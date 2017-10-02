@@ -28,6 +28,24 @@ case $CI_TARGET in
     make
     ./check/check.rb ./sources/parform --stat
     ;;
+  sanitize-vorm)
+    autoreconf -iv
+    ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
+    make -C sources vorm
+    ./check/check.rb ./sources/vorm --stat --timeout 60
+    ;;
+  sanitize-tvorm)
+    autoreconf -iv
+    ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
+    make -C sources tvorm
+    ./check/check.rb ./sources/tvorm --stat --timeout 60
+    ;;
+  sanitize-parvorm)
+    autoreconf -iv
+    ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
+    make -C sources parvorm
+    ./check/check.rb ./sources/parvorm --stat --timeout 60
+    ;;
   coverage-vorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
