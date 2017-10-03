@@ -42,7 +42,7 @@
 #define ABS(x) ( (x) < 0 ? -(x): (x) )
 #define SGN(x) ( (x) > 0 ? 1 : (x) < 0 ? -1 : 0 )
 #define REDLENG(x) ((((x)<0)?((x)+1):((x)-1))>>1)
-#define INCLENG(x) (((x)<0)?(((x)<<1)-1):(((x)<<1)+1))
+#define INCLENG(x) (((x)<0)?(((x)*2)-1):(((x)*2)+1))
 #define GETCOEF(x,y) x += *x;y = x[-1];x -= ABS(y);y=REDLENG(y)
 #define GETSTOP(x,y) y=x+(*x)-1;y -= ABS(*y)-1
 #define StuffAdd(x,y)  (((x)<0?-1:1)*(y)+((y)<0?-1:1)*(x))
@@ -336,7 +336,7 @@ TP=T+1;while(TP<TT){if(*TP==AR.PolyFun){TP[2]|=(DIRTYFLAG|MUSTCLEANPRF);}TP+=TP[
 */
 
 /*
- * The following two functions give the unsigned absolute value of a signed
+ * The following three functions give the unsigned absolute value of a signed
  * integer even for the most negative integer. This is beyond the scope of
  * the standard abs() function and its family, whose return-values are signed.
  * In short, we should not use the unary minus operator with signed numbers
@@ -350,6 +350,12 @@ TP=T+1;while(TP<TT){if(*TP==AR.PolyFun){TP[2]|=(DIRTYFLAG|MUSTCLEANPRF);}TP+=TP[
  *   https://stackoverflow.com/q/1610947   (Why does stdlib.h's abs() family of functions return a signed value?)
  *   https://blog.regehr.org/archives/226  (A Guide to Undefined Behavior in C and C++, Part 2)
  */
+static inline unsigned int IntAbs(int x)
+{
+	if ( x >= 0 ) return x;
+	return(-((unsigned int)x));
+}
+
 static inline UWORD WordAbs(WORD x)
 {
 	if ( x >= 0 ) return x;
@@ -360,6 +366,41 @@ static inline ULONG LongAbs(LONG x)
 {
 	if ( x >= 0 ) return x;
 	return(-((ULONG)x));
+}
+
+/*
+ * The following functions provide portable unsigned-to-signed conversions
+ * (to avoid the implementation-defined behaviour), which is expected to be
+ * optimized to a no-op.
+ *
+ * See also:
+ *   https://stackoverflow.com/a/13208789  (Efficient unsigned-to-signed cast avoiding implementation-defined behavior)
+ */
+static inline int UnsignedToInt(unsigned int x)
+{
+	extern void Terminate(int);
+	if ( x <= INT_MAX ) return(x);
+	if ( x >= (unsigned int)INT_MIN ) return((int)(x - INT_MIN) + INT_MIN);
+	Terminate(1);
+	return(0);
+}
+
+static inline WORD UWordToWord(UWORD x)
+{
+	extern void Terminate(int);
+	if ( x <= WORD_MAX_VALUE ) return(x);
+	if ( x >= (UWORD)WORD_MIN_VALUE ) return((WORD)(x - WORD_MIN_VALUE) + WORD_MIN_VALUE);
+	Terminate(1);
+	return(0);
+}
+
+static inline LONG ULongToLong(ULONG x)
+{
+	extern void Terminate(int);
+	if ( x <= LONG_MAX_VALUE ) return(x);
+	if ( x >= (ULONG)LONG_MIN_VALUE ) return((LONG)(x - LONG_MIN_VALUE) + LONG_MIN_VALUE);
+	Terminate(1);
+	return(0);
 }
 
 /*

@@ -1968,7 +1968,7 @@ WORD AddCoef(PHEAD WORD **ps1, WORD **ps2)
 		}
 	}
 	if ( !OutLen ) { *ps1 = *ps2 = 0; return(0); }
-	OutLen <<= 1;
+	OutLen *= 2;
 	if ( OutLen < 0 ) i = - ( --OutLen );
 	else			  i = ++OutLen;
 	if ( l1 < 0 ) l1 = -l1;

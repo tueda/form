@@ -3809,7 +3809,7 @@ OneTerm:
 							for ( ii = 1; ii < r3; ii++ ) coef[r3+ii] = 0;
 						}
 					}
-					r3 <<= 1;
+					r3 *= 2;
 					r33 = ( r3 > 0 ) ? ( r3 + 1 ) : ( r3 - 1 );
 					if ( r3 < 0 ) r3 = -r3;
 					if ( r1 < 0 ) r1 = -r1;
@@ -4363,7 +4363,7 @@ next2:		im = *term2;
 					}
 				}
 				if ( !r3 ) { goto cancelled; }
-				r3 <<= 1;
+				r3 *= 2;
 				r33 = ( r3 > 0 ) ? ( r3 + 1 ) : ( r3 - 1 );
 				if ( r3 < 0 ) r3 = -r3;
 				if ( r1 < 0 ) r1 = -r1;
