@@ -749,45 +749,74 @@ WORD AddLong(UWORD *a, WORD na, UWORD *b, WORD nb, UWORD *c, WORD *nc)
 
 WORD AddPLon(UWORD *a, WORD na, UWORD *b, WORD nb, UWORD *c, WORD *nc)
 {
-	UWORD carry = 0, e, nd = 0;
-	while ( na && nb ) {
-		e = *a;
-		*c = e + *b + carry;
-		if ( carry ) {
-			if ( e < *c ) carry = 0;
-		}
-		else {
-			if ( e > *c ) carry = 1;
-		}
-		a++; b++; c++; nd++; na--; nb--;
+	/*
+	 * Assumptions: na >= 0, nb >= 0.
+	 */
+	UWORD nmax, nmin, *c_end, nc_new;
+	RLONG carry = 0;
+	/*
+	 * Check if na >= nb. If not, swap a and b.
+	 */
+	if ( na >= nb ) {
+		nmax = (UWORD)na;
+		nmin = (UWORD)nb;
 	}
-	while ( na ) {
-		if ( carry ) {
-			*c = *a++ + carry;
-			if ( *c++ ) carry = 0;
-		}
-		else *c++ = *a++;
-		nd++; na--;
+	else {
+		UWORD *tmp;
+		tmp = a;
+		a = b;
+		b = tmp;
+		nmax = (UWORD)nb;
+		nmin = (UWORD)na;
 	}
-	while ( nb ) {
-		if ( carry ) {
-			*c = *b++ + carry;
-			if ( *c++ ) carry = 0;
-		}
-		else *c++ = *b++;
-		nd++; nb--;
+	/*
+	 * Now we consider (a,nmax) + (b,nmin) with nmax >= nmin.
+	 * First, low limbs where a and b overlap.
+	 */
+	c_end = c + nmin;
+	while ( c != c_end ) {
+		carry += (RLONG)*a++ + (RLONG)*b++;
+		*c++ = (UWORD)carry;
+		carry >>= BITSINWORD;
 	}
+	/*
+	 * Then, high limbs where only a has digits.
+	 */
+	c_end += nmax - nmin;
+	while ( c != c_end ) {
+		if ( !carry ) {
+			/*
+			 * Copy the remainder.
+			 */
+			if ( a != c ) {
+				while ( c != c_end ) {
+					*c++ = *a++;
+				}
+			}
+			else {
+				c = c_end;
+			}
+			break;
+		}
+		carry += (RLONG)*a++;
+		*c++ = (UWORD)carry;
+		carry >>= BITSINWORD;
+	}
+	nc_new = nmax;
+	/*
+	 * Check if we still have the carry.
+	 */
 	if ( carry ) {
-		nd++;
-		if ( nd > (UWORD)AM.MaxTal ) {
+		nc_new++;  /* Assume nc_new still fits in WORD. */
+		if ( nc_new > (UWORD)AM.MaxTal ) {
 			MLOCK(ErrorMessageLock);
 			MesPrint("Overflow in addition");
 			MUNLOCK(ErrorMessageLock);
 			return(-1);
 		}
-		*c++ = carry;
+		*c = carry;
 	}
-	*nc = nd;
+	*nc = (WORD)nc_new;
 	return(0);
 }
 
