@@ -135,16 +135,23 @@ if [ "x$TRAVIS_OS_NAME" = xosx ]; then
   esac
 fi
 
+forcer_required=false
 case $CI_TARGET in
-  form|tform|form-i386|tform-i386)
-    # Install Forcer to "./formlib".
-    mkdir -p formlib
-    travis_retry wget https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz -O - | tar -x --gzip
-    mv forcer-1.0.0/forcer.h formlib
-    mv forcer-1.0.0/forcer formlib
-    rm -rf forcer-1.0.0
+  form|tform|form-i386|tform-i386|sanitize-vorm|sanitize-tvorm|coverage-vorm|coverage-tvorm)
+    forcer_required=:
     ;;
+  valgrind-vorm|valgrind-tvorm)
+    [ $TEST = 'examples.frm' ] && forcer_required=:
+  ;;
 esac
+if $forcer_required; then
+  # Install Forcer to "./formlib".
+  mkdir -p formlib
+  travis_retry wget https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz -O - | tar -x --gzip
+  mv forcer-1.0.0/forcer.h formlib
+  mv forcer-1.0.0/forcer formlib
+  rm -rf forcer-1.0.0
+fi
 
 case $CI_TARGET in
   form-i386|tform-i386)

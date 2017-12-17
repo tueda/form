@@ -49,12 +49,14 @@ case $CI_TARGET in
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
     make -C sources vorm
     ./check/check.rb ./sources/vorm --stat --timeout 60
+    ./check/check.rb ./sources/vorm --stat -C forcer Forcer_example --timeout 60
     ;;
   sanitize-tvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
     make -C sources tvorm
     ./check/check.rb ./sources/tvorm --stat --timeout 60
+    ./check/check.rb ./sources/tvorm --stat -C forcer Forcer_example --timeout 60
     ;;
   sanitize-parvorm)
     autoreconf -iv
@@ -67,12 +69,14 @@ case $CI_TARGET in
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
     make -C sources vorm
     ./check/check.rb ./sources/vorm --stat --timeout 30
+    ./check/check.rb ./sources/vorm --stat -C forcer Forcer_example --timeout 30
     ;;
   coverage-tvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
     make -C sources tvorm
     ./check/check.rb ./sources/tvorm --stat --timeout 30
+    ./check/check.rb ./sources/tvorm --stat -C forcer Forcer_example --timeout 30
     ;;
   coverage-parvorm)
     autoreconf -iv
@@ -85,12 +89,16 @@ case $CI_TARGET in
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --with-gmp --with-zlib
     make -C sources vorm
     ./check/check.rb valgrind ./sources/vorm --stat $TEST
+    [ $TEST = 'examples.frm' ] && ./check/check.rb valgrind ./sources/vorm --stat -C forcer Forcer_example
+    :
     ;;
   valgrind-tvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --with-gmp --with-zlib
     make -C sources tvorm
     ./check/check.rb valgrind ./sources/tvorm --stat $TEST
+    [ $TEST = 'examples.frm' ] && ./check/check.rb valgrind ./sources/tvorm --stat -C forcer Forcer_example
+    :
     ;;
   valgrind-parvorm)
     autoreconf -iv
