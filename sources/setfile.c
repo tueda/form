@@ -1098,6 +1098,11 @@ int TryFileSetups()
 	LONG linenum, prevline;
 
 	if ( AC.CurrentStream == 0 ) return(error);
+	if ( AC.CurrentStream->type == INPUTSTREAM ) {
+		/* No rewinds supported. */
+		/* TODO */
+		return(error);
+	}
 	oldstream = AC.CurrentStream - AC.Streams;
 	oldstreamposition = GetStreamPosition(AC.CurrentStream);
 	linenum = AC.CurrentStream->linenumber;
