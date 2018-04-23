@@ -224,6 +224,7 @@ int DoTail(int argc, UBYTE **argv)
 	AM.HoldFlag = AM.qError = AM.Interact = AM.FileOnlyFlag = 0;
 	AM.InputFileName = AM.LogFileName = AM.IncDir = AM.TempDir = AM.TempSortDir =
 	AM.SetupDir = AM.SetupFile = AM.Path = 0;
+	AM.FromStdin = 0;
 	if ( argc < 1 ) {
 		onlyversion = 0;
 		goto printversion;
@@ -360,6 +361,9 @@ int DoTail(int argc, UBYTE **argv)
 							else if ( s[1] == 'i' ) { /* compatibility: silent/quiet */
 								AM.silent = 1;
 							}
+							else if ( s[1] == 't' && s[2] == 'd' && s[3] == 'i' && s[4] == 'n' ) {
+								AM.FromStdin = 1;
+							}
 							else {
 								TAKEPATH(AM.SetupDir)
 							}
@@ -422,6 +426,10 @@ printversion:;
 	}
 	AM.totalnumberofthreads = threadnum;
 	if ( AM.InputFileName ) {
+		if ( AM.FromStdin ) {
+			printf("Option -stdin can't be used with the input filename\n");
+			errorflag++;
+		}
 		s = AM.InputFileName;
 		while ( *s ) s++;
 		if ( s < AM.InputFileName+4 ||
@@ -450,6 +458,9 @@ printversion:;
 		}
 	}
 #endif
+	else if ( AM.FromStdin ) {
+		/* Do nothing. */
+	}
 	else {
 NoFile:
 #ifdef WITHMPI
@@ -482,6 +493,13 @@ int OpenInput()
 	int oldNoShowInput = AC.NoShowInput;
 	UBYTE c;
 	if ( !AM.Interact ) {
+		if ( AM.FromStdin ) {
+			if ( OpenStream(0,INPUTSTREAM,0,PRENOACTION) == 0 ) {
+				Error0("Cannot open stdin");
+				return(-1);
+			}
+		}
+		else {
 		if ( OpenStream(AM.InputFileName,FILESTREAM,0,PRENOACTION) == 0 ) {
 			Error1("Cannot open file",AM.InputFileName);
 			return(-1);
@@ -489,6 +507,7 @@ int OpenInput()
 		if ( AC.CurrentStream->inbuffer <= 0 ) {
 			Error1("No input in file",AM.InputFileName);
 			return(-1);
+		}
 		}
 		AC.NoShowInput = 1;
 		while ( AM.SkipClears > 0 ) {
@@ -1225,7 +1244,7 @@ VOID StartMore()
 	PutPreVar((UBYTE *)"NPARALLELTASKS_",(UBYTE *)"1",0,0);
 #endif
 
-	PutPreVar((UBYTE *)"NAME_",AM.InputFileName,0,0);
+	PutPreVar((UBYTE *)"NAME_",AM.InputFileName ? AM.InputFileName : (UBYTE *)"STDIN",0,0);
 }
 
 /*

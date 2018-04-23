@@ -1480,10 +1480,11 @@ struct M_const {
     WORD    onerhs;
     WORD    havesortdir;
     WORD    BracketFactors[8];
+    BOOL    FromStdin;             /* -stdin option */
 #ifdef WITHPTHREADS
-	PADPOSITION(17,25,61,81,sizeof(pthread_rwlock_t)+sizeof(pthread_mutex_t)*2);
+	PADPOSITION(17,25,61,81,sizeof(pthread_rwlock_t)+sizeof(pthread_mutex_t)*2+1);
 #else
-	PADPOSITION(17,23,61,81,0);
+	PADPOSITION(17,23,61,81,1);
 #endif
 };
 /*
