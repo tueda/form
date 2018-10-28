@@ -875,16 +875,8 @@ typedef struct DoLoOp {
  *	This facility is used in the communication with external channels.
  */
 
+/* NOTE: A bit field must be (signed/unsigned) "int" in C90. */
 struct  bit_field {	/* Assume 8 bits per byte */
-    UBYTE bit_0        : 1;
-    UBYTE bit_1        : 1;
-    UBYTE bit_2        : 1;
-    UBYTE bit_3        : 1;
-    UBYTE bit_4        : 1;
-    UBYTE bit_5        : 1;
-    UBYTE bit_6        : 1;
-    UBYTE bit_7        : 1;
-/*
     UINT bit_0        : 1;
     UINT bit_1        : 1;
     UINT bit_2        : 1;
@@ -893,7 +885,7 @@ struct  bit_field {	/* Assume 8 bits per byte */
     UINT bit_5        : 1;
     UINT bit_6        : 1;
     UINT bit_7        : 1;
-*/
+    UINT _padding     : 24;  /* padding for ILP32/LLP64/LP64 */
 };
 
 /**
