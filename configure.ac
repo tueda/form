@@ -742,7 +742,7 @@ my_test_COMPILEFLAGS=${COMPILEFLAGS+set}
 if test "$my_test_COMPILEFLAGS" != set; then
 	if test "x$vendor" = xgnu; then
 		# We don't use -pedantic option because of horrible warnings.
-		COMPILEFLAGS="-Wall -Wextra -Wpadded -O3"
+		COMPILEFLAGS="-Wall -Wextra -Wpadded -pedantic -O3"
 		if test "x$enable_profile" != xgprof; then
 			# -pg conflicts with -fomit-frame-pointer.
 			COMPILEFLAGS="$COMPILEFLAGS -fomit-frame-pointer"
@@ -809,7 +809,7 @@ fi
 my_test_DEBUGCOMPILEFLAGS=${DEBUGCOMPILEFLAGS+set}
 if test "$my_test_DEBUGCOMPILEFLAGS" != set && test "x$enable_debug" = xyes; then
 	if test "x$vendor" = xgnu; then
-		DEBUGCOMPILEFLAGS='-g3 -Wall -Wextra'
+		DEBUGCOMPILEFLAGS='-g3 -Wall -Wextra -pedantic'
 		if test "x$enable_sanitize" = xno; then
 			# UBSan puts many paddings (at least in gcc 5.3).
 			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -Wpadded"
