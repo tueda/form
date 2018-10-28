@@ -254,6 +254,7 @@ class MNodeClass {
     int **clmat;                   // matrix used for classification
     int  *flist;                   // the first node in each class
     int   maxdeg;                  // maximal value of degree(node)
+    int   _reserved;               // to suppress "padding struct" warning
 
     MNodeClass(int nnodes, int ncl);
     ~MNodeClass();

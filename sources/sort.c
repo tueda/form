@@ -2972,7 +2972,7 @@ NoPoly:
  *	to that of Compare1 which is the regular compare routine in sort.c
  */
 
-int CompareSymbols(WORD *term1, WORD *term2, WORD par)
+WORD CompareSymbols(WORD *term1, WORD *term2, WORD par)
 {
 	GETIDENTITY
 	int sum1, sum2;
@@ -3016,7 +3016,7 @@ int CompareSymbols(WORD *term1, WORD *term2, WORD par)
  *	to that of Compare1 which is the regular compare routine in sort.c
  */
 
-int CompareHSymbols(WORD *term1, WORD *term2, WORD par)
+WORD CompareHSymbols(WORD *term1, WORD *term2, WORD par)
 {
 	GETIDENTITY
 	WORD *t1, *t2, *tt1, *tt2, *ttt1, *ttt2;
