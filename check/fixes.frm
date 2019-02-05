@@ -1878,6 +1878,13 @@ Symbol x;
 .end
 assert succeeded?
 *--#] Issue222 : 
+*--#[ Issue253 :
+* Memory error for local $-variable in TFORM
+#$x = 0;
+ModuleOption local $x;
+.end
+assert succeeded?
+*--#] Issue253 : 
 *--#[ Issue258 :
 * gcd_ gives wrong results
 S s,t,m;
