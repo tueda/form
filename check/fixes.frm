@@ -2037,3 +2037,18 @@ P;
 #pend_if mpi?
 assert runtime_error?
 *--#] Issue261_7 : 
+*--#[ Issue277 :
+* A question about addargs
+CFunction f,g,h;
+S x,y;
+Local test = f(-1,1)*g(2);
+Transform f addargs(1,last);
+P;
+.sort
+id f(?x)*g(y?) = h(y,?x);
+P;
+.end
+assert succeeded?
+assert result("test", -2) =~ expr("f(0)*g(2)")
+assert result("test", -1) =~ expr("h(2,0)")
+*--#] Issue277 : 
