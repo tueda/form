@@ -3,12 +3,41 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  default:
+  form:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
-    - run: autoreconf -iv
-    - run: ./configure
-    - run: make -j 4
-    - run: make check
+    - run: MAKEFLAGS='-j 4' CI_TARGET=form ./scripts/travis-script.sh
+  tform:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+    - run: MAKEFLAGS='-j 4' CI_TARGET=tform ./scripts/travis-script.sh
+  sanitize-vorm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+    - run: MAKEFLAGS='-j 4' CI_TARGET=sanitize-vorm ./scripts/travis-script.sh
+  sanitize-tvorm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+    - run: MAKEFLAGS='-j 4' CI_TARGET=sanitize-tvorm ./scripts/travis-script.sh
+  src-release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+    - run: MAKEFLAGS='-j 4' CI_TARGET=src-release ./scripts/travis-script.sh
+  bin-release-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - run: MAKEFLAGS='-j 4' CI_TARGET=bin-release TRAVIS_OS_NAME=linux ./scripts/travis-script.sh
+  bin-release-osx:
+    runs-on: macOS-latest
+    steps:
+    - run: MAKEFLAGS='-j 4' CI_TARGET=bin-release TRAVIS_OS_NAME=osx ./scripts/travis-script.sh
