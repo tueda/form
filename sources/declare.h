@@ -872,6 +872,7 @@ extern int    DoUndefine(UBYTE *);
 extern int    DoInclude(UBYTE *);
 extern int    DoReverseInclude(UBYTE *);
 extern int    Include(UBYTE *,int);
+extern int    DoImport(UBYTE *);
 /*[14apr2004 mt]:*/
 extern int    DoExternal(UBYTE *);
 extern int    DoToExternal(UBYTE *);

@@ -73,6 +73,7 @@ static KEYWORD precommands[] = {
 	,{"if"           , DoIf           , 0, 0}
 	,{"ifdef"        , DoIfydef       , 0, 0}
 	,{"ifndef"       , DoIfndef       , 0, 0}
+	,{"import"       , DoImport       , 0, 0}
 	,{"include"      , DoInclude      , 0, 0}
 	,{"inside"       , DoInside       , 0, 0}
 	,{"message"      , DoMessage      , 0, 0}

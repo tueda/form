@@ -22,6 +22,7 @@ SRCBASE = \
 	gentopo.cc \
 	gentopo.h \
 	if.c \
+	import.cc \
 	index.c \
 	inivar.h \
 	lus.c \
