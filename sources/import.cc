@@ -51,13 +51,21 @@ std::string JoinPath(const First& first, const Rest&... rest) {
   return s1 + SEPARATOR + s2;
 }
 
+bool is404(const std::string filename) {
+  char buf[3];
+  std::ifstream file;
+  file.open(filename, std::ios::in | std::ios::binary);
+  file.read(buf, 3);
+  return file && buf[0] == '4' && buf[1] == '0' && buf[2] == '4';
+}
+
 int DeployPackage(const std::string path, const std::string url) {
   int err;
   std::string cmd;
 
   std::string pid = (const char*)GetPreVar((UBYTE*)"PID_", WITHERROR);
 
-  std::string tmp_dir = "formpkg" + pid;
+  std::string tmp_dir = "formpkg_" + pid;
 
   cmd = "mkdir -p " + tmp_dir;
   err = DoSystem((UBYTE*)cmd.c_str());
@@ -74,6 +82,12 @@ int DeployPackage(const std::string path, const std::string url) {
   cmd = "curl -L -o " + tmp_name + " " + url;
   err = DoSystem((UBYTE*)cmd.c_str());
   if (err) return err;
+
+  if (is404(tmp_name)) {
+    cmd = "cat " + tmp_name;
+    DoSystem((UBYTE*)cmd.c_str());
+    return -1;
+  }
 
   cmd = "cd " + tmp_dir + " && tar xfz *.tar.gz";
   err = DoSystem((UBYTE*)cmd.c_str());
