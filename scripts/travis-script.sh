@@ -8,9 +8,6 @@ fi
 if [ -d `pwd`/texlive/bin ]; then
   export PATH=`pwd`/texlive/bin/`uname -m`-linux:$PATH
 fi
-if [ -d `pwd`/formlib ]; then
-  export FORMPATH=`pwd`/formlib
-fi
 
 # Print all executed commands to the log.
 set -x

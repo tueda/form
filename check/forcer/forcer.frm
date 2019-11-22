@@ -8,7 +8,7 @@
 .end
 
 *--#[ Forcer_example :
-#include- forcer.h
+#usepackage- benruijl/forcer@v1.0.0
 L F =
   + 1/<p1.p1>/.../<p6.p6>*
     Q.p3*Q.p4*vx(Q,p1,p5,p6)*vx(-p1,p2,p3)*vx(-p5,-p6,p4)*vx(-Q,-p2,-p3,-p4)
@@ -34,7 +34,7 @@ assert result("F") =~ expr("
 *--#] Forcer_example : 
 *--#[ Forcer_1 :
 * timeout = 60 seconds.
-#include- forcer.h
+#usepackage- benruijl/forcer@v1.0.0
 CF f,f1,f2,f3;
 V p2,p3;
 S x3;
@@ -161,7 +161,7 @@ assert result("F2") =~ expr("
 *--#] Forcer_1 : 
 *--#[ Forcer_1-expand :
 * timeout = 60 seconds.
-#include- forcer.h
+#usepackage- benruijl/forcer@v1.0.0
 CF f,f1,f2,f3;
 V p2,p3;
 S x3;
