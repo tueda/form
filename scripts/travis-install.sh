@@ -83,7 +83,7 @@ if [ "x$TRAVIS_OS_NAME" = xlinux ]; then
     *doc-html*)
       # Install LaTeX2HTML to the TeX Live directory.
       if [ ! -e ./texlive/bin/`uname -m`-linux/latex2html ]; then
-        travis_retry wget https://github.com/latex2html/latex2html/archive/v2019.tar.gz -O - | tar -x --gzip
+        travis_retry wget https://github.com/latex2html/latex2html/archive/v2019.2.tar.gz -O - | tar -x --gzip
         (
           cd latex2html-*
           ./configure --prefix=$TRAVIS_BUILD_DIR/texlive/texmf-local/latex2html
