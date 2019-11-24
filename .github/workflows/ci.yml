@@ -29,23 +29,6 @@ jobs:
         run: make -j 4
       - name: Test
         run: ./check/check.rb ./sources/tform --stat
-  parform:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
-      - name: Prerequisite
-        run: |
-          sudo apt-get update
-          sudo apt-get install -yq --no-install-recommends openmpi-bin libopenmpi-dev
-      - name: Configuration
-        run: |
-          autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --with-gmp --with-zlib
-      - name: Build
-        run: make -j 4
-      - name: Test
-        run: ./check/check.rb ./sources/parform --stat
   sanitize-vorm:
     runs-on: ubuntu-latest
     steps:
@@ -72,23 +55,6 @@ jobs:
         run: make -j 4 -C sources tvorm
       - name: Test
         run: ./check/check.rb ./sources/tvorm --stat --timeout 60
-  sanitize-parvorm:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
-      - name: Prerequisite
-        run: |
-          sudo apt-get update
-          sudo apt-get install -yq --no-install-recommends openmpi-bin libopenmpi-dev
-      - name: Configuration
-        run: |
-          autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
-      - name: Build
-        run: make -j 4 -C sources parvorm
-      - name: Test
-        run: ./check/check.rb ./sources/parvorm --stat --timeout 60
   valgrind-vorm:
     runs-on: ubuntu-latest
     strategy:
@@ -129,23 +95,3 @@ jobs:
         run: make -j 4 -C sources tvorm
       - name: Test
         run: ./check/check.rb valgrind ./sources/tvorm --stat ${{ matrix.test }}
-  valgrind-parvorm:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test: [examples.frm, features.frm, fixes.frm]
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
-      - name: Prerequisite
-        run: |
-          sudo apt-get update
-          sudo apt-get install -yq --no-install-recommends openmpi-bin libopenmpi-dev valgrind
-      - name: Configuration
-        run: |
-          autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --enable-debug --with-gmp --with-zlib
-      - name: Build
-        run: make -j 4 -C sources parvorm
-      - name: Test
-        run: ./check/check.rb valgrind ./sources/parvorm --stat ${{ matrix.test }}
