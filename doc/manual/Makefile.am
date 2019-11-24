@@ -89,7 +89,7 @@ if CONFIG_LATEX2HTML
 latex2html: $(MAIN)/$(MAIN).html
 
 $(MAIN)/$(MAIN).html: $(MAIN).dvi
-	$(LATEX2HTML) -init_file $(srcdir)/.latex2html-init $(MAIN).tex
+	$(LATEX2HTML) -init_file $(srcdir)/.latex2html-init -verbosity 4 $(MAIN).tex
 	cat $(MAIN)/index.html | sed 's/$(MAIN).html#/#/g' >$(MAIN)/index.html.tmp
 	mv $(MAIN)/index.html.tmp $(MAIN)/index.html
 	cat $(MAIN)/$(MAIN).html | sed 's/$(MAIN).html#/#/g' >$(MAIN)/$(MAIN).html.tmp
