@@ -1,0 +1,46 @@
+name: Doc
+
+on:
+  push:
+    branches:
+      - master
+      - '**'  # !!! test for now !!!
+
+env:
+  FORMDOC_USER: ${{ secrets.FORMDOC_USER }}
+  FORMDOC_TOKEN: ${{ secrets.FORMDOC_TOKEN }}
+
+jobs:
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq --no-install-recommends doxygen latex2html texlive
+      - name: Configuration
+        run: |
+          autoreconf -iv
+          ./configure
+      - name: Build documents
+        run: |
+          make -C doc/devref latex2html
+          make -C doc/doxygen html
+          make -C doc/manual latex2html
+      - name: Update documents
+        run: |
+          # !!! repository: test for now !!!
+          git clone https://$FORMDOC_USER:$FORMDOC_TOKEN@github.com/tueda/form-doc
+          rm -f form-doc/latest
+          mkdir -p form-doc/latest
+          mv doc/devref/devref form-doc/latest/devref
+          mv doc/doxygen/html form-doc/latest/doxygen
+          mv doc/manual/manual form-doc/latest/manual
+          git -C form-doc add .
+          git -C form-doc config --local user.name "GitHub Action"
+          git -C form-doc config --local user.email "action@github.com"
+          git -C form-doc commit --allow-empty --message "Deployed ${{ github.repository }}@$(echo ${{ github.sha }} | cut -c1-7)"
+      - name: Push documents
+        run: |
+          git -C form-doc push origin master
