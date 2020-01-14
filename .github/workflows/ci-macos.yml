@@ -14,7 +14,7 @@ jobs:
         run: git fetch --prune --unshallow
       - uses: actions/setup-ruby@v1
       - name: Install dependencies
-        run: brew install automake gmp
+        run: brew install automake gcc gmp
       - name: Configuration
         run: |
           autoreconf -iv
