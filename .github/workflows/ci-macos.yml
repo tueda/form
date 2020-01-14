@@ -1,0 +1,25 @@
+name: CI on macOS
+
+on: [push, pull_request]
+
+env:
+  MAKEFLAGS: -j 4
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+      - uses: actions/setup-ruby@v1
+      - name: Install dependencies
+        run: brew install automake gmp
+      - name: Configuration
+        run: |
+          autoreconf -iv
+          ./configure --disable-dependency-tracking --with-gmp --with-zlib
+      - name: Build
+        run: make
+      - name: Test
+        run: make check
