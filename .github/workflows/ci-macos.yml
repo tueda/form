@@ -6,7 +6,20 @@ env:
   MAKEFLAGS: -j 4
 
 jobs:
-  test:
+  build:
     runs-on: macos-latest
     steps:
-      - run: man clock_gettime | cat
+      - uses: actions/checkout@v2
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+      - uses: actions/setup-ruby@v1
+      - name: Install dependencies
+        run: brew install automake gmp
+      - name: Configuration
+        run: |
+          autoreconf -iv
+          ./configure --disable-dependency-tracking --disable-threaded --with-gmp --with-zlib
+      - name: Build
+        run: make
+      - name: Test
+        run: ./sources/form check/formunit/fu.frm

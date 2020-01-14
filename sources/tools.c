@@ -3395,6 +3395,7 @@ argerror:
 #endif
 #endif
 
+#include <errno.h>
 /**
  * Returns the wall-clock time.
  *
@@ -3409,7 +3410,20 @@ LONG TimeWallClock(WORD par)
 
 #ifdef HAVE_CLOCK_GETTIME
 	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
+	int ret;
+	MesPrint("::1");
+	MesPrint("%d", par);
+	ret = clock_gettime(CLOCK_MONOTONIC, &ts);
+	if ( ret == 0 ) {
+		MesPrint("::2");
+		MesPrint("OK");
+	}
+	else {
+		MesPrint("::2");
+		MesPrint("%d", errno);
+		MesPrint("%d", ts.tv_sec);
+		MesPrint("%d", ts.tv_nsec);
+	}
 
 	if ( par ) {
 		return(((LONG)(ts.tv_sec)-AM.OldSecTime)*100 +
