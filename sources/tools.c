@@ -3411,18 +3411,14 @@ LONG TimeWallClock(WORD par)
 #ifdef HAVE_CLOCK_GETTIME
 	struct timespec ts;
 	int ret;
-	MesPrint("::1");
-	MesPrint("%d", par);
+	fprintf(stderr, "TimeWallClock(%d)\n", par);
+	fflush(stderr);
 	ret = clock_gettime(CLOCK_MONOTONIC, &ts);
-	if ( ret == 0 ) {
-		MesPrint("::2");
-		MesPrint("OK");
-	}
-	else {
-		MesPrint("::2");
-		MesPrint("%d", errno);
-		MesPrint("%d", ts.tv_sec);
-		MesPrint("%d", ts.tv_nsec);
+	fprintf(stderr, "ret = %d\n", ret);
+	fflush(stderr);
+	if ( ret ) {
+		fprintf(stderr, "errno = %d\n", errno);
+		fflush(stderr);
 	}
 
 	if ( par ) {
