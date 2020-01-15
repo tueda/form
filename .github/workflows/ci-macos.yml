@@ -18,7 +18,7 @@ jobs:
       - name: Configuration
         run: |
           autoreconf -iv
-          ./configure --disable-dependency-tracking --with-gmp --with-zlib COMPILEFLAGS=-O2
+          ./configure --disable-dependency-tracking --with-gmp --with-zlib COMPILEFLAGS='-Wall -Wextra -Wpadded -O2 -fomit-frame-pointer -march=native'
       - name: Build
         run: make
       - name: Test
