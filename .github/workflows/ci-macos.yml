@@ -18,8 +18,8 @@ jobs:
       - name: Configuration
         run: |
           autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-threaded --with-gmp --with-zlib
+          ./configure --disable-dependency-tracking --disable-threaded --enable-debug --enable-sanitize --with-gmp --with-zlib
       - name: Build
-        run: make
+        run: make -C sources vorm
       - name: Test
-        run: ./sources/form check/formunit/fu.frm
+        run: ./sources/vorm check/formunit/fu.frm
