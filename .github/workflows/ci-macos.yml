@@ -18,7 +18,7 @@ jobs:
       - name: Configuration
         run: |
           autoreconf -iv
-          ./configure --disable-dependency-tracking --with-gmp --with-zlib
+          ./configure --disable-dependency-tracking --with-gmp --with-zlib COMPILEFLAGS=-O2
       - name: Build
         run: make
       - name: Test
