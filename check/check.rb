@@ -957,7 +957,7 @@ class TestCases
     # It seems difficult to delete a class.
     # Instead, remove the test method.
     klass = Object.const_get("Test_#{classname}".to_sym)
-    klass.remove_method("test_#{classname}".to_sym)
+    klass.send(:remove_method, "test_#{classname}".to_sym)
   end
 end
 
