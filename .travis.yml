@@ -1,5 +1,5 @@
+os: linux
 dist: trusty
-sudo: false
 language: cpp
 
 git:
@@ -47,7 +47,7 @@ after_script:
 #   The APT whitelist request for mpich seems to be continuously ignored,
 #   travis-ci/apt-package-whitelist#406, so on linux we need to build/brew it.
 # - It is best to cache ./mpich or ./texlive when adequate.
-matrix:
+jobs:
   include:
     - os: linux
       compiler: gcc
@@ -59,29 +59,24 @@ matrix:
       compiler: gcc
       env: CI_TARGET=parform
       addons: { apt: { packages: [ libgmp-dev, libopenmpi-dev, openmpi-bin, zlib1g-dev ] } }
-      sudo: required
     - os: linux
       compiler: gcc
       env: CI_TARGET=form-i386
       addons: { apt: { packages: [] } }
-      sudo: required
       services: [ docker ]
     - os: linux
       compiler: gcc
       env: CI_TARGET=tform-i386
       addons: { apt: { packages: [] } }
-      sudo: required
       services: [ docker ]
     - os: linux
       compiler: gcc
       env: CI_TARGET=sanitize-vorm
       addons: { apt: { sources: [ ubuntu-toolchain-r-test ], packages: [ g++-7, libgmp-dev, zlib1g-dev ] } }
-      sudo: required
     - os: linux
       compiler: gcc
       env: CI_TARGET=sanitize-tvorm
       addons: { apt: { sources: [ ubuntu-toolchain-r-test ], packages: [ g++-7, libgmp-dev, zlib1g-dev ] } }
-      sudo: required
     - os: linux
       compiler: gcc
       env: CI_TARGET=coverage-vorm
@@ -94,41 +89,51 @@ matrix:
       cache: { directories: [ mpich ] }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-vorm TEST=examples.frm
+      env: CI_TARGET=valgrind-vorm TEST=1/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-vorm TEST=features.frm
+      env: CI_TARGET=valgrind-vorm TEST=2/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-vorm TEST=fixes.frm
+      env: CI_TARGET=valgrind-vorm TEST=3/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=examples.frm
+      env: CI_TARGET=valgrind-tvorm TEST=1/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=features.frm
+      env: CI_TARGET=valgrind-tvorm TEST=2/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=fixes.frm
+      env: CI_TARGET=valgrind-tvorm TEST=3/3
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=examples.frm
-      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
-      cache: { directories: [ mpich ] }
-    - os: linux
-      compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=features.frm
+      env: CI_TARGET=valgrind-parvorm TEST=1/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
       cache: { directories: [ mpich ] }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=fixes.frm
+      env: CI_TARGET=valgrind-parvorm TEST=2/5
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=3/5
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=4/5
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=5/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
       cache: { directories: [ mpich ] }
     - os: linux

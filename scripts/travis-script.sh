@@ -12,6 +12,14 @@ if [ -d `pwd`/formlib ]; then
   export FORMPATH=`pwd`/formlib
 fi
 
+if [ -z ${TEST+x} ]; then
+  TEST=
+fi
+
+if [[ ${TEST} =~ ^([0-9]+)/([0-9]+)$ ]]; then
+  TEST="--group $TEST"
+fi
+
 # Print all executed commands to the log.
 set -x
 
@@ -48,37 +56,37 @@ case $CI_TARGET in
     autoreconf -iv
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
     make -C sources vorm
-    ./check/check.rb ./sources/vorm --stat --timeout 60
+    ./check/check.rb ./sources/vorm --stat --timeout 60 $TEST
     ;;
   sanitize-tvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
     make -C sources tvorm
-    ./check/check.rb ./sources/tvorm --stat --timeout 60
+    ./check/check.rb ./sources/tvorm --stat --timeout 60 $TEST
     ;;
   sanitize-parvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --enable-debug --enable-sanitize --with-gmp --with-zlib
     make -C sources parvorm
-    ./check/check.rb ./sources/parvorm --stat --timeout 60
+    ./check/check.rb ./sources/parvorm --stat --timeout 60 $TEST
     ;;
   coverage-vorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --enable-scalar --disable-threaded --disable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
     make -C sources vorm
-    ./check/check.rb ./sources/vorm --stat --timeout 30
+    ./check/check.rb ./sources/vorm --stat --timeout 30 $TEST
     ;;
   coverage-tvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --enable-threaded --disable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
     make -C sources tvorm
-    ./check/check.rb ./sources/tvorm --stat --timeout 30
+    ./check/check.rb ./sources/tvorm --stat --timeout 30 $TEST
     ;;
   coverage-parvorm)
     autoreconf -iv
     ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --enable-parform --enable-debug --enable-coverage --with-gmp --with-zlib
     make -C sources parvorm
-    ./check/check.rb ./sources/parvorm --stat --timeout 30
+    ./check/check.rb ./sources/parvorm --stat --timeout 30 $TEST
     ;;
   valgrind-vorm)
     autoreconf -iv
