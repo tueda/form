@@ -78,12 +78,15 @@ jobs:
       env: CI_TARGET=sanitize-tvorm
       addons: { apt: { sources: [ ubuntu-toolchain-r-test ], packages: [ g++-7, libgmp-dev, zlib1g-dev ] } }
     - os: linux
+      dist: bionic
       compiler: gcc
       env: CI_TARGET=coverage-vorm
     - os: linux
+      dist: bionic
       compiler: gcc
       env: CI_TARGET=coverage-tvorm
     - os: linux
+      dist: bionic
       compiler: gcc
       env: CI_TARGET=coverage-parvorm
       cache: { directories: [ mpich ] }
