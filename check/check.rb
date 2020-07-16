@@ -1275,13 +1275,13 @@ def main
     (1..opts.group_count).each do |i|
       (1..divided).each do
         if i == opts.group_id
-          test_nos.append(n)
+          test_nos.push(n)
         end
         n += 1
       end
       if i <= reminder
         if i == opts.group_id
-          test_nos.append(n)
+          test_nos.push(n)
         end
         n += 1
       end
