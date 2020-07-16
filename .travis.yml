@@ -109,43 +109,57 @@ jobs:
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=1/4
+      env: CI_TARGET=valgrind-tvorm TEST=1/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=2/4
+      env: CI_TARGET=valgrind-tvorm TEST=2/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=3/4
+      env: CI_TARGET=valgrind-tvorm TEST=3/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-tvorm TEST=4/4
+      env: CI_TARGET=valgrind-tvorm TEST=4/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=1/5
+      env: CI_TARGET=valgrind-tvorm TEST=5/5
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
-      cache: { directories: [ mpich ] }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=2/5
-      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
-      cache: { directories: [ mpich ] }
-    - os: linux
-      compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=3/5
+      env: CI_TARGET=valgrind-parvorm TEST=1/7
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
       cache: { directories: [ mpich ] }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=4/5
+      env: CI_TARGET=valgrind-parvorm TEST=2/7
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
       cache: { directories: [ mpich ] }
     - os: linux
       compiler: gcc
-      env: CI_TARGET=valgrind-parvorm TEST=5/5
+      env: CI_TARGET=valgrind-parvorm TEST=3/7
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=4/7
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=5/7
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=6/7
+      addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
+      cache: { directories: [ mpich ] }
+    - os: linux
+      compiler: gcc
+      env: CI_TARGET=valgrind-parvorm TEST=7/7
       addons: { apt: { packages: [ libgmp-dev, valgrind, zlib1g-dev ] } }
       cache: { directories: [ mpich ] }
     - os: linux
