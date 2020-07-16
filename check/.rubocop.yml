@@ -93,3 +93,6 @@ Style/PerlBackrefs:
 
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
+
+Style/StderrPuts:
+  Enabled: false
