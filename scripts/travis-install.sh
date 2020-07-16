@@ -36,10 +36,11 @@ if [ "x$TRAVIS_OS_NAME" = xlinux ]; then
       if type mpicc >/dev/null 2>&1; then :; else
         if [ ! -e ./mpich/bin/mpicc ]; then
           # Install MPICH to "./mpich".
-          travis_retry wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-          tar xfz mpich-3.2.1.tar.gz
+          MPICH_VERSION=3.3.2
+          travis_retry wget http://www.mpich.org/static/downloads/$MPICH_VERSION/mpich-$MPICH_VERSION.tar.gz
+          tar xfz mpich-$MPICH_VERSION.tar.gz
           (
-            cd mpich-3.2.1
+            cd mpich-$MPICH_VERSION
             ./configure --prefix=$TRAVIS_BUILD_DIR/mpich --disable-dependency-tracking --disable-fortran
             make
             make check
