@@ -70,13 +70,13 @@ jobs:
       addons: { apt: { packages: [] } }
       services: [ docker ]
     - os: linux
+      dist: bionic
       compiler: gcc
       env: CI_TARGET=sanitize-vorm
-      addons: { apt: { sources: [ ubuntu-toolchain-r-test ], packages: [ g++-7, libgmp-dev, zlib1g-dev ] } }
     - os: linux
+      dist: bionic
       compiler: gcc
       env: CI_TARGET=sanitize-tvorm
-      addons: { apt: { sources: [ ubuntu-toolchain-r-test ], packages: [ g++-7, libgmp-dev, zlib1g-dev ] } }
     - os: linux
       dist: bionic
       compiler: gcc
