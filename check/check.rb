@@ -1025,6 +1025,14 @@ class FormConfig
   .end
         TEST_FRM
       end
+
+      # TEST BEGIN
+      s = `#{@form_bin} #{frmname} 2>/dev/null`
+      puts "<" * 79
+      puts s
+      puts ">" * 79
+      # TEST END
+
       @head = `#{@form_bin} #{frmname} 2>/dev/null`.split("\n").first
       @is_serial = false
       if @head =~ /^FORM/
