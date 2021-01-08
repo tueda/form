@@ -42,8 +42,10 @@ the errno checkup*/
 /*#define SAFESIGNAL*/
 /*:[13jul2005 mt]*/
 
+#ifndef __MINGW32__
 /*[29apr2004 mt]:*/
 #define WITHEXTERNALCHANNEL
+#endif
 /*
 */
 #define TRAPSIGNALS
