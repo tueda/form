@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-src:
+    name: Build tarball distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # at least a tag must be reachable
+
+      - name: Build tarball distribution
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          autoreconf -iv
+          ./configure --disable-dependency-tracking --disable-threaded --without-gmp --without-zlib
+          make distdir=$distname dist-gzip
+          ls -l $distname.tar.gz
+          file $distname.tar.gz
+
+      - name: Upload tarball as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: src
+          path: '*.tar.gz'
+          if-no-files-found: error
+
+  build-bin:
+    name: Build ${{ matrix.bin }} on ${{ matrix.os }}
+    needs: [build-src]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
+        bin: [form, tform, vorm, tvorm]
+    steps:
+      - name: Download tarball
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+
+      - name: Build ${{ matrix.bin }}
+        run: |
+          tar -xf *.tar.gz --strip-components 1
+          args='--disable-dependency-tracking'
+          binname=${{ matrix.bin }}
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            args="$args --with-api=windows"
+            binname="$binname.exe"
+          fi
+          if [ "${{ matrix.bin }}" == "form" ] || [ "${{ matrix.bin }}" == "vorm" ]; then
+            args="$args --enable-scalar --disable-threaded --disable-parform"
+          elif [ "${{ matrix.bin }}" == "tform" ] || [ "${{ matrix.bin }}" == "tvorm" ]; then
+            args="$args --disable-scalar --enable-threaded --disable-parform"
+          elif [ "${{ matrix.bin }}" == "parform" ] || [ "${{ matrix.bin }}" == "parvorm" ]; then
+            args="$args --disable-scalar --disable-threaded --enable-parform"
+          fi
+          if [ "${{ matrix.bin }}" == "form" ] || [ "${{ matrix.bin }}" == "tform" ]; then
+            if [ "$RUNNER_OS" == "macOS" ]; then
+              find . -name gmp.a
+              args="$args --enable-static-link --disable-native"
+            else
+              args="$args --enable-static-link --disable-native"
+            fi
+          elif [ "${{ matrix.bin }}" == "vorm" ] || [ "${{ matrix.bin }}" == "tvorm" ] || [ "${{ matrix.bin }}" == "parvorm" ]; then
+            args="$args --enable-debug --enable-coverage"
+          fi
+          ./configure $args
+          make -j 4 -C sources $binname
+
+      - name: Upload binary as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.bin }}-${{ matrix.os }}
+          path: |
+            sources/${{ matrix.bin }}
+            sources/${{ matrix.bin }}.exe
+          if-no-files-found: error
