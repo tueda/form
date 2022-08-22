@@ -23,7 +23,7 @@ jobs:
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
           autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-threaded --without-gmp --without-zlib
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded
           make distdir=$distname dist-gzip
           ls -l $distname.tar.gz
           file $distname.tar.gz
@@ -42,8 +42,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2019]
-        bin: [form, tform, vorm, tvorm]
+        #os: [ubuntu-18.04, macos-10.15, windows-2019]
+        #bin: [form, tform, vorm, tvorm]
+        os: [ubuntu-18.04]
+        bin: [form]
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
