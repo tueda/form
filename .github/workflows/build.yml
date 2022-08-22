@@ -23,7 +23,7 @@ jobs:
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
           autoreconf -iv
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
           make distdir=$distname dist-gzip
           ls -l $distname.tar.gz
           file $distname.tar.gz
@@ -44,7 +44,7 @@ jobs:
       matrix:
         #os: [ubuntu-18.04, macos-10.15, windows-2019]
         #bin: [form, tform, vorm, tvorm]
-        os: [ubuntu-18.04]
+        os: [windows-2019]
         bin: [form]
     steps:
       - name: Download tarball
@@ -58,7 +58,6 @@ jobs:
           args='--disable-dependency-tracking'
           binname=${{ matrix.bin }}
           if [ "$RUNNER_OS" == "Windows" ]; then
-            args="$args --with-api=windows"
             binname="$binname.exe"
           fi
           if [ "${{ matrix.bin }}" == "form" ] || [ "${{ matrix.bin }}" == "vorm" ]; then
