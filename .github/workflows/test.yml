@@ -10,47 +10,53 @@ defaults:
     shell: bash
 
 jobs:
-  fast-check:
-    name: Fast check for ${{ matrix.bin }}
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        bin: [form, tform, parform]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # at least a tag must be reachable
+      - run: env
+  # fast-check:
+  #   name: Fast check for ${{ matrix.bin }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       bin: [form, tform, parform]
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0  # at least a tag must be reachable
     
-      - name: Set up MPI
-        uses: mpi4py/setup-mpi@v1
-        if: ${{ matrix.bin == 'parform' }}
+  #     - name: Set up MPI
+  #       uses: mpi4py/setup-mpi@v1
+  #       if: ${{ matrix.bin == 'parform' }}
 
-      - name: Configure
-        run: |
-          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --disable-debug --with-gmp --with-zlib'
-          case ${{ matrix.bin }} in
-            form)
-              opts="$opts --enable-scalar"
-              ;;
-            tform)
-              opts="$opts --enable-threaded"
-              ;;
-            parform)
-              opts="$opts --enable-parform"
-              ;;
-          esac
-          autoreconf -i
-          ./configure $opts
+  #     - name: Configure
+  #       run: |
+  #         opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --disable-debug --with-gmp --with-zlib'
+  #         case ${{ matrix.bin }} in
+  #           form)
+  #             opts="$opts --enable-scalar"
+  #             ;;
+  #           tform)
+  #             opts="$opts --enable-threaded"
+  #             ;;
+  #           parform)
+  #             opts="$opts --enable-parform"
+  #             ;;
+  #         esac
+  #         autoreconf -i
+  #         ./configure $opts
           
-      - name: Build
-        run: |
-          make -j 4
+  #     - name: Build
+  #       run: |
+  #         make -j 4
 
-      - name: Test
-        run: |
-          make check
+  #     - name: Test
+  #       run: |
+  #         make check
+
+
 
   # sanitizer-check:
   #   name: Sanitizer check for ${{ matrix.name }}
