@@ -10,13 +10,25 @@ defaults:
     shell: bash
 
 jobs:
-  test:
-    name: Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  fast-check:
+    name: Fast-check for ${{ matrix.name }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        name:
+          - vorm-gmp-zlib
+          - vorm-nogmp-zlib
+          - vorm-gmp-nozlib
+          - vorm-nogmp-nozlib
+          - tvorm-gmp-zlib
+          - tvorm-nogmp-zlib
+          - tvorm-gmp-nozlib
+          - tvorm-nogmp-nozlib
+          - parvorm-gmp-zlib
+          - parvorm-nogmp-zlib
+          - parvorm-gmp-nozlib
+          - parvorm-nogmp-nozlib
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,11 +37,67 @@ jobs:
 
       - name: Configure
         run: |
-           autoreconf -i
-           ./configure --disable-dependency-tracking --enable-debug --enable-sanitize
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --enable-debug --enable-sanitize'
+          case ${{ matrix.name }} in
+            vorm-*-*)
+              opts="$opts --enable-scalar"
+              ;;
+            tvorm-*-*)
+              opts="$opts --enable-threaded"
+              ;;
+            parvorm-*-*)
+              opts="$opts --enable-parform"
+              ;;
+          esac
+          case ${{ matrix.name }} in
+            *-gmp-*)
+              opts="$opts --with-gmp"
+              ;;
+            *-nogmp-*)
+              opts="$opts --without-gmp"
+              ;;
+          esac
+          case ${{ matrix.name }} in
+            *-zlib-*)
+              opts="$opts --with-zlib"
+              ;;
+            *-nozlib-*)
+              opts="$opts --without-zlib"
+              ;;
+          esac
+          autoreconf -i
+          ./configure $opts
 
       - name: Build
-        run: make -j 4
+        run: |
+          bin=$([[ "${{ matrix.name }}" =~ ^(.*)-.*-.*$ ]] && echo "${BASH_REMATCH[1]}")
+          make -j 4 -C sources "$bin"
 
       - name: Test
-        run: make check
+        run: |
+          bin=$([[ "${{ matrix.name }}" =~ ^(.*)-.*-.*$ ]] && echo "${BASH_REMATCH[1]}")
+          ./check/check.rb "./sources/$bin"
+
+  # test:
+  #   name: Test on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, macos-latest, windows-latest]
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0  # at least a tag must be reachable
+
+  #     - name: Configure
+  #       run: |
+  #          autoreconf -i
+  #          ./configure --disable-dependency-tracking --enable-debug --enable-sanitize
+
+  #     - name: Build
+  #       run: make -j 4
+
+  #     - name: Test
+  #       run: make check
