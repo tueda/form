@@ -52,12 +52,37 @@ jobs:
   # Check memory errors (e.g., uninitialized values and memory leaks)
   # thoroughly by using Valgrind on Linux.
   valgrind-check:
-    name: Valgrind check for ${{ matrix.bin }}
+    name: Valgrind check for ${{ matrix.bin }} (${{ matrix.group }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        bin: [vorm, tvorm, parvorm]
+        include:
+          - {bin: vorm, group: 1/5}
+          - {bin: vorm, group: 2/5}
+          - {bin: vorm, group: 3/5}
+          - {bin: vorm, group: 4/5}
+          - {bin: vorm, group: 5/5}
+          - {bin: tvorm, group: 1/10}
+          - {bin: tvorm, group: 2/10}
+          - {bin: tvorm, group: 3/10}
+          - {bin: tvorm, group: 4/10}
+          - {bin: tvorm, group: 5/10}
+          - {bin: tvorm, group: 6/10}
+          - {bin: tvorm, group: 7/10}
+          - {bin: tvorm, group: 8/10}
+          - {bin: tvorm, group: 9/10}
+          - {bin: tvorm, group: 10/10}
+          - {bin: parvorm, group: 1/10}
+          - {bin: parvorm, group: 2/10}
+          - {bin: parvorm, group: 3/10}
+          - {bin: parvorm, group: 4/10}
+          - {bin: parvorm, group: 5/10}
+          - {bin: parvorm, group: 6/10}
+          - {bin: parvorm, group: 7/10}
+          - {bin: parvorm, group: 8/10}
+          - {bin: parvorm, group: 9/10}
+          - {bin: parvorm, group: 10/10}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -91,7 +116,7 @@ jobs:
 
       - name: Test
         run: |
-          ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat
+          ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }}
 
 
 
