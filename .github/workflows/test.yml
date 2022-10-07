@@ -117,7 +117,8 @@ jobs:
       - name: Test
         run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }}
 
-  # Generate LCOV coverage data.
+  # Post LCOV coverage data to coveralls.io. Note that we measure code coverage
+  # only for tests checked with Valgrind.
   coverage:
     name: Code coverage for ${{ matrix.bin }}
     runs-on: ubuntu-latest
@@ -135,7 +136,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: lcov
-          version: 1.0  # ??
+          version: 1.0
 
       - name: Set up MPI if necessary
         uses: mpi4py/setup-mpi@v1
@@ -161,9 +162,7 @@ jobs:
       - name: Generate LCOV coverage data
         run: |
           lcov -d . -c -o coverage.info
-          lcov -r coverage.info */c++/* -o coverage.info
-
-      - run: tree  # debug
+          lcov -r coverage.info */usr/include/* -o coverage.info
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@1.1.3
