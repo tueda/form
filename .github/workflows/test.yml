@@ -64,6 +64,12 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
+      - name: Install Valgrind
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: valgrind
+          version: 1.0
+
       - name: Set up MPI if necessary
         uses: mpi4py/setup-mpi@v1
         if: ${{ matrix.bin == 'parvorm' }}
