@@ -9,12 +9,12 @@ defaults:
   run:
     shell: bash
 
-env:
-  TERM: xterm-256color
-
 jobs:
-  fast-check:
-    name: Fast check for ${{ matrix.bin }}
+  # This quick check aims to perform a simple build and test on Linux; except
+  # the ParFORM case, it probably passes unless the committer has forgotten
+  # running "make check".
+  quick-check:
+    name: Quick check for ${{ matrix.bin }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,9 +24,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # at least a tag must be reachable
-    
-      - name: Set up MPI
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Set up MPI if necessary
         uses: mpi4py/setup-mpi@v1
         if: ${{ matrix.bin == 'parform' }}
 
@@ -34,19 +34,13 @@ jobs:
         run: |
           opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --disable-debug --with-gmp --with-zlib'
           case ${{ matrix.bin }} in
-            form)
-              opts="$opts --enable-scalar"
-              ;;
-            tform)
-              opts="$opts --enable-threaded"
-              ;;
-            parform)
-              opts="$opts --enable-parform"
-              ;;
+            form)    opts="$opts --enable-scalar";;
+            tform)   opts="$opts --enable-threaded";;
+            parform) opts="$opts --enable-parform";;
           esac
           autoreconf -i
           ./configure $opts
-          
+
       - name: Build
         run: |
           make -j 4
@@ -54,6 +48,45 @@ jobs:
       - name: Test
         run: |
           make check
+
+  # Check memory errors (e.g., uninitialized values and memory leaks)
+  # thoroughly by using Valgrind on Linux.
+  valgrind-check:
+    name: Valgrind check for ${{ matrix.bin }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bin: [vorm, tvorm, parvorm]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Set up MPI if necessary
+        uses: mpi4py/setup-mpi@v1
+        if: ${{ matrix.bin == 'parvorm' }}
+
+      - name: Configure
+        run: |
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --enable-debug --with-gmp --with-zlib'
+          case ${{ matrix.bin }} in
+            vorm)    opts="$opts --enable-scalar";;
+            tvorm)   opts="$opts --enable-threaded";;
+            parvorm) opts="$opts --enable-parform";;
+          esac
+          autoreconf -i
+          ./configure $opts
+
+      - name: Build
+        run: |
+          make -C sources -j 4 ${{ matrix.bin }}
+
+      - name: Test
+        run: |
+          ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat
+
 
 
 
