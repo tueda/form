@@ -159,7 +159,9 @@ jobs:
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --timeout 30
 
       - name: Generate LCOV coverage data
-        run:  lcov -d . -c -o coverage.info
+        run: |
+          lcov -d . -c -o coverage.info
+          lcov -r coverage.info */c++/* -o coverage.info
 
       - run: tree  # debug
 
