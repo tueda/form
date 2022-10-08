@@ -55,20 +55,20 @@ jobs:
         with:
           name: src
 
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew upgrade gmp
+
       - name: Configure
         run: |
           tar -xf *.tar.gz --strip-components 1
-          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --with-gmp --with-zlib'
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib'
           case ${{ matrix.bin }} in
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;
           esac
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            find . -name gmp.a  # test
-            opts="$opts --enable-static-link --disable-native"
-          else
-            opts="$opts --enable-static-link --disable-native"
-          fi
           ./configure $opts
 
       - name: Build
@@ -76,6 +76,15 @@ jobs:
         
       - name: Test
         run: make check
+
+      - name: Print executable information
+        run: |
+          binname=${{ matrix.bin }}
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            binname=$binname.exe
+          fi
+          ls -l sources/$binname
+          file sources/$binname
 
       - name: Upload binary as artifact
         uses: actions/upload-artifact@v3
