@@ -79,7 +79,11 @@ jobs:
           ./configure $opts
 
       - name: Build
-        run: make -j 4
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+              export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
+          fi
+          make -j 4
         
       - name: Test
         run: make check
