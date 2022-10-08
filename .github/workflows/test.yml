@@ -5,10 +5,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   # This quick check aims to perform a simple build and test on Linux; except
   # the ParFORM case, it probably passes unless the committer has forgotten

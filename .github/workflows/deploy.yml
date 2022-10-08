@@ -5,10 +5,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   build-src:
     name: Build tarball distribution
@@ -44,13 +40,19 @@ jobs:
     name: Build ${{ matrix.bin }} on ${{ matrix.os }}
     needs: [build-src]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }} {0}
     strategy:
       fail-fast: false
       matrix:
-        # os: [ubuntu-18.04, macos-10.15, windows-2019]
-        # bin: [form, tform]
-        os: [windows-2019]  # for now
-        bin: [form]
+        include:
+          - {os: ubuntu-18.04, shell: bash, bin: form}
+          - {os: ubuntu-18.04, shell: bash, bin: tform}
+          - {os: macos-10.15, shell: bash, bin: form}
+          - {os: macos-10.15, shell: bash, bin: tform}
+          - {os: windows-2019, shell: msys2, bin: form}
+          - {os: windows-2019, shell: msys2, bin: tform}
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
@@ -62,7 +64,9 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          install: gmp
+          install: >-
+            base-devel
+            gmp
 
       - name: Configure
         run: |
