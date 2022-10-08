@@ -65,6 +65,12 @@ jobs:
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;
           esac
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            mkdir static-lib
+            ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
+            export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
+            opts="$opts --disable-static-link"
+          fi
           ./configure $opts
 
       - name: Build
