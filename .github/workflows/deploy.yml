@@ -28,6 +28,7 @@ jobs:
 
       - name: Print tarball information
         run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
           ls -l $distname.tar.gz
           file $distname.tar.gz
           tar -tf $distname.tar.gz
