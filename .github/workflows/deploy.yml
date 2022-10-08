@@ -65,6 +65,11 @@ jobs:
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;
           esac
+          # --static fails on macOS but we want to statically link to
+          # the brewed gmp. The linker supports neither -Wl,-static nor
+          # -l:libgmp.a to make partial static links possible.
+          # As a workaround, we make a library directory with libgmp.a
+          # but without libgmp.dylib so that the linker has to link libgmp.a.
           if [ "$RUNNER_OS" == "macOS" ]; then
             mkdir static-lib
             ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
@@ -87,6 +92,14 @@ jobs:
           fi
           ls -l sources/$binname
           file sources/$binname
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            otool -L sources/$binname
+            # Check if brewed libraries are statically linked.
+            if otool -L sources/$binname | grep -q '/usr/local/opt'; then
+              echo 'Error: failed to statically link to brewed libraries' >&2
+              exit 1
+            fi
+          fi
 
       - name: Upload binary as artifact
         uses: actions/upload-artifact@v3
