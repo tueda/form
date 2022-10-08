@@ -65,6 +65,7 @@ jobs:
         with:
           update: true
           install: >-
+            base-devel
             gcc
             gmp-devel
             zlib-devel
@@ -87,8 +88,10 @@ jobs:
             ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
             export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
             opts="$opts --disable-static-link"
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            opts="$opts --disable-static-link"  # for now
           fi
-          ./configure $opts || { cat config.log; false; }
+          ./configure $opts
 
       - name: Build
         run: |
@@ -115,6 +118,8 @@ jobs:
               echo 'Error: failed to statically link brewed libraries' >&2
               exit 1
             fi
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            ldd sources/$binname
           fi
 
       - name: Upload binary as artifact
