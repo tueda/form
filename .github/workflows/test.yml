@@ -117,9 +117,10 @@ jobs:
       - name: Test
         run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }}
 
-  # Post LCOV coverage data to coveralls.io. Note that we measure code coverage
-  # only for tests checked with Valgrind.
+  # Generate LCOV coverage data to be posted to coveralls.io. Note that
+  # we measure code coverage only for tests checked with Valgrind.
   coverage:
+    if: ${{ false }}  # disable for now
     name: Code coverage for ${{ matrix.bin }}
     runs-on: ubuntu-latest
     strategy:
@@ -172,6 +173,7 @@ jobs:
           path-to-lcov: coverage.info
           parallel: true
 
+  # Post LCOV coverage data to coveralls.io.
   coverage-finish:
     needs: coverage
     runs-on: ubuntu-latest
@@ -182,95 +184,3 @@ jobs:
         github-token: ${{ secrets.github_token }}
         path-to-lcov: coverage.info
         parallel-finished: true
-
-  # sanitizer-check:
-  #   name: Sanitizer check for ${{ matrix.name }}
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       name:
-  #         - vorm-gmp-zlib
-  #         - vorm-nogmp-zlib
-  #         - vorm-gmp-nozlib
-  #         - vorm-nogmp-nozlib
-  #         - tvorm-gmp-zlib
-  #         - tvorm-nogmp-zlib
-  #         - tvorm-gmp-nozlib
-  #         - tvorm-nogmp-nozlib
-  #         - parvorm-gmp-zlib
-  #         - parvorm-nogmp-zlib
-  #         - parvorm-gmp-nozlib
-  #         - parvorm-nogmp-nozlib
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0  # at least a tag must be reachable
-
-  #     - name: Configure
-  #       run: |
-  #         opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-parform --enable-debug --enable-sanitize'
-  #         case ${{ matrix.name }} in
-  #           vorm-*-*)
-  #             opts="$opts --enable-scalar"
-  #             ;;
-  #           tvorm-*-*)
-  #             opts="$opts --enable-threaded"
-  #             ;;
-  #           parvorm-*-*)
-  #             opts="$opts --enable-parform"
-  #             ;;
-  #         esac
-  #         case ${{ matrix.name }} in
-  #           *-gmp-*)
-  #             opts="$opts --with-gmp"
-  #             ;;
-  #           *-nogmp-*)
-  #             opts="$opts --without-gmp"
-  #             ;;
-  #         esac
-  #         case ${{ matrix.name }} in
-  #           *-zlib-*)
-  #             opts="$opts --with-zlib"
-  #             ;;
-  #           *-nozlib-*)
-  #             opts="$opts --without-zlib"
-  #             ;;
-  #         esac
-  #         autoreconf -i
-  #         ./configure $opts
-
-  #     - name: Build
-  #       run: |
-  #         bin=$([[ "${{ matrix.name }}" =~ ^(.*)-.*-.*$ ]] && echo "${BASH_REMATCH[1]}")
-  #         make -j 4 -C sources "$bin"
-
-  #     - name: Test
-  #       run: |
-  #         bin=$([[ "${{ matrix.name }}" =~ ^(.*)-.*-.*$ ]] && echo "${BASH_REMATCH[1]}")
-  #         ./check/check.rb "./sources/$bin"  --stat --timeout 60
-
-  # test:
-  #   name: Test on ${{ matrix.os }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-latest, macos-latest, windows-latest]
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0  # at least a tag must be reachable
-
-  #     - name: Configure
-  #       run: |
-  #          autoreconf -i
-  #          ./configure --disable-dependency-tracking --enable-debug --enable-sanitize
-
-  #     - name: Build
-  #       run: make -j 4
-
-  #     - name: Test
-  #       run: make check
