@@ -47,15 +47,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2019]
-        bin: [form, tform]
-        # os: [macos-10.15,]  # for now
-        # bin: [form]
+        # os: [ubuntu-18.04, macos-10.15, windows-2019]
+        # bin: [form, tform]
+        os: [windows-2019]  # for now
+        bin: [form]
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
         with:
           name: src
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: gmp
 
       - name: Configure
         run: |
