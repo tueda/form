@@ -88,7 +88,7 @@ jobs:
             export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
             opts="$opts --disable-static-link"
           fi
-          ./configure $opts
+          ./configure $opts || { cat config.log; false; }
 
       - name: Build
         run: |
