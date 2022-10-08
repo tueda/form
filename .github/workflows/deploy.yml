@@ -47,10 +47,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # os: [ubuntu-18.04, macos-10.15, windows-2019]
-        # bin: [form, tform]
-        os: [macos-10.15,]  # for now
-        bin: [form]
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
+        bin: [form, tform]
+        # os: [macos-10.15,]  # for now
+        # bin: [form]
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
@@ -65,7 +65,7 @@ jobs:
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;
           esac
-          # --static fails on macOS but we want to statically link to
+          # --static fails on macOS but we want to statically link
           # the brewed gmp. The linker supports neither -Wl,-static nor
           # -l:libgmp.a to make partial static links possible.
           # As a workaround, we make a library directory with libgmp.a
@@ -100,7 +100,7 @@ jobs:
             otool -L sources/$binname
             # Check if brewed libraries are statically linked.
             if otool -L sources/$binname | grep -q '/usr/local/opt'; then
-              echo 'Error: failed to statically link to brewed libraries' >&2
+              echo 'Error: failed to statically link brewed libraries' >&2
               exit 1
             fi
           fi
