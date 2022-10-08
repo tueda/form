@@ -65,10 +65,10 @@ jobs:
         with:
           update: true
           install: >-
-            base-devel
-            gcc
-            gmp-devel
-            zlib-devel
+            make
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-gmp
+            mingw-w64-x86_64-zlib
 
       - name: Configure
         run: |
@@ -88,8 +88,6 @@ jobs:
             ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
             export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
             opts="$opts --disable-static-link"
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            opts="$opts --disable-static-link"  # for now
           fi
           ./configure $opts
 
