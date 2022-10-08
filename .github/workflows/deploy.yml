@@ -47,12 +47,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: ubuntu-18.04, shell: bash, bin: form}
-          - {os: ubuntu-18.04, shell: bash, bin: tform}
-          - {os: macos-10.15, shell: bash, bin: form}
-          - {os: macos-10.15, shell: bash, bin: tform}
+          # - {os: ubuntu-18.04, shell: bash, bin: form}
+          # - {os: ubuntu-18.04, shell: bash, bin: tform}
+          # - {os: macos-10.15, shell: bash, bin: form}
+          # - {os: macos-10.15, shell: bash, bin: tform}
           - {os: windows-2019, shell: msys2, bin: form}
-          - {os: windows-2019, shell: msys2, bin: tform}
+          # - {os: windows-2019, shell: msys2, bin: tform}
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
@@ -65,8 +65,9 @@ jobs:
         with:
           update: true
           install: >-
-            base-devel
-            gmp
+            gcc
+            gmp-devel
+            zlib-devel
 
       - name: Configure
         run: |
