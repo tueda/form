@@ -162,6 +162,12 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
+      - name: Install LaTeX2HTML
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: latex2html  # shares the same cache with build-doc-html
+          version: 1.0
+
       - name: Build PDF file
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
@@ -196,6 +202,12 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
+      - name: Install LaTeX2HTML
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: latex2html
+          version: 1.0
+
       - name: Build HTML files
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
@@ -221,6 +233,6 @@ jobs:
       - name: Upload file as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: src
+          name: doc-html
           path: '*.tar.gz'
           if-no-files-found: error
