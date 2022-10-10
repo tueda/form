@@ -6,7 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Generate the tarball distribution, e.g., "form-v4.2.1.tar.gz" for v4.2.1.
+  # The tarball will be tested in the following "build-bin" job.
   build-src:
+    if: ${{ false }}  # disable for now
     name: Build tarball distribution
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +39,11 @@ jobs:
           path: '*.tar.gz'
           if-no-files-found: error
 
+  # Build executables from the tarball distribution (w/o the Git repository).
+  # The executables must not be too optimized for the build machine and must be
+  # statically linked in such a way that they are suitable for binary distributions.
   build-bin:
+    if: ${{ false }}  # disable for now
     name: Build ${{ matrix.bin }} on ${{ matrix.os }}
     needs: [build-src]
     runs-on: ${{ matrix.os }}
@@ -143,4 +150,77 @@ jobs:
           path: |
             sources/${{ matrix.bin }}
             sources/${{ matrix.bin }}.exe
+          if-no-files-found: error
+
+  # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
+  build-doc-pdf:
+    name: Build PDF document
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Build PDF file
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          distname=$distname-manual
+          autoreconf -i
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
+          make pdf
+          cp doc/manual/manual.pdf $distname.pdf
+
+      - name: Print document information
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          distname=$distname-manual
+          ls -l $distname.pdf
+          file $distname.pdf
+
+      - name: Upload document as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: doc-pdf
+          path: '*.pdf'
+          if-no-files-found: error
+
+  # Generate the HTML reference manual packed as, e.g.,
+  # "form-4.2.1-manual-html.tar.gz" for v4.2.1.
+  build-doc-html:
+    name: Build HTML document
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Build HTML files
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          distname=$distname-manual-html
+          autoreconf -i
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
+          make -C doc/manual latex2html
+          (
+            cd doc/manual/manual
+            rm -f images.aux images.idx images.log images.pl images.tex internals.pl labels.pl WARNINGS
+          )
+          cp -r doc/manual/manual $distname
+          tar -c $distname/* | gzip -c -9 > $distname.tar.gz
+
+      - name: Print file information
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          distname=$distname-manual-html
+          ls -l $distname.tar.gz
+          file $distname.tar.gz
+          tar -tf $distname.tar.gz
+
+      - name: Upload file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: src
+          path: '*.tar.gz'
           if-no-files-found: error
