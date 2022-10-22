@@ -9,7 +9,6 @@ jobs:
   # Generate the tarball distribution, e.g., "form-v4.2.1.tar.gz" for v4.2.1.
   # The tarball will be tested in the following "build-bin" job.
   build-src:
-    if: ${{ false }}  # disable for now
     name: Build tarball distribution
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +42,6 @@ jobs:
   # The executables must not be too optimized for the build machine and must be
   # statically linked in such a way that they are suitable for binary distributions.
   build-bin:
-    if: ${{ false }}  # disable for now
     name: Build ${{ matrix.bin }} on ${{ matrix.os }}
     needs: [build-src]
     runs-on: ${{ matrix.os }}
@@ -233,7 +231,7 @@ jobs:
           make -C doc/manual latex2html
           (
             cd doc/manual/manual
-            rm -f images.aux images.idx images.log images.pl images.tex internals.pl labels.pl WARNINGS
+            rm -f images.aux images.idx images.log images.pdf images.pl images.tex internals.pl labels.pl WARNINGS
           )
           cp -r doc/manual/manual $distname
           tar -c $distname/* | gzip -c -9 > $distname.tar.gz
@@ -252,3 +250,40 @@ jobs:
           name: doc-html
           path: '*.tar.gz'
           if-no-files-found: error
+
+  # Prepare binaries to be published in GitHub Releases.
+  # They will be actually delivered when the commit has a tag
+  # starting with "v" (e.g., v4.2.1).
+  publish-binaries:
+    name: Publish binaries to GitHub Releases
+    needs:
+      - build-src
+      - build-bin
+      - build-doc-pdf
+      - build-doc-html
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Print all artifacts
+        run: ls -l -R artifacts
+
+      - name: Prepare distributions
+        run: |
+          distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
+          echo $distname
+          # TODO
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: dist/*.tar.gz dist/*.pdf
