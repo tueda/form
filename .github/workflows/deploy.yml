@@ -290,6 +290,7 @@ jobs:
             pkgname=$distname-x86_64-linux
             mkdir $pkgname
             mv artifacts/*-ubuntu-*/*form $pkgname
+            chmod +x $pkgname/*form
             tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
             rm -rf $pkgname
           fi
@@ -298,6 +299,7 @@ jobs:
             pkgname=$distname-x86_64-osx
             mkdir $pkgname
             mv artifacts/*-macos-*/*form $pkgname
+            chmod +x $pkgname/*form
             tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
             rm -rf $pkgname
           fi
@@ -306,6 +308,7 @@ jobs:
             pkgname=$distname-x86_64-windows
             mkdir $pkgname
             mv artifacts/*-windows-*/*form.exe $pkgname
+            chmod +x $pkgname/*form.exe
             tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
             rm -rf $pkgname
           fi
