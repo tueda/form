@@ -280,10 +280,53 @@ jobs:
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
           echo $distname
-          # TODO
 
-      - name: Publish
+          mv src/*.tar.gz dist
+          mv doc-html/*.tar.gz dist
+          mv doc-pdf/*.pdf dist
+
+          if ls *-ubuntu-*/*form >/dev/null 2>&1; then
+            pkgname=$distname-x86_64-linux
+            mkdir $pkgname
+            mv *-ubuntu-*/*form $pkgname
+            tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+            rm -rf $pkgname
+          fi
+
+          if ls *-macos-*/*form >/dev/null 2>&1; then
+            pkgname=$distname-x86_64-osx
+            mkdir $pkgname
+            mv *-macos-*/*form $pkgname
+            tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+            rm -rf $pkgname
+          fi
+
+          if ls *-windows-*/*form.exe >/dev/null 2>&1; then
+            pkgname=$distname-x86_64-windows
+            mkdir $pkgname
+            mv *-windows-*/*form.exe $pkgname
+            tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+            rm -rf $pkgname
+          fi
+
+      - name: Print distributions
+        run: ls -l dist
+
+      # Publish the distributions to GitHub Releases, only if the commit has
+      # a versioning tag.
+      - name: Publish distributions
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: dist/*.tar.gz dist/*.pdf
+
+      # We upload the distributions as an artifact, regardless of whether
+      # the commit has a versioning tag. This makes checking and debugging easy.
+      - name: Upload distributions as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            dist/*.tar.gz
+            dist/*.pdf
+          if-no-files-found: error
