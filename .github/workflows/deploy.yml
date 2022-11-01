@@ -280,6 +280,8 @@ jobs:
         run: |
           distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')
 
+          mkdir dist
+
           mv artifacts/src/*.tar.gz dist
           mv artifacts/doc-html/*.tar.gz dist
           mv artifacts/doc-pdf/*.pdf dist
