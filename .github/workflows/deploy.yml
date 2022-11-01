@@ -114,8 +114,8 @@ jobs:
           fi
           make -j 4
 
-      - name: Test
-        run: make check
+      # - name: Test
+      #   run: make check
 
       - name: Print executable information
         run: |
