@@ -171,7 +171,7 @@ jobs:
 
   # Post LCOV coverage data to coveralls.io.
   coverage-finish:
-    needs: coverage
+    needs: [coverage,  valgrind-check]
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
