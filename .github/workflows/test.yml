@@ -42,14 +42,15 @@ jobs:
           ./configure $opts
 
       - name: Build
-        run: |
-          make -C sources -j 4 ${{ matrix.bin }}
-          tar -cvf ${{ matrix.bin }}.tar sources/${{ matrix.bin }}
+        run: make -C sources -j 4 ${{ matrix.bin }}
 
       # Notoriously, actions/upload-artifact fails to retain file permissions.
       # It seems that the fix will require some innovative developments.
       # See: https://github.com/actions/upload-artifact/issues/38#issuecomment-1262491750
       # As a workaround, we use tar.
+      - name: Create tar file
+        run: tar -cvf ${{ matrix.bin }}.tar sources/${{ matrix.bin }}
+
       - name: Upload tar file as artifact
         uses: actions/upload-artifact@v3
         with:
@@ -79,7 +80,7 @@ jobs:
 
       - name: Extract executable
         run: |
-          tar -xf ${{ matrix.bin }}.tar
+          tar -xvf ${{ matrix.bin }}.tar
           rm ${{ matrix.bin }}.tar
 
       - name: Install MPI runtime if necessary
@@ -112,7 +113,7 @@ jobs:
 
       - name: Extract executable
         run: |
-          tar -xf ${{ matrix.bin }}.tar
+          tar -xvf ${{ matrix.bin }}.tar
           rm ${{ matrix.bin }}.tar
 
       - name: Install MPI runtime if necessary
@@ -193,7 +194,7 @@ jobs:
 
       - name: Extract executable
         run: |
-          tar -xf ${{ matrix.bin }}.tar
+          tar -xvf ${{ matrix.bin }}.tar
           rm ${{ matrix.bin }}.tar
 
       - name: Install Valgrind
