@@ -144,7 +144,7 @@ jobs:
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat -C ${{ matrix.test }} --timeout ${{ matrix.timeout }}
         env:
-          FORMPATH: formlib
+          FORMPATH: ${{ github.workspace }}/formlib
 
   # Check memory errors (e.g., uninitialized values and memory leaks)
   # thoroughly by using Valgrind on Linux. To maximize the use of concurrent
