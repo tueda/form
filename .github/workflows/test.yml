@@ -49,7 +49,7 @@ jobs:
       # Notoriously, actions/upload-artifact fails to retain file permissions.
       # It seems that the fix will require some innovative developments.
       # See: https://github.com/actions/upload-artifact/issues/38#issuecomment-1262491750
-      # As a workaround, we use Tar.
+      # As a workaround, we use tar.
       - name: Upload tar file as artifact
         uses: actions/upload-artifact@v3
         with:
@@ -142,7 +142,9 @@ jobs:
           esac
 
       - name: Test
-        run: FORMPATH=formlib ./check/check.rb ./sources/${{ matrix.bin }} --stat -C ${{ matrix.test }} --timeout ${{ matrix.timeout }}
+        run: ./check/check.rb ./sources/${{ matrix.bin }} --stat -C ${{ matrix.test }} --timeout ${{ matrix.timeout }}
+        env:
+          FORMPATH: formlib
 
   # Check memory errors (e.g., uninitialized values and memory leaks)
   # thoroughly by using Valgrind on Linux. To maximize the use of concurrent
@@ -269,7 +271,7 @@ jobs:
 
   # Post LCOV coverage data to coveralls.io.
   coverage-finish:
-    needs: [coverage,  valgrind-check]
+    needs: [quick-check, special-check, valgrind-check, coverage]
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
