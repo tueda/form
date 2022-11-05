@@ -373,6 +373,8 @@ module FormTest
   def execute_popen3(cmdline, timeout)
     cmdline = "echo pid=$$;cd #{@tmpdir};#{cmdline};echo exit_status=$?"
 
+    mutex = Mutex.new # for stdout
+
     stdout = []
     stderr = []
 
@@ -380,7 +382,9 @@ module FormTest
       stdinstream.close
       out = Thread.new do
         while (line = stdoutstream.gets)
-          stdout << line
+          mutex.synchronize do
+            stdout << line
+          end
         end
       end
       err = Thread.new do
@@ -389,7 +393,9 @@ module FormTest
           # We print both stdout and stderr when a test fails. An easy way to
           # implement this is to copy messages in stderr to those in stdout.
           # Unfortunately their orders are not preserved.
-          stdout << line
+          mutex.synchronize do
+            stdout << line
+          end
         end
       end
       begin
@@ -401,7 +407,7 @@ module FormTest
         out.join
         err.join
         killer.kill
-      rescue StandardError
+      rescue RuntimeError # raised by killer
         while out.alive? && stdout.empty?
           sleep(0.01)
         end
