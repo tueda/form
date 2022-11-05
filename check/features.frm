@@ -111,176 +111,25 @@ assert result("F4")  =~ expr("
 ")
 *--#] divmod_4 :
 *--#[ moebius_ :
-* Test the Moebius function. Original code: export.frm from Jos.
-*
-* Calculates the integral Euler Characteristic of Out(F_n) where N = chi + 1
-*
-#define chi "16"
-*
-*--#[ Declarations :
-*
-#define M "{`chi'*2}"
-#define N "{`chi'*6}"
-Symbol j,n,y,x,zsq(-{2*`M'}:`M'),z(:`M'),g,l(:`N');
-Symbol c0,...,c`N';
-*--#] Declarations :
-.global
-Off Statistics;
-Local L0 =
-  #do j = 1,`M'
-    + g^`j' * z^`j' / `j' * (
-      c`j' + c`j'^2/2
-      #if {2*`j'} <= `N'
-          - c{2*`j'} / 2
-      #endif
-      - (1+c`j') * (
-        #do k = `j',`N',`j'
-          + moebius_({`k'/`j'})/{`k'/`j'} *
-            sum_(j,`k',`N',`k',-sign_(j/`k') * c`k'^(j/`k')/(j/`k'))
-        #enddo
-      )
-    )
-  #enddo
-        ;
-id z = 1/zsq^2;
-*
-* Some corner cutting:
-*
-#do j = `N',{`N'/2+1},-2
-    id c{`j'} = l^`j'*zsq^`j';
-#enddo
-#do j = `N'-1,{`N'/2+1},-2
-    id c{`j'} = 0;
-#enddo
-#do j = 1,`N'
-    id c`j' = l^`j' * c`j'*zsq^`j';
-#enddo
-*
-* We don't really need to keep the g. It is has 'weight' -2:
-*
-id g = l^(-2);
-B zsq,l;   * in case we would like to print the expression.
-.sort
-*
-* Now we have to set up a loop in which we work our way down from the
-* high c`i' to the c1.
-* This should be done slowly to avoid building up too many terms.
-* Each time we try to eliminate the respective c`i' as quickly as possible.
-*
-Off Statistics;
-#do i = `N'/2,1,-1
-L L`i' = L0;
-#$minl`i' = `N';
-if ( expression(L`i') );
-  if ( count(c`i',1) == 0 ) Discard;
-  if ( count(l,1) < $minl`i' ) $minl`i' = count_(l,1);
-else;
-  id c`i' = 0;
-endif;
-B+ l;
-ModuleOption minimum,$minl`i';
-.sort:L`i';
-Table,zerofill,Ltab`i'(0:`N');
-FillExpression Ltab`i' = L`i'(l);
-Hide L`i';
-#enddo
-#$minl0 = `N';
-if ( count(l,1) < $minl0 ) $minl0 = count_(l,1);
-B l;
-ModuleOption minimum,$minl0;
-.sort
-Table,zerofill,Ltab0(0:`N');
-FillExpression Ltab0 = L0(l);
-Hide L0;
-.sort
-*
-* Now we construct G`i' = exp(L`i').
-* This step uses a manipulation of the summation bounds due to
-* the fact that most L`i' have a minimum power of l that is
-* bigger than one.
-*
-#do i = 0,`N'/2
-L G`i' = sum_(j,0,{`M'/`$minl`i''},x^j*invfac_(j));
-#do ii = `M'/`$minl`i'',1,-1
-    id,once,x^`ii'*l^n? = x^`ii'/x*l^n*
-    sum_(j,1,{`M'-`$minl`i''*(`ii'-1)}-n,Ltab`i'(j)*l^j);
-.sort:G`i'-`ii';
-#enddo
-id l^n? = 1;
-B+ zsq;
-.sort
-Hide G`i';
-.sort
-#enddo
-*
-* Here we set up tables for the powers of the c`i'.
-*
-#do i = `N'/2,1,-1
-Table,zerofill,Ctab`i'(1:{`N'/`i'});
-#do in = 1,`N'/`i'
-  #if ( {`i'%2} != 0 )
-    #if ( {`in'%2} != 0 )
-      #$t = 0;
-    #else
-      #$t = fac_(`in')*invfac_(`in'/2)/2^(`in'/2)*`i'^(`in'/2);
-    #endif
-  #else
-    #$t = sum_(j,0,integer_(`in'/2),fac_(`in')*invfac_(`in'-2*j)*invfac_(j)*{`i'/2}^j);
-  #endif
-  Fill Ctab`i'(`in') = `$t';
-#enddo
-#enddo
-*
-* The idea here is to multiply in such a way that we can
-* substitute the powers of c`i' immediately. To avoid too much
-* work we bracket in c`i' and zsq.
-* Yet the number of terms generated is enormous, specially compared
-* to the number of terms remaining after sorting.
-* The worst step is for c6.
-*
-L L = G0;
-#do i = `N'/2,1,-1
-B zsq,c`i';
-.sort:remove-c{`i'+1};
-Keep Brackets;
-id zsq^n? = zsq^n*sum_(j,0,2*`chi'-n,zsq^j*G`i'[zsq^j]);
-id c`i'^n?pos_ = Ctab`i'(n);
-#enddo
-id zsq^2 = z;
-Bracket z;
-.sort:z-expansion;
-*
-* And now the final steps
-*
-L Log = sum_(j,1,`chi', -sign_(j) * y^j/j );
-#do j = 1,`chi'
-    id once y = L-1;
-    .sort
-#enddo
-B z;
-.sort
-Hide Log;
-L C = sum_(j,1,`chi', sum_(l,1,integer_(`chi'/j),z^(l*j) * moebius_(l)/l * Log[z^j]));
-Print +f +s C;
+S i,x;
+L F = sum_(i,1,200,moebius_(i)*x^i);
+P;
 .end:result;
 assert succeeded?
-assert result("C") =~ expr("
-       + z
-       + z^2
-       + 2*z^3
-       + z^4
-       + 2*z^5
-       + z^6
-       + z^7
-       - 21*z^8
-       - 124*z^9
-       - 1202*z^10
-       - 10738*z^11
-       - 112901*z^12
-       - 1271148*z^13
-       - 15668391*z^14
-       - 208214777*z^15
-       - 2975254451*z^16
+# Sum[MoebiusMu[i] x^i, {i, 1, 200}] // InputForm
+assert result("F") =~ expr("
+ x - x^2 - x^3 - x^5 + x^6 - x^7 + x^10 - x^11 - x^13 + x^14 + x^15 - x^17 -
+ x^19 + x^21 + x^22 - x^23 + x^26 - x^29 - x^30 - x^31 + x^33 + x^34 + x^35 -
+ x^37 + x^38 + x^39 - x^41 - x^42 - x^43 + x^46 - x^47 + x^51 - x^53 + x^55 +
+ x^57 + x^58 - x^59 - x^61 + x^62 + x^65 - x^66 - x^67 + x^69 - x^70 - x^71 -
+ x^73 + x^74 + x^77 - x^78 - x^79 + x^82 - x^83 + x^85 + x^86 + x^87 - x^89 +
+ x^91 + x^93 + x^94 + x^95 - x^97 - x^101 - x^102 - x^103 - x^105 + x^106 -
+ x^107 - x^109 - x^110 + x^111 - x^113 - x^114 + x^115 + x^118 + x^119 + x^122 +
+ x^123 - x^127 + x^129 - x^130 - x^131 + x^133 + x^134 - x^137 - x^138 - x^139 +
+ x^141 + x^142 + x^143 + x^145 + x^146 - x^149 - x^151 - x^154 + x^155 - x^157 +
+ x^158 + x^159 + x^161 - x^163 - x^165 + x^166 - x^167 - x^170 - x^173 - x^174 +
+ x^177 + x^178 - x^179 - x^181 - x^182 + x^183 + x^185 - x^186 + x^187 - x^190 -
+ x^191 - x^193 + x^194 - x^195 - x^197 - x^199
 ")
 *--#] moebius_ :
 *--#[ partitions_ :
