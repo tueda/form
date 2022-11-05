@@ -329,6 +329,140 @@ assert result("F6") == result("F61")
 assert result("F71") =~ expr("f(nosquare,q2)*functions(p1,p2,q2,N1_?,N1_?)")
 assert result("F72") =~ expr("f(N1_?,q2)*functions(p1,p2,q2,N1_?)*nosquare.nosquare")
 *--#] CoToTensor :
+*--#[ Format_allfloat :
+* See also Issue #216.
+#-
+Off stats;
+S x;
+L F = x - x^2 + 2*x^3 + 1/2*x^4 - 2/3*x^5;
+.sort
+
+#message (0) normal
+#write " F = %E;", F
+.sort
+
+#message (1) Fortran
+Format Fortran;
+#write " F = %E;", F
+.sort
+
+* TODO: this combination doesn't work correctly, though no one may use
+* single-precision Fortran seriously.
+*
+* #message Fortran,allfloat
+* Format Fortran;
+* Format allfloat;
+* #write " F = %E;", F
+* .sort
+
+#message (2) DoubleFortran
+Format DoubleFortran;
+#write " F = %E;", F
+.sort
+
+#message (3) DoubleFortran,allfloat
+Format DoubleFortran;
+Format allfloat;
+#write " F = %E;", F
+.sort
+
+#message (4) QuadrupleFortran
+Format QuadrupleFortran;
+#write " F = %E;", F
+.sort
+
+#message (5) QuadrupleFortran,allfloat
+Format QuadrupleFortran;
+Format allfloat;
+#write " F = %E;", F
+.sort
+
+#message (6) Fortran90,.0_wp
+Format Fortran90,.0_wp;  * forcibly allfloat
+#write " F = %E;", F
+.end
+assert succeeded?
+assert result("F", 0) =~ expr("x - x^2 + 2*x^3 + 1/2*x^4 - 2/3*x^5")
+assert result("F", 1) =~ expr("x - x**2 + 2*x**3 + 1./2.*x**4 - 2./3.*x**5")
+assert result("F", 2) =~ expr("x - x**2 + 2*x**3 + 1.D0/2.D0*x**4 - 2.D0/3.D0*x**5")
+assert result("F", 3) =~ expr("x - x**2 + 2.D0*x**3 + 1.D0/2.D0*x**4 - 2.D0/3.D0*x**5")
+assert result("F", 4) =~ expr("x - x**2 + 2*x**3 + 1.Q0/2.Q0*x**4 - 2.Q0/3.Q0*x**5")
+assert result("F", 5) =~ expr("x - x**2 + 2.Q0*x**3 + 1.Q0/2.Q0*x**4 - 2.Q0/3.Q0*x**5")
+assert result("F", 6) =~ expr("x - x**2 + 2.0_wp*x**3 + 1.0_wp/2.0_wp*x**4 - 2.0_wp/3.0_wp*x**5")
+*--#] Format_allfloat :
+*--#[ Format_noreset_linelen :
+#-
+Off stats;
+Auto S x;
+L F = (x1+...+x5)^3;
+.sort
+
+#message (0) normal,80
+#write " F = %E;", F
+.sort
+
+#message (1) Fortran,72
+Format Fortran;
+#write " F = %E;", F
+.sort
+
+#message (2) C,50
+Format 50;
+Format C;
+#write " F = %E;", F
+.sort
+
+#message (3) Fortran,50
+Format Fortran;
+#write " F = %E;", F
+.end
+assert succeeded?
+assert result("F", 0) =~ expr("
+     x5^3 + 3*x4*x5^2 + 3*x4^2*x5 + x4^3 + 3*x3*x5^2 + 6*x3*x4*x5 + 3*x3*x4^2
+       + 3*x3^2*x5 + 3*x3^2*x4 + x3^3 + 3*x2*x5^2 + 6*x2*x4*x5 + 3*x2*x4^2 + 6
+      *x2*x3*x5 + 6*x2*x3*x4 + 3*x2*x3^2 + 3*x2^2*x5 + 3*x2^2*x4 + 3*x2^2*x3
+       + x2^3 + 3*x1*x5^2 + 6*x1*x4*x5 + 3*x1*x4^2 + 6*x1*x3*x5 + 6*x1*x3*x4
+       + 3*x1*x3^2 + 6*x1*x2*x5 + 6*x1*x2*x4 + 6*x1*x2*x3 + 3*x1*x2^2 + 3*x1^2
+      *x5 + 3*x1^2*x4 + 3*x1^2*x3 + 3*x1^2*x2 + x1^3
+")
+assert result("F", 1) =~ expr("
+     x5**3 + 3*x4*x5**2 + 3*x4**2*x5 + x4**3 + 3*x3*x5**2 + 6*x3*x4*x5
+     &  + 3*x3*x4**2 + 3*x3**2*x5 + 3*x3**2*x4 + x3**3 + 3*x2*x5**2 + 6
+     & *x2*x4*x5 + 3*x2*x4**2 + 6*x2*x3*x5 + 6*x2*x3*x4 + 3*x2*x3**2 +
+     & 3*x2**2*x5 + 3*x2**2*x4 + 3*x2**2*x3 + x2**3 + 3*x1*x5**2 + 6*x1
+     & *x4*x5 + 3*x1*x4**2 + 6*x1*x3*x5 + 6*x1*x3*x4 + 3*x1*x3**2 + 6*
+     & x1*x2*x5 + 6*x1*x2*x4 + 6*x1*x2*x3 + 3*x1*x2**2 + 3*x1**2*x5 + 3
+     & *x1**2*x4 + 3*x1**2*x3 + 3*x1**2*x2 + x1**3
+")
+assert result("F", 2) =~ expr("
+     pow(x5,3) + 3*x4*pow(x5,2) + 3*pow(x4,2)*x5
+       + pow(x4,3) + 3*x3*pow(x5,2) + 6*x3*x4*x5
+       + 3*x3*pow(x4,2) + 3*pow(x3,2)*x5 + 3*pow(
+      x3,2)*x4 + pow(x3,3) + 3*x2*pow(x5,2) + 6*
+      x2*x4*x5 + 3*x2*pow(x4,2) + 6*x2*x3*x5 + 6*
+      x2*x3*x4 + 3*x2*pow(x3,2) + 3*pow(x2,2)*x5
+       + 3*pow(x2,2)*x4 + 3*pow(x2,2)*x3 + pow(
+      x2,3) + 3*x1*pow(x5,2) + 6*x1*x4*x5 + 3*x1*
+      pow(x4,2) + 6*x1*x3*x5 + 6*x1*x3*x4 + 3*x1*
+      pow(x3,2) + 6*x1*x2*x5 + 6*x1*x2*x4 + 6*x1*
+      x2*x3 + 3*x1*pow(x2,2) + 3*pow(x1,2)*x5 + 3
+      *pow(x1,2)*x4 + 3*pow(x1,2)*x3 + 3*pow(
+      x1,2)*x2 + pow(x1,3)
+")
+assert result("F", 3) =~ expr("
+     x5**3 + 3*x4*x5**2 + 3*x4**2*x5 + x4**3 + 3*
+     & x3*x5**2 + 6*x3*x4*x5 + 3*x3*x4**2 + 3*
+     & x3**2*x5 + 3*x3**2*x4 + x3**3 + 3*x2*x5**2
+     &  + 6*x2*x4*x5 + 3*x2*x4**2 + 6*x2*x3*x5 +
+     & 6*x2*x3*x4 + 3*x2*x3**2 + 3*x2**2*x5 + 3*
+     & x2**2*x4 + 3*x2**2*x3 + x2**3 + 3*x1*x5**2
+     &  + 6*x1*x4*x5 + 3*x1*x4**2 + 6*x1*x3*x5 +
+     & 6*x1*x3*x4 + 3*x1*x3**2 + 6*x1*x2*x5 + 6*
+     & x1*x2*x4 + 6*x1*x2*x3 + 3*x1*x2**2 + 3*
+     & x1**2*x5 + 3*x1**2*x4 + 3*x1**2*x3 + 3*
+     & x1**2*x2 + x1**3
+")
+*--#] Format_noreset_linelen :
 *--#[ Issue49 :
 * Add mul_ function for polynomial multiplications
 Symbols x,y,z;
