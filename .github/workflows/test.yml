@@ -132,7 +132,7 @@ jobs:
         if: steps.cache-formlib.outputs.cache-hit != 'true'
         run: |
           mkdir -p formlib
-          case ${{ matrix.test }}
+          case ${{ matrix.test }} in
             forcer)
               wget https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz -O - | tar -x --gzip
               mv forcer-1.0.0/forcer.h formlib
