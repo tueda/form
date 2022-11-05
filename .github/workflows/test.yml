@@ -42,14 +42,19 @@ jobs:
           ./configure $opts
 
       - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+        run: |
+          make -C sources -j 4 ${{ matrix.bin }}
+          tar -cvf ${{ matrix.bin }}.tar sources/${{ matrix.bin }}
 
-      - name: Upload binary as artifact
+      # Notoriously, actions/upload-artifact fails to retain file permissions.
+      # It seems that the fix will require some innovative developments.
+      # See: https://github.com/actions/upload-artifact/issues/38#issuecomment-1262491750
+      # As a workaround, we use Tar.
+      - name: Upload tar file as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.bin }}-${{ matrix.os }}
-          path: |
-            sources/${{ matrix.bin }}
+          name: ${{ matrix.bin }}
+          path: ${{ matrix.bin }}.tar
           if-no-files-found: error
 
   # This quick check aims to perform a simple test on Linux;
@@ -67,11 +72,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download executable
+      - name: Download tar file
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.bin }}-${{ matrix.os }}
-          path: sources
+          name: ${{ matrix.bin }}
+
+      - name: Extract executable
+        run: |
+          tar -xf ${{ matrix.bin }}.tar
+          rm ${{ matrix.bin }}.tar
 
       - name: Install MPI runtime if necessary
         if: ${{ matrix.bin == 'parform' }}
@@ -96,11 +105,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download executable
+      - name: Download tar file
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.bin }}-${{ matrix.os }}
-          path: sources
+          name: ${{ matrix.bin }}
+
+      - name: Extract executable
+        run: |
+          tar -xf ${{ matrix.bin }}.tar
+          rm ${{ matrix.bin }}.tar
 
       - name: Install MPI runtime if necessary
         if: ${{ matrix.bin == 'parform' }}
@@ -171,11 +184,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download executable
+      - name: Download tar file
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.bin }}-${{ matrix.os }}
-          path: sources
+          name: ${{ matrix.bin }}
+
+      - name: Extract executable
+        run: |
+          tar -xf ${{ matrix.bin }}.tar
+          rm ${{ matrix.bin }}.tar
 
       - name: Install Valgrind
         uses: awalsh128/cache-apt-pkgs-action@v1
