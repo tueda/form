@@ -122,7 +122,7 @@ jobs:
           fi
           make -j 4
 
-      # NOTE: Tests on Windows miserably fail.
+      # NOTE: Currently, many tests on Windows miserably fail.
       - name: Test
         run: make check
         continue-on-error: ${{ runner.os == 'Windows' }}
@@ -323,7 +323,8 @@ jobs:
             mkdir $pkgname
             mv artifacts/*-windows-*/*form.exe $pkgname
             chmod +x $pkgname/*form.exe
-            tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+            # tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+            zip -9 dist/$pkgname.zip $pkgname/*
             rm -rf $pkgname
           fi
 
@@ -338,6 +339,7 @@ jobs:
         with:
           files: |
             dist/*.tar.gz
+            dist/*.zip
             dist/*.pdf
 
       # Upload the distributions as an artifact, regardless of whether
@@ -348,5 +350,6 @@ jobs:
           name: dist
           path: |
             dist/*.tar.gz
+            dist/*.zip
             dist/*.pdf
           if-no-files-found: error
