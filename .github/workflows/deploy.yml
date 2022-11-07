@@ -70,16 +70,6 @@ jobs:
           - {os: windows-2019, shell: msys2, bin: form}
           - {os: windows-2019, shell: msys2, bin: tform}
     steps:
-      - name: Download tarball
-        uses: actions/download-artifact@v3
-        with:
-          name: src
-
-      - name: Uncompress tarball
-        run: |
-          tar -xf *.tar.gz --strip-components 1
-          rm *.tar.gz
-
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
@@ -91,6 +81,16 @@ jobs:
             mingw-w64-x86_64-gmp
             mingw-w64-x86_64-zlib
             ruby
+
+      - name: Download tarball
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+
+      - name: Uncompress tarball
+        run: |
+          tar -xf *.tar.gz --strip-components 1
+          rm *.tar.gz
 
       - name: Configure
         run: |
