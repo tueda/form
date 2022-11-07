@@ -65,9 +65,10 @@ jobs:
           - {os: ubuntu-18.04, shell: bash, bin: tform}
           - {os: macos-10.15, shell: bash, bin: form}
           - {os: macos-10.15, shell: bash, bin: tform}
-          # Disable Windows native executables that have too many problems, for now.
-          # - {os: windows-2019, shell: msys2, bin: form}
-          # - {os: windows-2019, shell: msys2, bin: tform}
+          # NOTE: Windows native executables have too many problems.
+          # We include them in artifacts but not in releases.
+          - {os: windows-2019, shell: msys2, bin: form}
+          - {os: windows-2019, shell: msys2, bin: tform}
     steps:
       - name: Download tarball
         uses: actions/download-artifact@v3
@@ -121,8 +122,10 @@ jobs:
           fi
           make -j 4
 
+      # NOTE: Tests on Windows miserably fail.
       - name: Test
         run: make check
+        continue-on-error: ${{ runner.os == 'Windows' }}
 
       - name: Print executable information
         run: |
