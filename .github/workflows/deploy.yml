@@ -328,16 +328,18 @@ jobs:
             tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
             rm -rf $pkgname
           fi
-          if ls artifacts/*-windows-*/*form.exe >/dev/null 2>&1; then
-            pkgname=$distname-x86_64-windows
-            mkdir $pkgname
-            mv artifacts/*-windows-*/*form.exe $pkgname
-            chmod +x $pkgname/*form.exe
-            # Zip may be more popular than tar.gz for Windows(?)
-            # tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
-            zip -9 dist/$pkgname.zip $pkgname/*
-            rm -rf $pkgname
-          fi
+          # Do not include Windows binaries into the distribution, for now.
+          #
+          # if ls artifacts/*-windows-*/*form.exe >/dev/null 2>&1; then
+          #   pkgname=$distname-x86_64-windows
+          #   mkdir $pkgname
+          #   mv artifacts/*-windows-*/*form.exe $pkgname
+          #   chmod +x $pkgname/*form.exe
+          #   # Zip may be more popular than tar.gz for Windows(?)
+          #   # tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+          #   zip -9 dist/$pkgname.zip $pkgname/*
+          #   rm -rf $pkgname
+          # fi
 
       - name: Print distributions
         run: ls -l dist
