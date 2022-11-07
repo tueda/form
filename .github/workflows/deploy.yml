@@ -67,6 +67,9 @@ jobs:
           - {os: macos-10.15, shell: bash, bin: tform}
           # NOTE: Windows native executables have too many problems.
           # We include them in artifacts but not in releases.
+          # Unfortunately, "allow-failure" is not available on GitHub Actions
+          # (https://github.com/actions/toolkit/issues/399).
+          # We have to use "continue-on-error", instead.
           - {os: windows-2019, shell: msys2, bin: form}
           - {os: windows-2019, shell: msys2, bin: tform}
     steps:
@@ -116,6 +119,8 @@ jobs:
           ./configure $opts
 
       - name: Build
+        id: build
+        continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
               export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
@@ -124,10 +129,14 @@ jobs:
 
       # NOTE: Currently, many tests on Windows miserably fail.
       - name: Test
-        run: make check
+        if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
         continue-on-error: ${{ runner.os == 'Windows' }}
+        run: make check
 
       - name: Print executable information
+        id: check-portability
+        if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
+        continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           binname=${{ matrix.bin }}
           if [ "$RUNNER_OS" == "Windows" ]; then
@@ -153,6 +162,7 @@ jobs:
           fi
 
       - name: Upload binary as artifact
+        if: steps.check-portability.outcome == 'success' && steps.check-portability.conclusion == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.bin }}-${{ matrix.os }}
@@ -323,6 +333,7 @@ jobs:
             mkdir $pkgname
             mv artifacts/*-windows-*/*form.exe $pkgname
             chmod +x $pkgname/*form.exe
+            # Zip may be more popular than tar.gz for Windows(?)
             # tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
             zip -9 dist/$pkgname.zip $pkgname/*
             rm -rf $pkgname
