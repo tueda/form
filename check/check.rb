@@ -220,12 +220,20 @@ module FormTest
     RUBY_PLATFORM =~ /linux/i
   end
 
+  def windows?
+    RUBY_PLATFORM =~ /cygwin|mingw|mswin|msys/i
+  end
+
   def travis?
     ENV["TRAVIS"] == "true"
   end
 
   def github?
     ENV["GITHUB_ACTIONS"] == "true"
+  end
+
+  def gitlab?
+    ENV["GITLAB_CI"] == "true"
   end
 
   # Override methods in Test::Unit::TestCase.
@@ -444,8 +452,16 @@ module FormTest
     # big memory chunks.
     stdout = stdout.reject { |l| l =~ /Warning: set address range perms/ }
 
-    @stdout += stdout.join
-    @stderr += stderr.join
+    if windows?
+      # The test suite has been developed on Linux so they are written with LF.
+      # But the FORM output may be with CRLF on Windows (dependeing on the API
+      # specified in the configuration). We convert CRLF into LF here.
+      @stdout += stdout.join.gsub("\r\n", "\n")
+      @stderr += stderr.join.gsub("\r\n", "\n")
+    else
+      @stdout += stdout.join
+      @stderr += stderr.join
+    end
   end
 
   # Default assertions.
