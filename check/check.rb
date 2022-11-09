@@ -315,13 +315,13 @@ module FormTest
     #       minitest and MiniTest::Assertion is not a subclass of
     #       StandardError.
     rescue Exception => e # rubocop:disable Lint/RescueException
-      $stderr.puts
-      $stderr.puts("=" * 79)
-      $stderr.puts("#{info.desc} FAILED")
-      $stderr.puts("=" * 79)
-      $stderr.puts(@stdout)
-      $stderr.puts("=" * 79)
-      $stderr.puts
+      $stdout.puts
+      $stdout.puts("=" * 79)
+      $stdout.puts("#{info.desc} FAILED")
+      $stdout.puts("=" * 79)
+      $stdout.puts(@stdout)
+      $stdout.puts("=" * 79)
+      $stdout.puts
       if info.status.nil?
         if (defined?(MiniTest::Assertion) && e.is_a?(MiniTest::Assertion)) ||
            (defined?(Test::Unit::AssertionFailedError) && e.is_a?(Test::Unit::AssertionFailedError))
@@ -333,13 +333,13 @@ module FormTest
       raise e
     else
       if FormTest.cfg.verbose
-        $stderr.puts
-        $stderr.puts("=" * 79)
-        $stderr.puts("#{info.desc} SUCCEEDED")
-        $stderr.puts("=" * 79)
-        $stderr.puts(@stdout)
-        $stderr.puts("=" * 79)
-        $stderr.puts
+        $stdout.puts
+        $stdout.puts("=" * 79)
+        $stdout.puts("#{info.desc} SUCCEEDED")
+        $stdout.puts("=" * 79)
+        $stdout.puts(@stdout)
+        $stdout.puts("=" * 79)
+        $stdout.puts
       end
       info.status = "OK"
     end
