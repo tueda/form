@@ -452,16 +452,17 @@ module FormTest
     # big memory chunks.
     stdout = stdout.reject { |l| l =~ /Warning: set address range perms/ }
 
+    stdout_str = stdout.join
+    stderr_str = stderr.join
     if windows?
       # The test suite has been developed on Linux so they are written with LF.
       # But the FORM output may be with CRLF on Windows (dependeing on the API
       # specified in the configuration). We convert CRLF into LF here.
-      @stdout += stdout.join.gsub("\r\n", "\n")
-      @stderr += stderr.join.gsub("\r\n", "\n")
-    else
-      @stdout += stdout.join
-      @stderr += stderr.join
+      stdout_str.gsub!("\r\n", "\n")
+      stderr_str.gsub!("\r\n", "\n")
     end
+    @stdout += stdout_str
+    @stderr += stderr_str
   end
 
   # Default assertions.
