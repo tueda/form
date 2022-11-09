@@ -555,11 +555,19 @@ module FormTest
   def file(filename)
     begin
       File.open(File.join(@tmpdir, filename), "r") do |f|
-        return f.read
+        result = f.read
+        if windows?
+          # The test suite has been developed on Linux so they are written with LF.
+          # But the FORM output may be with CRLF on Windows (dependeing on the API
+          # specified in the configuration). We convert CRLF into LF here.
+          result.gsub!("\r\n", "\n")
+        end
+        return result
       end
     rescue StandardError
       $stderr.puts("warning: failed to read '#{filename}'")
     end
+
     ""
   end
 
