@@ -1594,6 +1594,16 @@ EOF
     Print;
     .end
     assert succeeded?
+
+    debug(stdout)
+    debug(exact_pattern("
+      F =
+     & 1/SEVEN*x + HALF*x**2 + x**3 + FIVE/4*x**4 + x**5 + HALF*x**6 + 
+>>>>>>>>Could not translate coefficient with dictionary numbers<<<<<<<<<
+<<<
+     & 1/SEVEN*x**7 + 1.D0/56.D0*x**8
+"))
+
     assert stdout =~ exact_pattern("
       F =
      & 1/SEVEN*x + HALF*x**2 + x**3 + FIVE/4*x**4 + x**5 + HALF*x**6 + 

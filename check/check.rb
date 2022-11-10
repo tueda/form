@@ -684,6 +684,13 @@ module FormTest
     san_str = Regexp.quote(str.gsub(/\s+/, ""))
     Regexp.new("^#{san_str}$")
   end
+
+  # For debugging
+  def debug(expr)
+    $stdout.puts("===== debug begin =====")
+    $stdout.puts(expr.to_s.gsub("\r\n", "<CRLF>").gsub("\n", "<LF>"))
+    $stdout.puts("===== debug end =======")
+  end
 end
 
 # Information of a test case.
