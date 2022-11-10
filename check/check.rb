@@ -455,6 +455,9 @@ module FormTest
     stdout_str = stdout.join
     stderr_str = stderr.join
     if windows?
+      # Workaround for https://github.com/vermaseren/form/issues/418
+      stdout_str.gsub!("\r\r\n", "\r\n")
+      stderr_str.gsub!("\r\r\n", "\r\n")
       # The test suite has been developed on Linux so they are written with LF.
       # But the FORM output may be with CRLF on Windows (dependeing on the API
       # specified in the configuration). We convert CRLF into LF here.
@@ -558,6 +561,8 @@ module FormTest
       File.open(File.join(@tmpdir, filename), "r") do |f|
         result = f.read
         if windows?
+          # Workaround for https://github.com/vermaseren/form/issues/418
+          result.gsub!("\r\r\n", "\r\n")
           # The test suite has been developed on Linux so they are written with LF.
           # But the FORM output may be with CRLF on Windows (dependeing on the API
           # specified in the configuration). We convert CRLF into LF here.
