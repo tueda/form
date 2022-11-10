@@ -24,12 +24,14 @@ TESTS_ENVIRONMENT = \
 	TEST_BINS="$(TEST_BINS)" \
 	$(SHELL)
 endif
-TESTS += benchmark-fu.sh
+TESTS += benchmark-fu.sh check-checkpoint.sh
 
 EXTRA_DIST = \
-	check-help.sh \
 	benchmark-fu.sh \
+	check-checkpoint.sh \
+	check-help.sh \
 	check.rb \
+	checkpoint/checkpoint.frm \
 	examples.frm \
 	features.frm \
 	fixes.frm \
