@@ -458,8 +458,13 @@ module FormTest
       # The test suite has been developed on Linux so they are written with LF.
       # But the FORM output may be with CRLF on Windows (dependeing on the API
       # specified in the configuration). We convert CRLF into LF here.
+      debug(1111111111)
+      debug(stdout_str)
+      debug(2222222222)
       stdout_str.gsub!("\r\n", "\n")
       stderr_str.gsub!("\r\n", "\n")
+      debug(stdout_str)
+      debug(3333333333)
     end
     @stdout += stdout_str
     @stderr += stderr_str
