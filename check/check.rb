@@ -693,7 +693,7 @@ module FormTest
   # For debugging
   def debug(expr)
     $stdout.puts("===== debug begin =====")
-    $stdout.puts(expr.to_s.gsub("\r\n", "<CRLF>").gsub("\n", "<LF>"))
+    $stdout.puts(expr.to_s.gsub("\r\n", "<CRLF>").gsub("\n", "<LF>").gsub("\r", "<CR>"))
     $stdout.puts("===== debug end =======")
   end
 end
