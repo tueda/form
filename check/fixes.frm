@@ -1472,8 +1472,6 @@ Drop;
 L F1 = termsin_(F);
 P;
 .end
-# Too slow on Travis CI. ParFORM didn't have this bug.
-#pend_if travis? && (!linux? || valgrind? || mpi?)
 assert succeeded?
 assert result("F1") =~ expr("2027025")
 *--#] Issue154 : 
