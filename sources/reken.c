@@ -3749,6 +3749,7 @@ WORD Moebius(PHEAD WORD nn)
 		mu = -mu;
 		if ( n == 1 ) goto putvalue;
 	}
+#if ( BITSINWORD == 32 )
 	for ( i = 0; i < AR.numinprimelist; i++ ) {
 		x = AR.PrimeList[i];
 		if ( n % x == 0 ) {
@@ -3760,6 +3761,7 @@ WORD Moebius(PHEAD WORD nn)
 		}
 		if ( n < x*x ) break; /* notice that x*x always fits inside a WORD */
 	}
+#endif
 	mu = -mu;
 putvalue:
 	AR.moebiustable[nn] = mu;
