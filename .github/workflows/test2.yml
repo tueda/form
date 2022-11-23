@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install automake g++
+          apt-get -y install automake build-essential git libgmp-dev ruby zlib1g-dev
 
       - name: Configure
         run: |
