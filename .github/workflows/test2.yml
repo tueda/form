@@ -9,14 +9,15 @@ jobs:
   container-test-job:
     runs-on: ubuntu-latest
     container:
-      image: debian:11.5
+      image: i386/debian:11.5
+    strategy:
+      fail-fast: false
+      matrix:
+        bin: [form, tform]
     steps:
       - run: uname -a
 
       - run: cat /etc/os-release
-
-      - run: |
-          linux32 --32bit i386 sudo rpm --rebuilddb
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,9 +43,4 @@ jobs:
         run: make -C sources -j 4 ${{ matrix.bin }}
 
       - name: Test
-        run: |
-          testset=''
-          if [ "${{ matrix.test }}" != "default" ]; then
-            testset='-C ${{ matrix.test }}'
-          fi
-          ./check/check.rb ./sources/${{ matrix.bin }} --stat $testset --timeout ${{ matrix.timeout }}
+        run: make check
