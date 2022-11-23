@@ -6,3 +6,42 @@ on:
   workflow_dispatch:
 
 jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:11.5
+    steps:
+      - run: uname -a
+
+      - run: lsb_release -a
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # ensures a reachable tag
+
+      - name: Configure
+        run: |
+          opts='--disable-dependency-tracking'
+          case ${{ matrix.bin }} in
+            form|vorm)       opts="$opts --enable-scalar --disable-threaded --disable-parform";;
+            tform|tvorm)     opts="$opts --disable-scalar --enable-threaded --disable-parform";;
+            parform|parvorm) opts="$opts --disable-scalar --disable-threaded --enable-parform";;
+          esac
+          case ${{ matrix.bin }} in
+            vorm|tvorm|parvorm) opts="$opts --enable-debug";;
+          esac
+          opts="$opts --with-gmp --with-zlib"
+          autoreconf -i
+          ./configure $opts
+
+      - name: Build
+        run: make -C sources -j 4 ${{ matrix.bin }}
+
+      - name: Test
+        run: |
+          testset=''
+          if [ "${{ matrix.test }}" != "default" ]; then
+            testset='-C ${{ matrix.test }}'
+          fi
+          ./check/check.rb ./sources/${{ matrix.bin }} --stat $testset --timeout ${{ matrix.timeout }}
