@@ -16,7 +16,7 @@ jobs:
       - run: cat /etc/os-release
 
       - run: |
-        linux32 --32bit i386 sudo rpm --rebuilddb
+          linux32 --32bit i386 sudo rpm --rebuilddb
 
       - name: Checkout repository
         uses: actions/checkout@v3
