@@ -13,7 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bin: [form, tform]
+        bin: [form]
+        # bin: [form, tform]
     steps:
       # We use v1.
       # See https://github.com/actions/checkout/issues/334
@@ -22,8 +23,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get -y install automake
+          apt-get update
+          apt-get -y install automake
 
       - name: Configure
         run: |
