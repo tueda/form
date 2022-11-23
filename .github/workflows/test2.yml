@@ -15,14 +15,15 @@ jobs:
       matrix:
         bin: [form, tform]
     steps:
-      - run: uname -a
-
-      - run: cat /etc/os-release
-
       # We use v1.
       # See https://github.com/actions/checkout/issues/334
       - name: Checkout repository
         uses: actions/checkout@v1
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install automake
 
       - name: Configure
         run: |
