@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install automake
+          apt-get -y install automake g++
 
       - name: Configure
         run: |
