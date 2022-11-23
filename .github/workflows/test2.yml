@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  container-test-job:
+  # Tests with a 32-bit container.
+  check-i386:
     runs-on: ubuntu-latest
     container:
       image: i386/debian:11.5
@@ -16,7 +17,7 @@ jobs:
         bin: [form]
         # bin: [form, tform]
     steps:
-      # We use v1.
+      # We have to use v1.
       # See https://github.com/actions/checkout/issues/334
       - name: Checkout repository
         uses: actions/checkout@v1

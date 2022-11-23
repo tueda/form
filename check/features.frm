@@ -110,55 +110,6 @@ assert result("F4")  =~ expr("
       x1^6*x3^5
 ")
 *--#] divmod_4 :
-*--#[ moebius_1 :
-S i,x;
-L F = sum_(i,1,200,moebius_(i)*x^i);
-P;
-.end:result;
-assert succeeded?
-# Sum[MoebiusMu[i] x^i, {i, 1, 200}] // InputForm
-assert result("F") =~ expr("
- x - x^2 - x^3 - x^5 + x^6 - x^7 + x^10 - x^11 - x^13 + x^14 + x^15 - x^17 -
- x^19 + x^21 + x^22 - x^23 + x^26 - x^29 - x^30 - x^31 + x^33 + x^34 + x^35 -
- x^37 + x^38 + x^39 - x^41 - x^42 - x^43 + x^46 - x^47 + x^51 - x^53 + x^55 +
- x^57 + x^58 - x^59 - x^61 + x^62 + x^65 - x^66 - x^67 + x^69 - x^70 - x^71 -
- x^73 + x^74 + x^77 - x^78 - x^79 + x^82 - x^83 + x^85 + x^86 + x^87 - x^89 +
- x^91 + x^93 + x^94 + x^95 - x^97 - x^101 - x^102 - x^103 - x^105 + x^106 -
- x^107 - x^109 - x^110 + x^111 - x^113 - x^114 + x^115 + x^118 + x^119 +
- x^122 + x^123 - x^127 + x^129 - x^130 - x^131 + x^133 + x^134 - x^137 -
- x^138 - x^139 + x^141 + x^142 + x^143 + x^145 + x^146 - x^149 - x^151 -
- x^154 + x^155 - x^157 + x^158 + x^159 + x^161 - x^163 - x^165 + x^166 -
- x^167 - x^170 - x^173 - x^174 + x^177 + x^178 - x^179 - x^181 - x^182 +
- x^183 + x^185 - x^186 + x^187 - x^190 - x^191 - x^193 + x^194 - x^195 -
- x^197 - x^199
-")
-*--#] moebius_1 :
-*--#[ moebius_2 :
-S x,x1,x2;
-CF f1,f2;
-L F = 1;
-multiply <f1(1)*x1^1>+...+<f1(10)*x1^10>;
-multiply <f2(1)*x2^1>+...+<f2(10)*x2^10>;
-id x1 = x;
-id x2 = x^20;
-.sort
-S n;
-id f1(n?) = moebius_(10000+n);
-.sort
-id f2(n?) = moebius_(20000+n);
-P;
-.end:result;
-assert succeeded?
-# Sum[MoebiusMu[10000 + i] MoebiusMu[20000 + j] x^(i + 20 * j), {i, 1, 10}, {j, 1, 10}] // InputForm
-assert result("F") =~ expr("
--x^21 + x^22 - x^23 - x^25 - x^26 + x^27 + x^29 + x^30 - x^41 + x^42 - x^43 -
- x^45 - x^46 + x^47 + x^49 + x^50 + x^61 - x^62 + x^63 + x^65 + x^66 - x^67 -
- x^69 - x^70 + x^101 - x^102 + x^103 + x^105 + x^106 - x^107 - x^109 - x^110 -
- x^121 + x^122 - x^123 - x^125 - x^126 + x^127 + x^129 + x^130 - x^181 +
- x^182 - x^183 - x^185 - x^186 + x^187 + x^189 + x^190 - x^201 + x^202 -
- x^203 - x^205 - x^206 + x^207 + x^209 + x^210
-")
-*--#] moebius_2 :
 *--#[ partitions_ :
 * Test partitions function
 #-
