@@ -30,19 +30,15 @@ jobs:
         run: |
           opts='--disable-dependency-tracking'
           case ${{ matrix.bin }} in
-            form|vorm)       opts="$opts --enable-scalar --disable-threaded --disable-parform";;
-            tform|tvorm)     opts="$opts --disable-scalar --enable-threaded --disable-parform";;
-            parform|parvorm) opts="$opts --disable-scalar --disable-threaded --enable-parform";;
+            form)  opts="$opts --enable-scalar --disable-threaded --disable-parform";;
+            tform) opts="$opts --disable-scalar --enable-threaded --disable-parform";;
           esac
-          case ${{ matrix.bin }} in
-            vorm|tvorm|parvorm) opts="$opts --enable-debug";;
-          esac
-          opts="$opts --with-gmp --with-zlib"
+          opts="$opts --disable-debug --with-gmp --with-zlib"
           autoreconf -i
           ./configure $opts
 
       - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+        run: make -j 4
 
       - name: Test
         run: make check
