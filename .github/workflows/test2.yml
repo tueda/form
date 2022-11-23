@@ -14,8 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bin: [form]
-        # bin: [form, tform]
+        bin: [form, tform]
     steps:
       # We have to use v1.
       # See https://github.com/actions/checkout/issues/334
