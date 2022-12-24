@@ -127,6 +127,8 @@ jobs:
           fi
           make -j 4
 
+      - run: free
+
       # NOTE: Currently, many tests on Windows miserably fail.
       - name: Test
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'

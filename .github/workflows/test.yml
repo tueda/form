@@ -152,6 +152,8 @@ jobs:
       - name: Build
         run: make -C sources -j 4 ${{ matrix.bin }}
 
+      - run: free
+
       - name: Test
         run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }} --retries 5
 
