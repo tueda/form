@@ -33,6 +33,10 @@ if [ -z "${LATEX2HTML+x}" ] || [ -z "$LATEX2HTML" ]; then
   LATEX2HTML=latex2html
 fi
 
+if [ -z "${PYTHON+x}" ] || [ -z "$PYTHON" ]; then
+  PYTHON=python3
+fi
+
 # https://stackoverflow.com/a/43919044
 a="/$0"; a="${a%/*}"; a="${a:-.}"; a="${a##/}/"; BINDIR=$(cd "$a"; pwd)
 
@@ -44,6 +48,12 @@ fix_html() {
   # HREF="main.html#SECTION..." -> HREF="#SECTION..."
   sed "s/$2.html#/#/g" "$1" >"$1.tmp"
   mv "$1.tmp" "$1"
+  if command -v "$PYTHON" >/dev/null; then
+    "$PYTHON" "$BINDIR/_run_latex2html-permalink-sed.py" "$1" >"$1.tmp.sed"
+    sed -f "$1.tmp.sed" "$1" >"$1.tmp"
+    mv "$1.tmp" "$1"
+    rm "$1.tmp.sed"
+  fi
 }
 
 fix_html "$MAIN_DIR/index.html" "$MAIN"

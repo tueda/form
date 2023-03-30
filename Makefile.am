@@ -1,6 +1,10 @@
 SUBDIRS = doc sources check
 
-EXTRA_DIST = README.md scripts/.latex2html-init scripts/run-latex2html.sh
+EXTRA_DIST = \
+	README.md \
+	scripts/_run_latex2html-permalink-sed.py \
+	scripts/.latex2html-init \
+	scripts/run-latex2html.sh
 
 dist-hook:
 	$(DISTHOOK_VERSION)
