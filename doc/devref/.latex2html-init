@@ -1,15 +1,13 @@
 $DVIPSOPT = ' -E';
-$TITLE = `grep '\\title{' devref.tex`;
-$TITLE =~ s/^\s*\\title\s*{//;
-$TITLE =~ s/}\s*$//;
-$TITLE =~ s/\\\s*(Huge|huge|Large|large|\\)//g;
-$TITLE =~ s/^\s+//;
-$TITLE =~ s/\s+$//;
-$TITLE =~ s/\s+/ /g;
 $MAX_SPLIT_DEPTH = 0;
 $NO_NAVIGATION = 1;
 $NO_FOOTNODE = 1;
-$ADDRESS = '';
-$INFO = '';
+$ADDRESS = '<small>'
+    . 'This document was generated using the '
+    . "<a href=\"$TEX2HTMLADDRESS\">LaTeX2HTML</a>"
+    . " translator Version $TEX2HTMLVERSION."
+    . '</small>';
+$INFO = 0;
+$SHOW_SECTION_NUMBERS = 1;
 
 1;
