@@ -841,11 +841,6 @@ if test "$my_test_COMPILEFLAGS" != set; then
 						COMPILEFLAGS="$COMPILEFLAGS -march=opteron"
 					fi
 				fi])
-#
-#			Added this one (JV 5-apr-2023)
-#
-			AX_CHECK_COMPILE_FLAG([-m64],
-				[COMPILEFLAGS="$COMPILEFLAGS -m64"])
 		fi
 		# Profiling option.
 		if test "x$enable_profile" = xgprof; then
