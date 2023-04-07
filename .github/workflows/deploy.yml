@@ -24,7 +24,7 @@ jobs:
       - name: Build tarball distribution
         run: |
           autoreconf -i
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-mpfr --without-zlib
           make distdir=$distname dist-gzip
 
       - name: Print tarball information
@@ -100,7 +100,7 @@ jobs:
 
       - name: Configure
         run: |
-          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib'
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-mpfr --with-zlib'
           case ${{ matrix.bin }} in
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;
@@ -211,7 +211,7 @@ jobs:
       - name: Build PDF file
         run: |
           autoreconf -i
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-mpfr --without-zlib
           make pdf
           cp doc/manual/manual.pdf $distname.pdf
 
@@ -264,7 +264,7 @@ jobs:
       - name: Build HTML files
         run: |
           autoreconf -i
-          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-zlib
+          ./configure --disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --without-gmp --without-mpfr --without-zlib
           make -C doc/manual latex2html
           (
             cd doc/manual/manual
