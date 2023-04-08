@@ -120,7 +120,7 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             opts="$opts --with-api=windows"
           fi
-          ./configure $opts
+          ./configure $opts || { cat config.log; false; }
 
       - name: Build
         id: build
