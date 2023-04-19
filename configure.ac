@@ -815,7 +815,10 @@ DEBUGTOOL_LIBS=
 # AX_HANDLE_EXTRA_WARNING(COMPILEFLAGS)
 # -------------------------------------
 AC_DEFUN([AX_HANDLE_EXTRA_WARNING],
-[if test "x$enable_extra_warning" != xyes; then
+[if test "x$enable_extra_warning" = xyes; then
+	# Why not?
+	$1="$$1 -pedantic -Wpadded"
+else
 	# Too many misleading indentation in the FORM source code.
 	AX_CHECK_COMPILE_FLAG([-Wno-misleading-indentation],
 		[$1="$$1 -Wno-misleading-indentation"],
@@ -833,7 +836,6 @@ fi[]dnl
 my_test_COMPILEFLAGS=${COMPILEFLAGS+set}
 if test "$my_test_COMPILEFLAGS" != set; then
 	if test "x$vendor" = xgnu; then
-		# We don't use -pedantic option because of horrible warnings.
 		COMPILEFLAGS="-Wall -Wextra"
 		AX_HANDLE_EXTRA_WARNING([COMPILEFLAGS])
 		# Enable optimizations.
@@ -898,15 +900,6 @@ my_test_DEBUGCOMPILEFLAGS=${DEBUGCOMPILEFLAGS+set}
 if test "$my_test_DEBUGCOMPILEFLAGS" != set && test "x$enable_debug" = xyes; then
 	if test "x$vendor" = xgnu; then
 		DEBUGCOMPILEFLAGS='-Wall -Wextra'
-		if test "x$enable_sanitize" = xno; then
-			# UBSan puts many paddings (at least in gcc 5.3).
-			#
-			# Unfortunately gmp.h and mpfr.h give padding warnings.
-			# We leave those out. (JV 5-apr-2023)
-			#
-			# DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -Wpadded"
-			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS"
-		fi
 		AX_HANDLE_EXTRA_WARNING([DEBUGCOMPILEFLAGS])
 		# Check for -Og. If it doesn't work then use -O0.
 		AX_CHECK_COMPILE_FLAG([-Og],
