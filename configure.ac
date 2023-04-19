@@ -365,6 +365,11 @@ AC_ARG_ENABLE([parform],
 		[build parallel version using MPI (parform) @<:@default=no@:>@])],
 	[AS_IF([test "x$enableval" != xno && test "x$enableval" != xcheck], [enable_parform=yes])],
 	[enable_parform=no])
+AC_ARG_ENABLE([release],
+	[AS_HELP_STRING([--enable-release],
+		[build release versions (form/tform/parform) @<:@default=yes@:>@])],
+	[AS_IF([test "x$enableval" != xno], [enable_release=yes])],
+	[enable_release=yes])
 AC_ARG_ENABLE([debug],
 	[AS_HELP_STRING([--enable-debug],
 		[build debugging versions (vorm/tvorm/parvorm) @<:@default=no@:>@])],
@@ -376,8 +381,15 @@ AC_ARG_ENABLE([float],
 	[AS_IF([test "x$enableval" != xno && test "x$enableval" != xcheck], [enable_float=yes])],
 	[enable_float=check])
 
+# If --disable-release && --disable-debug then disable all builds
+AS_IF([test "x$enable_release" = xno && test "x$enable_debug" = xno],
+	[enable_scalar=no
+	enable_threaded=no
+	enable_parform=no])
+
 # Check for scalar version
 build_form=$enable_scalar
+AS_IF([test "x$enable_release" = xno], [build_form=no])
 AS_IF([test "x$enable_scalar" = xyes && test "x$enable_debug" = xyes], [build_vorm=yes], [build_vorm=no])
 AM_CONDITIONAL([BUILD_FORM], [test "x$build_form" = xyes])
 AM_CONDITIONAL([BUILD_VORM], [test "x$build_vorm" = xyes])
@@ -515,6 +527,7 @@ AC_SUBST([PTHREAD_CFLAGS])
 AC_SUBST([PTHREAD_CPPFLAGS])
 AC_SUBST([PTHREAD_LIBS])
 build_tform=$enable_threaded
+AS_IF([test "x$enable_release" = xno], [build_tform=no])
 AS_IF([test "x$enable_threaded" = xyes && test "x$enable_debug" = xyes], [build_tvorm=yes], [build_tvorm=no])
 AM_CONDITIONAL([BUILD_TFORM], [test "x$build_tform" = xyes])
 AM_CONDITIONAL([BUILD_TVORM], [test "x$build_tvorm" = xyes])
@@ -646,6 +659,7 @@ AS_IF([test "x$enable_parform" != xno],
 			[AC_MSG_NOTICE([building parvorm has been disabled])])
 		enable_parform=no])])
 build_parform=$enable_parform
+AS_IF([test "x$enable_release" = xno], [build_parform=no])
 AS_IF([test "x$enable_parform" = xyes && test "x$enable_debug" = xyes], [build_parvorm=yes], [build_parvorm=no])
 AM_CONDITIONAL([BUILD_PARFORM], [test "x$build_parform" = xyes])
 AM_CONDITIONAL([BUILD_PARVORM], [test "x$build_parvorm" = xyes])
