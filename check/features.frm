@@ -528,6 +528,46 @@ assert result("F", 3) =~ expr("
      & x1**2*x2 + x1**3
 ")
 *--#] Format_noreset_linelen :
+*--#[ Switch :
+S x,a1,...,a5;
+CF f;
+L F = <f(-2)>+...+<f(7)>;
+id  f(x?$x) = f(x);
+switch $x;
+  case -1;
+    multiply a1;
+    break;
+  case 3;
+    multiply a2;
+    break;
+  case 4;
+  case 5;
+    multiply a3;
+*   fall through
+  case 6;
+    multiply a4;
+    break;
+  default;
+    multiply a5;
+    break;
+endswitch;
+ModuleOption local $x;
+P +s;
+.end
+assert succeeded?
+assert result("F") =~ expr("
+       + f(-2)*a5
+       + f(-1)*a1
+       + f(0)*a5
+       + f(1)*a5
+       + f(2)*a5
+       + f(3)*a2
+       + f(4)*a3*a4
+       + f(5)*a3*a4
+       + f(6)*a4
+       + f(7)*a5
+")
+*--#] Switch : 
 *--#[ Issue49 :
 * Add mul_ function for polynomial multiplications
 Symbols x,y,z;
