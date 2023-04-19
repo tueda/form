@@ -1,4 +1,4 @@
-.TH FORM 1 "2018-10-04"
+.TH FORM 1 2023-04-11 "FORM 4.3.1"
 .SH NAME
 FORM \- Symbolic manipulation system
 .SH SYNOPSIS
@@ -21,9 +21,6 @@ field.
 .PP
 \fBparform\fR is the multiprocessing version using MPI.
 .SH OPTIONS
-.TP
-.BR "-"
-Read the input from stdin instead of from a file.
 .TP
 .BR "-c"
 Error checking only. Notice that this will not work properly if there are conditionals in the
@@ -106,6 +103,9 @@ FORM ignore this parameter.
 .BR "-W"
 Turn on the wall-clock time mode in the statistics.
 .TP
+.BR "-y"
+Run only the preprocessor and dump its output.
+.TP
 .BR "-z"
 The number following is a timelimit for the program in second.
 .TP
@@ -113,9 +113,6 @@ The number following is a timelimit for the program in second.
 Removes the \fB.str\fR file on crash, whatever its contents. Under
 ordinary circumstances at a crash a \fB.str\fR file will not be removed if
 it has a nonzero content.
-.TP
-.BR "-y"
-Run only the preprocessor and dump its output.
 .SH ENVIRONMENT
 .TP
 \fBFORMPATH\fR
