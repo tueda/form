@@ -11,12 +11,12 @@
  *
  *	Special routines for the parallel sorting are in the file threads.c
  *	Also the sorting of terms in polynomials is special but most of that is
- *	controlled by changing the address of the compare routine. Other routines
+ *	controled by changing the address of the compare routine. Other routines
  *	relevant for adding rational polynomials are in the file polynito.c
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -1968,7 +1968,7 @@ WORD FlushOut(POSITION *position, FILEHANDLE *fi, int compr)
  *		Adds the coefficients of the terms *ps1 and *ps2.
  *		The problem comes when there is not enough space for a new
  *		longer coefficient. First a local solution is tried.
- *		If this is not successful we need to move terms around.
+ *		If this is not succesfull we need to move terms around.
  *		The possibility of a garbage collection should not be
  *		ignored, as avoiding this costs very much extra space which
  *		is nearly wasted otherwise.
@@ -2102,8 +2102,8 @@ RegEnd:
  *		At first we allow only univariate polynomials in the PolyFun.
  *		This restriction will be lifted a.s.a.p.
  *
- *		@param ps1 A pointer to the position of the first term
- *		@param ps2 A pointer to the position of the second term
+ *		@param ps1 A pointer to the postion of the first term
+ *		@param ps2 A pointer to the postion of the second term
  *		@return If zero the terms cancel. Otherwise the new term is in *ps1.
  */
 
@@ -2932,7 +2932,7 @@ NoPoly:
 				There is a little problem here with fast arguments
 				We don't want to sacrifice speed, but we like to
 				keep a rational ordering. This last one suffers in
-				the solution that has been chosen here.
+				the solution that has been choosen here.
 */
 				if ( AC.properorderflag ) {
 					WORD oldpolyflag;

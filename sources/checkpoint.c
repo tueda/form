@@ -53,7 +53,7 @@
   	#] Explanations : 
   	#[ License :
  *
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -2343,9 +2343,9 @@ int DoRecovery(int *moduletype)
 	R_SET(AR.SortType, WORD);
 	R_SET(AR.ShortSortCount, WORD);
 
-	/* this is usually done in Process(), but sometimes FORM does not
+	/* this is usually done in Process(), but sometimes FORM doesn't
 	   end up executing Process() before it uses the AR.CompressPointer,
-	   so we need to explicitly set it here. */
+	   so we need to explicitely set it here. */
 	AR.CompressPointer = AR.CompressBuffer;
 
 #ifdef WITHPTHREADS

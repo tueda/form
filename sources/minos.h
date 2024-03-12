@@ -16,7 +16,7 @@
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -51,8 +51,7 @@
 	The following typedef has been moved to form3.h where all the sizes
 	are defined for the various memory models.
 	We want MLONG to have a more or less fixed size.
-	In form3.h we try to fix it at 8 bytes.
-	This should make files exchangeable
+	In form3.h we try to fix it at 8 bytes. This should make files exchangable
 	between various 32-bits and 64-bits systems. At 4 bytes it might have
 	problems with files of more than 2 Gbytes.
 

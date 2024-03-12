@@ -6,7 +6,7 @@
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -445,7 +445,7 @@ HaveTodo:
 						NumberFree(LCMb,"execarg"); NumberFree(LCMc,"execarg");
 						j = 2*k+1;
 /*
-						Now we have to correct the overall factor
+						Now we have to correct the overal factor
 
 						We have a little problem here.
 						r3 is in GCDbuffer and we returned that.
@@ -505,7 +505,7 @@ HaveTodo:
 						if ( j < 0 ) j = -j;
 						if ( type == TYPENORM && scale && ( factor == 0 || *factor ) ) {
 /*
-							Now we correct the overall factor
+							Now we correct the overal factor
 */
 ScaledVariety:;
 							size = term[*term-1];
@@ -530,7 +530,7 @@ ScaledVariety:;
 					}
 /*
                   	We generate a statement for adapting all terms in the
-					argument successively
+					argument sucessively
 */
 					r4 = AddRHS(AT.ebufnum,1);
 					while ( (r4+j+12) > CC->Top ) r4 = DoubleCbuffer(AT.ebufnum,r4,3);

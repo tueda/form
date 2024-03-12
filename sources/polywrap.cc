@@ -7,7 +7,7 @@
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -705,7 +705,7 @@ WORD *poly_ratfun_add (PHEAD WORD *t1, WORD *t2) {
  *
  *   Description
  *   ===========
- *   This method searches a term for multiple polyratfuns and
+ *   This method seaches a term for multiple polyratfuns and
  *   multiplies their contents. The result is properly
  *   normalized. Normalization also works for terms with a single
  *   polyratfun.

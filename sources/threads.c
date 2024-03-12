@@ -21,7 +21,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -52,7 +52,7 @@
 /*
   	#[ Variables :
 
-	The sortbot additions are from 17-may-2007 and after. They constitute
+	The sortbot additions are from 17-may-2007 and after. They consitute
 	an attempt to make the final merge sorting faster for the master.
 	This way the master has only one compare per term.
 	It does add some complexity, but the final merge routine (MasterMerge)
@@ -1032,7 +1032,7 @@ int UpdateOneThread(int identity)
  *	because this is part of the 'overhead'.
  *
  *	@param from     the source thread which has all the variables already
- *	@param identity the TFORM defined integer thread identifier of the thread that needs the copy
+ *	@param identity the TFORM defined integer thread identitier of the thread that needs the copy
  *	@param thr      the bucket that contains the terms to be processed by 'identity'
  *	@param par		if 1 copies the already active pieces in the (de)compress buffer
  *	@return Standard return convention (OK -> 0)
@@ -2457,7 +2457,7 @@ int SendOneBucket(int type)
 /**
  *	We divide the expressions marked by partodo over the workers.
  *	The workers are responsible for writing their results into the buffers
- *	of the master (output). This is to be controlled by locks.
+ *	of the master (output). This is to be controled by locks.
  *	The order of the expressions may get changed this way.
  *
  *	The InParallel statement allows the execution of complete expressions
@@ -2530,7 +2530,7 @@ int InParallelProcessor(VOID)
  *	statement. These are usually the large expressions. It will divide
  *	the terms of these expressions over the workers, using a bucket system
  *	to reduce overhead (buckets are collections of a number of terms that
- *	are transferred together).
+ *	are transfered together).
  *	At the end of the expression when all terms have been assigned and 
  *	workers become available again, there is a load balancing system to
  *	take terms from the buckets of workers that still have to do many terms
@@ -3271,7 +3271,7 @@ restart:;
 */
 		if ( thr->totnum-thr->usenum < numtogo ) goto restart;
 /*
-		If the thread is in the term loading phase
+		If the thread is in the term loading phace
 		(thr->busy == BUCKETPREPARINGTERM) we better stay away from it.
 		We wait now for the thread to be busy, and don't allow it
 		now to drop out of this state till we are done here.
@@ -3577,7 +3577,7 @@ SortBotOut(PHEAD WORD *term)
  *	but now also each worker part is divided into blocks. This allows the
  *	worker to fill blocks while the master is already working on blocks that
  *	were filled before. The blocks are arranged in a circular fashion.
- *	The whole is controlled by locks which seems faster than setting it up
+ *	The whole is controled by locks which seems faster than setting it up
  *	with signals.
  *
  *	This routine is run by the master when we don't use the sortbots.

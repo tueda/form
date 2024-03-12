@@ -8,7 +8,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -1175,7 +1175,7 @@ WORD DoDistrib(PHEAD WORD *term, WORD level)
 		0:	Make all possible divisions:  2^nargs
 		1:	fun1 should get n arguments:  nargs! / ( n! (nargs-n)! )
 		2:	fun2 should get n arguments:  nargs! / ( n! (nargs-n)! )
-	The distinction between 1 and two is for noncommuting objects.
+	The distiction between 1 and two is for noncommuting objects.
 		3:  fun1 should get n arguments. Super symmetric option.
 		4:	fun2 idem
 	The super symmetric option involves:

@@ -2,12 +2,12 @@
  * 
  *  This file contains the main program.
  *  It also deals with the very early stages of the startup of FORM
- *	and the final stages when the program attempts some cleanup.
+ *	and the final stages when the program attemps some cleanup.
  *	Here is the routine that analyses the command tail.
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -714,7 +714,7 @@ VOID ReserveTempFiles(int par)
 		FG.fnamebase = t-FG.fname;
 	  }
 #else
-	  iii = snprintf((char*)t,FG.fnamesize-((char*)t-FG.fname),"%d",PF.me);
+	  iii = snprintf((char*)t,FG.fnamesize-(t-FG.fname),"%d",PF.me);
 	  t+= iii;
 	  s+= iii; /* in case defaulttmpfilename is too short */
 #endif
@@ -728,7 +728,7 @@ VOID ReserveTempFiles(int par)
 		they can make the same .str file. We prevent this with first trying
 		a file that contains the digits of the pid. If this file
 		has already been taken we fall back on the old scheme.
-		The whole is controlled with the -M (MultiRun) parameter in the
+		The whole is controled with the -M (MultiRun) parameter in the
 		command tail.
 */
 	if ( AM.MultiRun ) {
@@ -792,7 +792,7 @@ classic:;
 	*t = 0;
 
 /*
-	Now we should assign a name to the main sort file and the two stage 4 files.
+	Now we should asign a name to the main sort file and the two stage 4 files.
 */
 	AM.S0->file.name = (char *)Malloc1(sizeof(char)*(i+14),"name for temporary files");
 	s = (UBYTE *)AM.S0->file.name;

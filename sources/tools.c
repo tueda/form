@@ -10,7 +10,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -499,7 +499,7 @@ STREAM *OpenStream(UBYTE *name, int type, int prevarmode, int raiselow)
 			{/*Block*/
 				int n, *tmpn;
 				if( (n=getCurrentExternalChannel()) == 0 )
-					Error0("@No current external channel");
+					Error0("@No current extrenal channel");
 				stream = CreateStream((UBYTE *)"externalchannel");
 				stream->handle = CreateHandle();
 				tmpn = (int *)Malloc1(sizeof(int),"external channel handle");
@@ -848,7 +848,7 @@ VOID PositionStream(STREAM *stream, LONG position)
  		#[ ReverseStatements :
 
 		Reverses the order of the statements in the buffer.
-		We allocate an extra buffer and copy a bit to and from.
+		We allocate an extra buffer and copy a bit to and fro.
 		Note that there are some nasties that cannot be resolved.
 */
 
@@ -2773,7 +2773,7 @@ VOID CacheNumberFree2(PHEAD UWORD *NumberMem, char *text)
 
 	Returns the next object in a list.
 	If the list has been exhausted we double it (like a realloc)
-	If the list has not been initialized yet we start with 12 elements.
+	If the list has not been initialized yet we start with 10 elements.
 */
 
 VOID *FromList(LIST *L)
@@ -2827,7 +2827,7 @@ VOID *From0List(LIST *L)
 
 	Returns the next object in a list of variables.
 	If the list has been exhausted we double it (like a realloc)
-	If the list has not been initialized yet we start with 12 elements.
+	If the list has not been initialized yet we start with 10 elements.
 	We allow at most MAXVARIABLES elements!
 */
 

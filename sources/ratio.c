@@ -7,7 +7,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -139,7 +139,7 @@ We have to revise the code for the second case.
  		#] RatioFind : 
  		#[ RatioGen :
 
-		The algorithm:
+		The algoritm:
 		x1^-n1*x2^n2	==>  x2 --> x1 + x3
 		x1^n1*x2^-n2	==>  x1 --> x2 - x3
 		x1^-n1*x2^-n2	==>

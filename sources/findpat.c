@@ -3,7 +3,7 @@
  *  Pattern matching of symbols and dotproducts.
  *  There are various routines because of the options in the id-statements
  *	like once, only, multi and many.
- *	These are among the oldest routines in FORM and that can be noticed,
+ *	These are amoung the oldest routines in FORM and that can be noticed,
  *	because the interplay with the function matching is not complete.
  *	When we match functions and halfway we fail we can backtrack properly.
  *	With the symbols, the dotproducts and the vectors (in pattern.c) there
@@ -12,7 +12,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -51,7 +51,7 @@
 
 	This routine searches for an exact match. This means in particular:
 	1:	x^#	must match exactly.
-	2:	x^n? must have a single value for n that cannot be adapted.
+	2:	x^n? must have a single value for n that cannot be addapted.
 
 	When setp != 0 it points to a collection of sets
 	A match can occur only if no object will be left that belongs

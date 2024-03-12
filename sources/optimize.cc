@@ -5,7 +5,7 @@
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -57,12 +57,8 @@
 #include <iostream>
 
 #ifdef APPLE64
-#ifndef HAVE_UNORDERED_MAP
 #define HAVE_UNORDERED_MAP
-#endif
-#ifndef HAVE_UNORDERED_SET
 #define HAVE_UNORDERED_SET
-#endif
 #endif
 
 #ifdef HAVE_UNORDERED_MAP
@@ -874,7 +870,7 @@ vector<WORD> Horner_tree (const WORD *expr, const vector<WORD> &order) {
 	LONG sumsize = 0;
 
 	for (const WORD *t=expr; *t!=0; t+=*t) {
-		sumsize += *t;
+		sumsize += *t; t += *t;
 	}
 	if ( sorted + sumsize > AT.WorkTop ) {
 		MLOCK(ErrorMessageLock);
@@ -2974,7 +2970,7 @@ bool do_optimization (const optimization optim, vector<WORD> &instr, int newid) 
 		instr.push_back(varnumx);  // symbol id
 		instr.push_back(n); 	   // power
 		instr.push_back(1);
-		instr.push_back(1); 	   // coefficient 1
+		instr.push_back(1); 	   // coeffient 1
 		instr.push_back(3);
 		instr.push_back(0); 	   // trailing 0
 	}
@@ -3291,7 +3287,7 @@ bool do_optimization (const optimization optim, vector<WORD> &instr, int newid) 
 			// check signs (type=4: x+y and -x-y, type=5: x-y and -x+y) ??????
 			// check signs (type=4: x+y, type=5: x-y) !!!!!!!!!!
 			if (SGN(ncoeffx) * SGN(ncoeffy) * (optim.type==4 ? 1 : -1) == 1) {
-				// check absolute value of coefficients
+				// check absolute value of coeeficients
 				if (BigLong((UWORD *)coeffx, ABS(ncoeffx)-1, (UWORD *)coeffy, ABS(ncoeffy)-1) == 0) {
 					// substitute
 					vector<WORD> coeff(coeffx, coeffx+ABS(ncoeffx));

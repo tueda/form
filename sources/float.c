@@ -10,7 +10,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2020 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -121,7 +121,7 @@ void RatToFloat(mpf_t result, UWORD *formrat, int ratsize);
 
 	From mpfr.h
 
-	The formats here are different. This has, among others, to do with
+	The formats here are different. This has, amoung others, to do with
 	the rounding. The result is that we need different aux variables
 	when working with mpfr and we need a different conversion routine
 	to float. It also means that we need to treat the mzv_ etc functions

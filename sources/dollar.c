@@ -5,7 +5,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -2626,7 +2626,7 @@ int DollarRaiseLow(UBYTE *name, LONG value)
 /**
  *	Evaluates one argument of a do loop. Such an argument is constructed
  *	from SNUMBERs DOLLAREXPRESSIONs and possibly DOLLAREXPR2s which indicate
- *	factors of the preceding dollar. Hence we have
+ *	factors of the preceeding dollar. Hence we have
  *	SNUMBER,num
  *	DOLLAREXPRESSION,numdollar
  *	DOLLAREXPRESSION,numdollar,DOLLAREXPR2,numfactor

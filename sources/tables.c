@@ -1,11 +1,11 @@
 /** @file tables.c
  * 
  *  Contains all functions that deal with the table bases on the 'FORM level'
- *  The low level database routines are in minos.c
+ *  The low level databse routines are in minos.c
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -589,8 +589,8 @@ WORD DoTableExpansion(WORD *term, WORD level)
 	id tbl_(f?,?a) = f(?a);
 	When a tbl_ is used, automatically the corresponding element is compiled
 	at the start of the next module.
-	if TB,On,substitute [tablename], use of table RHS (if loaded)
-	if TB,Off,substitute [tablename], use of tbl_(table,...);
+	if TB,On,substitue [tablename], use of table RHS (if loaded)
+	if TB,Off,substitue [tablename], use of tbl_(table,...);
 
 
 	Still needed: Something like OverLoad to allow loading parts of a table
@@ -2007,7 +2007,7 @@ WORD Apply(WORD *term, WORD level)
 	rhs of table(indices,pattern). It does this up to maxtogo times
 	in the given term. It starts with the occurrences inside the
 	arguments of functions. If necessary it finishes at groundlevel.
-	An infinite number of tries is indicated by maxtogo = 2^15-1 or 2^31-1.
+	An infite number of tries is indicates by maxtogo = 2^15-1 or 2^31-1.
 	The occurrences are replaced by subexpressions. This allows TestSub
 	to finish the job properly.
 
@@ -2136,7 +2136,7 @@ int ApplyExec(WORD *term, int maxtogo, WORD level)
 		}
 /*
 		If there are more arguments we have to do some
-		pattern matching. This should be easy. We adapted the
+		pattern matching. This should be easy. We addapted the
 		pattern, so that the array indices match already.
 */
 #ifdef WITHPTHREADS

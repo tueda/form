@@ -6,7 +6,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -173,8 +173,6 @@ int CoModuleOption(UBYTE *s)
 		if ( StrCmp((UBYTE *)(option->name),(UBYTE *)("polyfun")) == 0
 		 || StrCmp((UBYTE *)(option->name),(UBYTE *)("polyratfun")) == 0 ) {
 			polyflag = 1;
-			t++;
-			t = SkipAName(t);
 		}
 		else polyflag = 0;
 		if ( option->flags > 0 ) return(error);

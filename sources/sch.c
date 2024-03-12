@@ -5,7 +5,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -1042,7 +1042,7 @@ VOID WriteLists(VOID)
 				element = Sets[i].first;
 				LastElement = Sets[i].last;
 				type = Sets[i].type;
-				while ( element < LastElement ) {
+				do {
 					TokenToLine((UBYTE *)" ");
 					number = SetElements[element++];
 					switch ( type ) {
@@ -1110,7 +1110,7 @@ VOID WriteLists(VOID)
 							TokenToLine(OutScr);
 							break;
 					}
-				}
+				} while ( element < LastElement );
 			}
 		}
 		*skip = 0;
@@ -1276,7 +1276,7 @@ VOID WriteLists(VOID)
 			MesPrint("\nCurrently dictionary %s is active\n",
 				AO.Dictionaries[olddict-1]->name);
 		else
-			MesPrint("\nCurrently there is no active dictionary\n");
+			MesPrint("\nCurrently there is no actice dictionary\n");
 	}
 	if ( AC.CodesFlag ) {
 		if ( C->numlhs > 0 ) {
@@ -1770,8 +1770,6 @@ WORD WriteSubTerm(WORD *sterm, WORD first)
 				if ( !first ) MultiplyToLine();
 				if ( AC.OutputMode == CMODE && t[2] != 1 )
 					TokenToLine((UBYTE *)"pow(");
-				if ( AC.OutputMode == MATHEMATICAMODE )
-					TokenToLine((UBYTE *)"(");
 				Out = StrCopy(FindVector(*t),buffer);
 /*				Out = StrCopy(VARNAME(vectors,*t - AM.OffsetVector),buffer); */
 				t++;
@@ -1781,10 +1779,6 @@ WORD WriteSubTerm(WORD *sterm, WORD first)
 				else *Out++ = '.';
 				Out = StrCopy(FindVector(*t),Out);
 /*				Out = StrCopy(VARNAME(vectors,*t - AM.OffsetVector),Out); */
-				if ( AC.OutputMode == MATHEMATICAMODE ) {
-					*Out++ = ')';
-					*Out = 0;
-				}
 				t++;
 				if ( *t != 1 ) WrtPower(Out,*t);
 				t++;
@@ -2639,9 +2633,6 @@ WORD WriteAll(VOID)
 				TokenToLine((UBYTE *)")");
 			}
 			TOKENTOLINE(" =","=");
-			if ( AC.OutputMode == MATHEMATICAMODE ) {
-				TOKENTOLINE(" (","(");
-			}
 			lbrac = 0;
 			AO.InFbrack = 0;
 			if ( AC.OutputMode == FORTRANMODE || AC.OutputMode == PFORTRANMODE )
@@ -2694,9 +2685,6 @@ WORD WriteAll(VOID)
 					TOKENTOLINE(" + 1 * ( ","+1*(")
 					PrtTerms();
 					TOKENTOLINE(" )",")")
-				}
-				if ( AC.OutputMode == MATHEMATICAMODE ) {
-					TokenToLine((UBYTE *)")");
 				}
 				if ( AC.OutputMode != FORTRANMODE && AC.OutputMode != PFORTRANMODE )
 					TokenToLine((UBYTE *)";");

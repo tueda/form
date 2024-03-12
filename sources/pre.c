@@ -4,7 +4,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -55,7 +55,6 @@ static KEYWORD precommands[] = {
 	,{"close"        , DoPreClose     , 0, 0}
 	,{"closedictionary", DoPreCloseDictionary,0,0}
 	,{"commentchar"  , DoCommentChar  , 0, 0}
-	,{"continuedo"  ,  DoContinueDo   , 0, 0}
 	,{"create"       , DoPreCreate    , 0, 0}
 	,{"debug"        , DoDebug        , 0, 0}
 	,{"default"      , DoPreDefault   , 0, 0}
@@ -322,7 +321,6 @@ higherlevel:
 */
 					int nargs = 1;
 					PREVAR *p;
-					size_t p_offset;
 					*s++ = 0; namebuf[i-2] = 0;
 					if ( StrICmp(namebuf,(UBYTE *)"random_") == 0 ) {
 						UBYTE *ranvalue;
@@ -440,7 +438,6 @@ higherlevel:
 					while ( *s ) s++;
 					s++;
 					t = p->argnames;
-					p_offset = p - PreVar;
 					for ( j = 0; j < p->nargs; j++ ) {
 						if ( ( nargs == p->nargs-1 ) && ( *t == '?' ) ) {
 							PutPreVar(t,0,0,0);
@@ -450,7 +447,6 @@ higherlevel:
 							while ( *s ) s++;
 							s++;
 						}
-						p = PreVar + p_offset;
 						while ( *t ) t++;
 						t++;
 					}
@@ -2773,31 +2769,6 @@ nonumber:
 
 /*
  		#] DoTerminate : 
- 		#[ DoContinueDo :
-*/
-
-int DoContinueDo(UBYTE *s)
-{
-	DOLOOP *loop;
-
-	if ( AP.PreSwitchModes[AP.PreSwitchLevel] != EXECUTINGPRESWITCH ) return(0);
-	if ( AP.PreIfStack[AP.PreIfLevel] != EXECUTINGIF ) return(0);
-
-	if ( NumDoLoops <= 0 ) {
-		MesPrint("@%#continuedo without %#do");
-		return(1);
-	}
-
-	loop = &(DoLoops[NumDoLoops-1]);
-	AP.NumPreTypes = loop->NumPreTypes+1;
-	AP.PreIfLevel = loop->PreIfLevel;
-	AP.PreSwitchLevel = loop->PreSwitchLevel;
-
-	return(DoEnddo(s));
-}
-
-/*
- 		#] DoContinueDo :
  		#[ DoDo :
 
 		The do loop has three varieties:
@@ -3018,7 +2989,7 @@ illdo:;
  		#] DoDo : 
  		#[ DoBreakDo :
 
-		#breakdo [num]
+		#dobreak [num]
 		jumps out of num #do-loops (if there are that many) (default is 1)
 */
 
@@ -3031,7 +3002,7 @@ int DoBreakDo(UBYTE *s)
 	if ( AP.PreIfStack[AP.PreIfLevel] != EXECUTINGIF ) return(0);
 
 	if ( NumDoLoops <= 0 ) {
-		MesPrint("@%#breakdo without %#do");
+		MesPrint("@%#dobreak without %#do");
 		return(1);
 	}
 /*
@@ -3048,7 +3019,7 @@ int DoBreakDo(UBYTE *s)
 	}
 	else {
 improper:
-		MesPrint("@Improper syntax of %#breakdo instruction");
+		MesPrint("@Improper syntax of %#dobreak instruction");
 		return(1);
 	}
 	if ( levels > NumDoLoops ) {
@@ -5764,7 +5735,7 @@ int DoRmExternal(UBYTE *s)
 					stored.
 
 					FORM continues to read the running external
-					program output until the external program outputs a
+					program output until the extrenal program outputs a
 					prompt.
 
 */

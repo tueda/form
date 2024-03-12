@@ -5,7 +5,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -758,7 +758,7 @@ ReStart:
 					else if ( t[2] >= 0 ) {
 /*
 						Compute Binom(numterms+power-1,power-1)
-						We need potentially long arithmetic.
+						We need potentially long arrithmetic.
 						That is why we had to allocate AN.BinoScrat
 */
 						if ( AN.last1 == t[3] && AN.last2 == cbuf[t[4]].NumTerms[t[2]] + t[3] - 1 ) {
@@ -2047,7 +2047,7 @@ showtable:							AO.OutFill = AO.OutputLine = (UBYTE *)m;
 					}
 /*
 					If there are more arguments we have to do some
-					pattern matching. This should be easy. We adapted the
+					pattern matching. This should be easy. We addapted the
 					pattern, so that the array indices match already.
 					Note that if there is no match the program will become
 					very slow.
@@ -4563,7 +4563,7 @@ OverWork:
  *		If there are more powers needed there will be a recursion.
  *
  *		No attempt is made to use binomials because we have no
- *		information about commuting properties.
+ *		information about commutating properties.
  *
  *		There is a searching for the contents of brackets if needed.
  *		This searching may be rather slow because of the single links.

@@ -22,7 +22,7 @@ using namespace std;
 
 //	The next limitation is imposed by the fact that the latest compilers
 //	can give warnings on declarations like "int dtcl1[nNodes]"
-//	With a bit of overkill there should be no real problems.
+//	With a bit of overkil there should be no real problems.
 #define MAXNODES 100
 #define MAXNCLASSES 100
 
@@ -91,7 +91,7 @@ T_EGraph::T_EGraph(int nnodes, int nedges, int mxdeg)
 
     nNodes  = nnodes;
     nEdges  = nedges;
-    maxdeg  = mxdeg;    // maximum value of degree of nodes
+    maxdeg  = mxdeg;    // maxmum value of degree of nodes
     nExtern = 0;
 
     nodes = new T_ENode[nNodes];
@@ -364,7 +364,7 @@ void T_MNodeClass::mkNdCl(void)
 int T_MNodeClass::clCmp(int nd0, int nd1, int cn)
 {
 
-    // Whether two nodes are in a same class or not.
+    // Wether two nodes are in a same class or not.
     int cmp = ndcl[nd0] - ndcl[nd1];
     if (cmp != 0) {
       return cmp;

@@ -7,12 +7,12 @@
  *  Contains a number of defines to make the coding easier.
  *	Especially the defines for the use of the lists are very nice.
  *	And of course the AC for A.Cc and AT for either A.T of B->T
- *	are indispensable to keep FORM and TFORM in one set of sources.
+ *	are indispensible to keep FORM and TFORM in one set of sources.
  */
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid

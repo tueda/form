@@ -5,12 +5,12 @@
  *	Hence there are routines for dealing with integers and with rational
  *	of 'arbitrary precision' (within limits)
  *	There are also routines for that calculus modulus an integer.
- *	In addition there are the routines for factorials and Bernoulli numbers.
+ *	In addition there are the routines for factorials and bernoulli numbers.
  *	The random number function is currently only for internal purposes.
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -522,7 +522,7 @@ WORD DivRat(PHEAD UWORD *a, WORD na, UWORD *b, WORD nb, UWORD *c, WORD *nc)
  		#[ Simplify :		WORD Simplify(a,na,b,nb)
 
 	Determines the greatest common denominator of a and b and
-	divides both by it. A possible sign is put in a. This is
+	devides both by it. A possible sign is put in a. This is
 	the simplification of the fraction a/b.
 
 */
@@ -1651,7 +1651,7 @@ UWORD Quotient(UWORD *a, WORD *na, WORD b)
  		#] Quotient : 
  		#[ Remain10 :		WORD Remain10(a,na)
 
-	Routine divides a by 10 and gives the remainder as return value.
+	Routine devides a by 10 and gives the remainder as return value.
 	The value of a will be the quotient! a must be positive.
 
 */
@@ -1678,7 +1678,7 @@ WORD Remain10(UWORD *a, WORD *na)
  		#] Remain10 : 
  		#[ Remain4 :		WORD Remain4(a,na)
 
-	Routine divides a by 10000 and gives the remainder as return value.
+	Routine devides a by 10000 and gives the remainder as return value.
 	The value of a will be the quotient! a must be positive.
 
 */
@@ -2233,7 +2233,7 @@ GcdErr:
 	digit Lehmer-Euclid algorithm of Jebelean it seems.
 
 	Maybe this can be programmed slightly better and we can get another
-	few percent speed increase. Further improvements for the asymptotic
+	few percent speed increase. Further improvements for the assymptotic
 	case come from splitting the calculation as in Karatsuba and working
 	with FFT divisions and multiplications etc. But this is when hundreds
 	of words are involved at the least.
@@ -3516,7 +3516,7 @@ int Factorial(PHEAD WORD n, UWORD *a, WORD *na)
 	Builds up what is needed and remembers it for the next time.
 	b_0 = 1
 	(n+1)*b_n = -b_{n-1}-sum_(i,1,n-1,b_i*b_{n-i})
-	The n-1 plays only a role for b_2.
+	The n-1 playes only a role for b_2.
 	We have hard coded b_0,b_1,b_2 and b_odd. After that:
 	(2n+1)*b_2n = -sum_(i,1,n-1,b_2i*b_{2n-2i})
 
@@ -3739,8 +3739,8 @@ WORD Moebius(PHEAD WORD nn)
 		b: the number is not already in the table.
 */
 	if ( nn >= AR.moebiustablesize ) {
-		if ( AR.moebiustablesize <= 0 ) { newsize = (LONG)nn + 20; }
-		else { newsize = (LONG)nn*2; }
+		if ( AR.moebiustablesize <= 0 ) { newsize = nn + 20; }
+		else { newsize = nn*2; }
 		if ( newsize > MAXPOSITIVE ) newsize = MAXPOSITIVE;
 		newtable = (char *)Malloc1(newsize*sizeof(char),"Moebius");
 		for ( i = 0; i < AR.moebiustablesize; i++ ) newtable[i] = AR.moebiustable[i];
@@ -3749,8 +3749,7 @@ WORD Moebius(PHEAD WORD nn)
 		AR.moebiustable = newtable;			
 		AR.moebiustablesize = newsize;
 	}
-	/* NOTE: nn == MAXPOSITIVE never fits in moebiustable. */
-	if ( nn != MAXPOSITIVE && AR.moebiustable[nn] != 2 ) return((WORD)AR.moebiustable[nn]);
+	if ( AR.moebiustable[nn] != 2 ) return((WORD)AR.moebiustable[nn]);
 	mu = 1;
 	if ( n == 1 ) goto putvalue;
 	if ( n % 2 == 0 ) {
@@ -3760,12 +3759,8 @@ WORD Moebius(PHEAD WORD nn)
 		mu = -mu;
 		if ( n == 1 ) goto putvalue;
 	}
-#if ( BITSINWORD == 32 )
 	for ( i = 0; i < AR.numinprimelist; i++ ) {
 		x = AR.PrimeList[i];
-#else
-	for ( x = 3; x < MAXPOSITIVE; x += 2 ) {
-#endif
 		if ( n % x == 0 ) {
 			n /= x;
 			if ( n % x == 0 ) { mu = 0; goto putvalue; }
@@ -3777,7 +3772,7 @@ WORD Moebius(PHEAD WORD nn)
 	}
 	mu = -mu;
 putvalue:
-	if ( nn != MAXPOSITIVE ) AR.moebiustable[nn] = mu;
+	AR.moebiustable[nn] = mu;
 	return((WORD)mu);
 }
 

@@ -5,7 +5,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -1290,7 +1290,7 @@ void poly::divmod_one_term (const poly &a, const poly &b, poly &q, poly &r, bool
 		WORD nq,nr;
 	 
 		if (div) {
-			// if variables are divisible, divide coefficient
+			// if variables are divisable, divide coefficient
 			if (q.modp==0) {				
 				DivLong((UWORD *)&a[ai+1+AN.poly_num_vars], a[ai+a[ai]-1],
 								(UWORD *)&b[2+AN.poly_num_vars], b[b[1]],
@@ -1759,7 +1759,7 @@ void poly::divmod_heap (const poly &a, const poly &b, poly &q, poly &r, bool onl
 			ri += t[3];
 		}
 		else {
-			// divisible, so divide coefficient as well
+			// divisable, so divide coefficient as well
 			WORD nq, nr;
 	
 			if (q.modp==0) {
@@ -1990,7 +1990,7 @@ int poly::number_of_terms () const {
   	#[ first_variable :
 */
 
-// returns the lexicographically first variable of a polynomial
+// returns the lexcicographically first variable of a polynomial
 int poly::first_variable () const {
 	
 	POLY_GETIDENTITY(*this);

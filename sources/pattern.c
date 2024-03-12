@@ -11,7 +11,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -53,7 +53,7 @@
 			to many.
 		2:	Each symbol can have only one (wildcard) power, so
 			x^2*x^n? is illegal.
-		3:	when a single vector is used it replaces all occurrences
+		3:	when a single vector is used it replaces all occurences
 			of the vector. Therefore q*q(mu) or q*q(mu) cannot occur.
 			Also q*q cannot be done.
 		4:	Loose vector elements are replaced with p(mu), dotproducts

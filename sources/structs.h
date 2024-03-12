@@ -16,7 +16,7 @@
 
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -39,7 +39,7 @@
  *   You should have received a copy of the GNU General Public License along
  *   with FORM.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* #] License : */ 
+/* #] License : */
  
 #ifndef __STRUCTS__
 
@@ -191,13 +191,13 @@ typedef struct ReNuMbEr {
 } *RENUMBER;
 
 /*
-  	#] sav&store : 
+  	#] sav&store :
   	#[ Variables :
 */
 
 /**
  *  Much information is stored in arrays of which we can double the size
- *  if the array proves to be too small. Such arrays are controlled by
+ *  if the array proves to be too small. Such arrays are controled by
  *  a variable of type #LIST. The routines that expand the lists are in the
  *  file tools.c
  */
@@ -664,7 +664,7 @@ typedef struct NaMeSpAcE {
 
 
 /*
-  	#] Variables : 
+  	#] Variables :
   	#[ Files :
 */
 
@@ -773,7 +773,7 @@ typedef struct SpecTatoR {
 } SPECTATOR;
 
 /*
-  	#] Files : 
+  	#] Files :
   	#[ Traces :
 */
 
@@ -830,7 +830,7 @@ typedef struct TrAcEn {			/* For computing n dimensional traces */
 } *TRACEN;
 
 /*
-  	#] Traces : 
+  	#] Traces :
   	#[ Preprocessor :
 */
 
@@ -971,7 +971,7 @@ typedef struct {
 } HANDLERS;
 
 /*
-  	#] Preprocessor : 
+  	#] Preprocessor :
   	#[ Varia :
 */
 
@@ -1338,7 +1338,6 @@ typedef struct {
         float fval;
         int ival[2];
     } saMinT; /* Minimum temperature of SA */
-    int    spare;
 } OPTIMIZE;
 
 typedef struct {
@@ -1410,7 +1409,7 @@ typedef struct {
 } TERMINFO;
 
 /*
-  	#] Varia : 
+  	#] Varia :
     #[ A :
  		#[ M : The M struct is for global settings at startup or .clear
 */
@@ -1452,7 +1451,7 @@ struct M_const {
     LONG    CompressSize;          /* (M) Size of Compress buffer */
     LONG    ScratSize;             /* (M) Size of Fscr[] buffers */
     LONG    HideSize;              /* (M) Size of Fscr[2] buffer */
-    LONG    SizeStoreCache;        /* (M) Size of the caches for reading global expr. */
+    LONG    SizeStoreCache;        /* (M) Size of the chaches for reading global expr. */
     LONG    MaxStreamSize;         /* (M) Maximum buffer size in reading streams */
     LONG    SIOsize;               /* (M) Sort InputOutput buffer size */
     LONG    SLargeSize;            /* (M) */
@@ -1480,7 +1479,7 @@ struct M_const {
 #endif
     int     FileOnlyFlag;          /* (M) Writing only to file */
     int     Interact;              /* (M) Interactive mode flag */
-    int     MaxParLevel;           /* (M) Maximum nesting of parentheses */
+    int     MaxParLevel;           /* (M) Maximum nesting of parantheses */
     int     OutBufSize;            /* (M) size of OutBuffer */
     int     SMaxFpatches;          /* (M) */
     int     SMaxPatches;           /* (M) */
@@ -1616,7 +1615,7 @@ struct M_const {
 #endif
 };
 /*
- 		#] M : 
+ 		#] M :
  		#[ P : The P struct defines objects set by the preprocessor
 */
 /**
@@ -1683,7 +1682,7 @@ struct P_const {
 };
 
 /*
- 		#] P : 
+ 		#] P :
  		#[ C : The C struct defines objects changed by the compiler
 */
 
@@ -1929,7 +1928,7 @@ struct C_const {
     WORD    SymChangeFlag;         /* (C) */
     WORD    CollectPercentage;     /* (C) Collect function percentage */
     WORD    ShortStatsMax;         /* For  On FewerStatistics 10; */
-	WORD	extrasymbols;          /* Flag for the extra symbols output mode */
+	WORD	extrasymbols;          /* Flag for the extra symbsols output mode */
     WORD    PolyRatFunChanged;     /* Keeps track whether we changed in the compiler */
     WORD    ToBeInFactors;
     WORD    InnerTest;            /* For debugging */
@@ -1957,7 +1956,7 @@ struct C_const {
 #endif
 };
 /*
- 		#] C : 
+ 		#] C :
  		#[ S : The S struct defines objects changed at the start of the run (Processor)
 		       Basically only set by the master.
 */
@@ -2007,7 +2006,7 @@ struct S_const {
 #endif
 };
 /*
- 		#] S : 
+ 		#] S :
  		#[ R : The R struct defines objects changed at run time.
                They determine the environment that has to be transfered
                together with a term during multithreaded execution.
@@ -2101,7 +2100,7 @@ struct R_const {
 };
 
 /*
- 		#] R : 
+ 		#] R :
  		#[ T : These are variables that stay in each thread during multi threaded execution.
 */
 /**
@@ -2136,7 +2135,7 @@ struct T_const {
     UWORD   *factorials;           /* (T) buffer of factorials. Dynamic. */
     WORD    *small_power_n;        /*     length of the number */
     UWORD  **small_power;          /*     the number*/	
-    UWORD   *bernoullis;           /* (T) The buffer with Bernoulli numbers. Dynamic. */
+    UWORD   *bernoullis;           /* (T) The buffer with bernoulli numbers. Dynamic. */
     WORD    *primelist;
     LONG    *pfac;                 /* (T) array of positions of factorials. Dynamic. */
     LONG    *pBer;                 /* (T) array of positions of Bernoulli's. Dynamic. */
@@ -2161,7 +2160,7 @@ struct T_const {
     VOID    *auxr_;
 #endif
     PARTI   partitions;
-    LONG    sBer;                  /* (T) Size of the Bernoullis buffer */
+    LONG    sBer;                  /* (T) Size of the bernoullis buffer */
     LONG    pWorkPointer;          /* (R) Offset-pointer in pWorkSpace */
     LONG    lWorkPointer;          /* (R) Offset-pointer in lWorkSpace */
     LONG    posWorkPointer;        /* (R) Offset-pointer in posWorkSpace */
@@ -2215,7 +2214,7 @@ struct T_const {
     WORD    TMbuff;                /* (R) Communication between TestSub and Genera */
 	WORD	TMdolfac;              /* factor number for dollar */
     WORD    nfac;                  /* (T) Number of highest stored factorial */
-    WORD    nBer;                  /* (T) Number of highest Bernoulli number. */
+    WORD    nBer;                  /* (T) Number of highest bernoulli number. */
     WORD    mBer;                  /* (T) Size of buffer pBer. */
     WORD    PolyAct;               /* (R) Used for putting the PolyFun at end. ini at 0 */
     WORD    RecFlag;               /* (R) Used in TestSub. ini at zero. */
@@ -2253,7 +2252,7 @@ struct T_const {
 #endif
 };
 /*
- 		#] T : 
+ 		#] T :
  		#[ N : The N struct contains variables used in running information
                that is inside blocks that should not be split, like pattern
                matching, traces etc. They are local for each thread.
@@ -2433,7 +2432,7 @@ struct N_const {
 };
 
 /*
- 		#] N : 
+ 		#] N :
  		#[ O : The O struct concerns output variables
 */
 /**
@@ -2527,9 +2526,9 @@ struct O_const {
 */
 #ifdef WITHFLOAT
 #if defined(mBSD) && defined(MICROTIME)
-	PADPOSITION(25,7,36,18,1);
+	PADPOSITION(25,7,36,17,1);
 #else
-	PADPOSITION(25,5,36,18,1);
+	PADPOSITION(25,5,36,17,1);
 #endif
 #else
 #if defined(mBSD) && defined(MICROTIME)
@@ -2540,7 +2539,7 @@ struct O_const {
 #endif
 };
 /*
- 		#] O : 
+ 		#] O :
  		#[ X : The X struct contains variables that deal with the external channel
 */
 /**
@@ -2567,7 +2566,7 @@ struct X_const {
 	PADPOINTER(0,5,0,0);
 };
 /*
- 		#] X : 
+ 		#] X :
  		#[ Definitions :
 
 	Note: we changed the definition from C to Cc in version 5.
@@ -2627,7 +2626,7 @@ typedef struct AllGlobals {
 #endif
 
 /*
- 		#] Definitions : 
+ 		#] Definitions :
     #] A : 
   	#[ FG :
 */
@@ -2683,7 +2682,7 @@ typedef struct FixedGlobals {
 } FIXEDGLOBALS;
 
 /*
-  	#] FG : 
+  	#] FG :
 */
 
 #endif

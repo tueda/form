@@ -4,7 +4,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -2167,7 +2167,7 @@ WORD RunPermute(PHEAD WORD *fun, WORD *args, WORD *info)
 		if ( *info > totarg ) return(0);
 /*
 		Now we have a look whether there are dollar variables to be expanded
-		We also shift out all values that are out of range.
+		We also sift out all values that are out of range.
 */
 		withdollar = 0;  in = info;
 		while ( in < infostop ) {
@@ -2906,7 +2906,7 @@ WORD RunMulArg(PHEAD WORD *fun, WORD *args)
  		#[ RunIsLyndon :
 
 		Determines whether the range constitutes a Lyndon word.
-		The two cases of ordering are distinguished by the order of
+		The two cases of ordering are distinguised by the order of
 		the numbers of the arguments in the range.
 */
 
@@ -2984,7 +2984,7 @@ nexti1:;
 		Determines whether the range constitutes a Lyndon word.
 		If not, we rotate it to a Lyndon word. If this is not possible
 		we return the noLyndon condition.
-		The two cases of ordering are distinguished by the order of
+		The two cases of ordering are distinguised by the order of
 		the numbers of the arguments in the range.
 */
 
@@ -3198,7 +3198,7 @@ WORD RunZtoHArg(PHEAD WORD *fun, WORD *args)
 	}
 	TermFree(tt,"RunZtoHArg");
 /*
-	Now the overall sign.
+	Now the overal sign.
 */
 	while ( f1 < f ) { if ( f1[1] < 0 ) sign = 1-sign; f1 += 2; }
 	return(sign);
@@ -3238,7 +3238,7 @@ WORD RunHtoZArg(PHEAD WORD *fun, WORD *args)
 		if ( *f != -SNUMBER || f[1] == 0 ) return(-1);
 	}
 /*
-	First the overall sign.
+	First the overal sign.
 */
 	while ( f2 < f ) { if ( f2[1] < 0 ) sign = 1-sign; f2 += 2; }
 /*

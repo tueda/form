@@ -5,7 +5,7 @@
  */
 /* #[ License : */
 /*
- *   Copyright (C) 1984-2023 J.A.M. Vermaseren
+ *   Copyright (C) 1984-2017 J.A.M. Vermaseren
  *   When using this file you are requested to refer to the publication
  *   J.A.M.Vermaseren "New features of FORM" math-ph/0010025
  *   This is considered a matter of courtesy as the development was paid
@@ -252,11 +252,7 @@ int CoRemoveSpectator(UBYTE *inp)
 		return(1);
 	}
 	for ( i = 0; i < AM.SizeForSpectatorFiles; i++ ) {
-		if ( AM.SpectatorFiles[i].name != 0 ) {
-			if ( StrCmp((UBYTE *)(AM.SpectatorFiles[i].name),(UBYTE *)(inp)) == 0 ) {
-				break;
-			}
-		}
+		if ( StrCmp((UBYTE *)(AM.SpectatorFiles[i].name),(UBYTE *)(inp)) == 0 ) break;
 	}
 	if ( i >= AM.SizeForSpectatorFiles ) {
 		MesPrint("&Spectator %s not found.",inp);
