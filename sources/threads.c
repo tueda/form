@@ -3143,10 +3143,14 @@ NextBucket:;
 
 		Other problem: local $ variables aren't copied along.
 */
+/*
 		AS.Balancing = 0;
+*/
 	}
 	MasterWaitAll();
+/*
 	AS.Balancing = 0;
+*/
 /*
 	When we deal with the last expression we can now remove the input
 	scratch file. This saves potentially much disk space (up to 1/3)
