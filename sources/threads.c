@@ -236,7 +236,7 @@ void StartHandleLock(VOID)
   	#[ StartAllThreads :
 */
 /**
- *	In this routine we start 'number' threats
+ *	In this routine we start 'number' threads.
  *	The routine that runs the show for each worker is called RunThread.
  *	It will call the allocations and all the worker specific action.
  *	Then the master has to wait till all workers are asleep before continuing.
