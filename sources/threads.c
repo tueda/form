@@ -94,6 +94,7 @@ static int identityretval;
 static LONG *timerinfo;
 static LONG *sumtimerinfo;
 static int numberclaimed;
+static pthread_barrier_t identitybarrier;
 
 static THREADBUCKET **threadbuckets, **freebuckets;
 static int numthreadbuckets;
@@ -289,9 +290,16 @@ int StartAllThreads(int number)
 	numberofworkers = number - 1;
 	threadpointers[identity] = pthread_self();
 	topofavailables = 0;
+	if ( pthread_barrier_init(&identitybarrier,NULL,number) ) {
+		goto failure;
+	}
 	for ( j = 1; j < number; j++ ) {
 		if ( pthread_create(&thethread,NULL,RunThread,(void *)(&dummy)) )
 			goto failure;
+	}
+	pthread_barrier_wait(&identitybarrier);
+	if ( pthread_barrier_destroy(&identitybarrier) ) {
+		goto failure;
 	}
 /*
 	Now we initialize the master at the same time that the workers are doing so.
@@ -316,9 +324,16 @@ int StartAllThreads(int number)
 #ifdef WITHSORTBOTS
 	if ( numberofworkers > 2 ) {
 		numberofsortbots = numberofworkers-2;
+		if ( pthread_barrier_init(&identitybarrier,NULL,numberofworkers-1) ) {
+			goto failure;
+		}
 		for ( j = numberofworkers+1; j < 2*numberofworkers-1; j++ ) {
 			if ( pthread_create(&thethread,NULL,RunSortBot,(void *)(&dummy)) )
 				goto failure;
+		}
+		pthread_barrier_wait(&identitybarrier);
+		if ( pthread_barrier_destroy(&identitybarrier) ) {
+			goto failure;
 		}
 	}
 	else {
@@ -1265,6 +1280,7 @@ void *RunThread(void *dummy)
 	DUMMYUSE(dummy);
 	identity = SetIdentity(&identityretv);
 	threadpointers[identity] = pthread_self();
+	pthread_barrier_wait(&identitybarrier);
 	B = InitializeOneThread(identity);
 	while ( ( wakeupsignal = ThreadWait(identity) ) > 0 ) {
 		switch ( wakeupsignal ) {
@@ -1923,6 +1939,7 @@ void *RunSortBot(void *dummy)
 	DUMMYUSE(dummy);
 	identity = SetIdentity(&identityretv);
 	threadpointers[identity] = pthread_self();
+	pthread_barrier_wait(&identitybarrier);
 	B = InitializeOneThread(identity);
 	while ( ( wakeupsignal = SortBotWait(identity) ) > 0 ) {
 		switch ( wakeupsignal ) {
