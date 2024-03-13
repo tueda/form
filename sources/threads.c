@@ -2160,8 +2160,8 @@ int GetThread(int identity)
 int ThreadWait(int identity)
 {
 	int retval, top, j;
-	LOCK(wakeuplocks[identity]);
 	LOCK(availabilitylock);
+	LOCK(wakeuplocks[identity]);
 	top = topofavailables;
 	for ( j = topofavailables; j > 0; j-- )
 		listofavailables[j] = listofavailables[j-1];
@@ -2204,8 +2204,8 @@ int ThreadWait(int identity)
 int SortBotWait(int identity)
 {
 	int retval;
-	LOCK(wakeuplocks[identity]);
 	LOCK(availabilitylock);
+	LOCK(wakeuplocks[identity]);
 	topsortbotavailables++;
 	if ( topsortbotavailables >= numberofsortbots ) {
 		UNLOCK(availabilitylock);
