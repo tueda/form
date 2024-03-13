@@ -66,7 +66,9 @@ extern LONG nummallocs;
 extern LONG numfrees;
 #endif
 
+/*
 LONG numcompares;
+*/
 
 /*
   	#] Includes : 
@@ -608,7 +610,9 @@ WORD NewSort(PHEAD0)
 	}
 	if ( AR.sLevel == 0 ) {
 
+/*
 		numcompares = 0;
+*/
 
 		AN.FunSorts[0] = AT.S0;
 		if ( AR.PolyFun == 0 ) { AT.S0->PolyFlag = 0; }
@@ -2572,9 +2576,11 @@ WORD Compare1(PHEAD WORD *term1, WORD *term2, WORD level)
 	WORD prevorder;
 	WORD count = -1, localPoly, polyhit = -1;
 
+/*
 	if ( AR.sLevel == 0 ) {
 		numcompares++;
 	}
+*/
 
 	if ( S->PolyFlag ) {
 /*
