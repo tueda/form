@@ -157,7 +157,10 @@ case $host_os in
 		AC_DEFINE(LINUX, , [Compiling for a Linux system.])
 		;;
 	cygwin* )
-		print_os="Cygwin"
+		print_os="Windows (Cygwin)"
+		;;
+	mingw64* )
+		print_os="Windows (Mingw-w64)"
 		;;
 	freebsd* )
 		print_os="FreeBSD"
