@@ -44,6 +44,7 @@ jobs:
   # The executables must not be too optimized for the build machine and must be
   # statically linked in such a way that they are suitable for binary distributions.
   build-bin:
+    if: false
     name: Build ${{ matrix.bin }} on ${{ matrix.os }}
     needs: build-src
     runs-on: ${{ matrix.os }}
@@ -177,6 +178,7 @@ jobs:
 
   # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
   build-doc-pdf:
+    if: false
     name: Build PDF document
     needs: build-src
     runs-on: ubuntu-latest
@@ -230,6 +232,7 @@ jobs:
   # Generate the HTML reference manual packed as, e.g.,
   # "form-4.2.1-manual-html.tar.gz" for v4.2.1.
   build-doc-html:
+    if: false
     name: Build HTML document
     needs: build-src
     runs-on: ubuntu-latest
@@ -290,6 +293,7 @@ jobs:
   # They will be actually delivered when the commit has a tag
   # starting with "v" (e.g., v4.2.1).
   publish-binaries:
+    if: false
     name: Publish binaries to GitHub Releases
     needs:
       - build-src
