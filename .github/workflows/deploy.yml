@@ -209,11 +209,7 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             opts="$opts CC=cl.exe CXX=cl.exe --with-api=windows"
           fi
-          ./configure $opts
-
-      - name: Configure (Log)
-        run: |
-          cat config.log
+          ./configure $opts || cat config.log
 
       - name: Build
         id: build
