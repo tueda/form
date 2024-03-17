@@ -211,6 +211,10 @@ jobs:
           fi
           ./configure $opts
 
+      - name: Configure (Log)
+        run: |
+          cat config.log
+
       - name: Build
         id: build
         continue-on-error: ${{ runner.os == 'Windows' }}
