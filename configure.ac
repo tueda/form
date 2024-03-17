@@ -144,8 +144,9 @@ AC_C_INLINE
 # Sets _FILE_OFFSET_BITS if possible
 AC_SYS_LARGEFILE
 
-# Check for architecture and OS
+# Check for OS and CPU architecture
 AC_CANONICAL_HOST
+AC_MSG_CHECKING([os])
 case $host_os in
 	darwin* )
 		print_os="OSX"
@@ -171,6 +172,8 @@ case $host_os in
 		print_os="UNKNOWN OS ($host_os)"
 		;;
 esac
+AC_MSG_RESULT($print_os)
+AC_MSG_CHECKING([CPU architecture])
 case $host_cpu in
 	i586 )
 		print_cpu="Pentium"
@@ -188,10 +191,12 @@ case $host_cpu in
 		print_cpu="UNKNOWN CPU ($host_cpu)"
 		;;
 esac
+AC_MSG_RESULT($print_cpu)
 
 # Check for C compiler vendor. We assume that all compilers (CC, CXX, MPICC and
 # MPICXX) have the same vendor and the same version. Clang most likely works
 # as GCC.
+AC_MSG_CHECKING([compiler vendor])
 vendors="
 intel:     __ICC,__ECC,__INTEL_COMPILER
 gnu:       __GNUC__
@@ -215,6 +220,7 @@ choke me
 ])], [break])
 done
 vendor=`echo $vendor | cut -d: -f1`
+AC_MSG_RESULT($vendor)
 
 # POSIX or Windows API
 AC_ARG_WITH([api],
