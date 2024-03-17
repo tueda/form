@@ -176,6 +176,53 @@ jobs:
             sources/${{ matrix.bin }}.exe
           if-no-files-found: error
 
+  build-bin-windows:
+    name: Build ${{ matrix.bin }} on ${{ matrix.os }}, ${{ matrix.shell }}
+    needs: build-src
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }} {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-2019, shell: bash, bin: form}
+    steps:
+      - name: Setup MSVC path (Windows, bash)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Download tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: src
+
+      - name: Uncompress tarball
+        run: |
+          tar -xf *.tar.gz --strip-components 1
+          rm *.tar.gz
+
+      - name: Configure
+        run: |
+          # opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib'
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native'
+          case "${{ matrix.bin }}" in
+            form)  opts="$opts --enable-scalar";;
+            tform) opts="$opts --enable-threaded";;
+          esac
+          if [ "$RUNNER_OS" = "Windows" ] && [ "${{ matrix.shell }}" = "bash" ]; then
+            opts="$opts CC=cl.exe CXX=cl.exe --with-api=windows"
+          fi
+          echo ./configure $opts  # debug
+          ./configure $opts || cat config.log
+
+      - name: Build
+        id: build
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: |
+          make -j 4
+
   # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
   build-doc-pdf:
     if: false
