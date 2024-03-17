@@ -235,7 +235,7 @@ AS_IF([test "x$with_api" = xposix],
 	AC_DEFINE(UNIX, , [Compiling for UNIX system])])
 AS_IF([test "x$with_api" = xwindows],
 	[print_api=Windows
-	AC_CHECK_HEADERS([windows.h], [],[AC_MSG_FAILURE([windows.h is not found])] )
+	AC_CHECK_HEADERS([windows.h], [], [AC_MSG_FAILURE([windows.h is not found])])
 	AC_DEFINE(WINDOWS, , [Compiling for WINDOWS system])])
 AM_CONDITIONAL([ONUNIX], [test "x$with_api" = xposix])
 AM_CONDITIONAL([ONWINDOWS], [test "x$with_api" = xwindows])
