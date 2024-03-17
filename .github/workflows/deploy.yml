@@ -176,6 +176,47 @@ jobs:
             sources/${{ matrix.bin }}.exe
           if-no-files-found: error
 
+  build-bin-windows:
+    name: Build ${{ matrix.bin }} on ${{ matrix.os }}
+    needs: build-src
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }} {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-2019, shell: bash, bin: form}
+    steps:
+      - name: Download tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: src
+
+      - name: Uncompress tarball
+        run: |
+          tar -xf *.tar.gz --strip-components 1
+          rm *.tar.gz
+
+      - name: Configure
+        run: |
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib'
+          case ${{ matrix.bin }} in
+            form)  opts="$opts --enable-scalar";;
+            tform) opts="$opts --enable-threaded";;
+          esac
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            opts="$opts --with-api=windows"
+          fi
+          ./configure $opts
+
+      - name: Build
+        id: build
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: |
+          make -j 4
+
   # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
   build-doc-pdf:
     if: false
