@@ -207,7 +207,7 @@ jobs:
             tform) opts="$opts --enable-threaded";;
           esac
           if [ "$RUNNER_OS" == "Windows" ]; then
-            opts="$opts --with-api=windows"
+            opts="$opts CC=cl.exe CXX=cl.exe --with-api=windows"
           fi
           ./configure $opts
 
