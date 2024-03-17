@@ -58,8 +58,8 @@ jobs:
           # platforms available.
           - {os: ubuntu-20.04, shell: bash, bin: form}
           - {os: ubuntu-20.04, shell: bash, bin: tform}
-          - {os: macos-11, shell: bash, bin: form}
-          - {os: macos-11, shell: bash, bin: tform}
+          # - {os: macos-11, shell: bash, bin: form}
+          # - {os: macos-11, shell: bash, bin: tform}
           # NOTE: Windows native executables have too many problems.
           # We include them in artifacts but not in releases.
           # Unfortunately, "allow-failure" is not available on GitHub Actions
@@ -266,6 +266,7 @@ jobs:
 
   # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
   build-doc-pdf:
+    if: false
     name: Build PDF document
     needs: build-src
     runs-on: ubuntu-latest
@@ -319,6 +320,7 @@ jobs:
   # Generate the HTML reference manual packed as, e.g.,
   # "form-4.2.1-manual-html.tar.gz" for v4.2.1.
   build-doc-html:
+    if: false
     name: Build HTML document
     needs: build-src
     runs-on: ubuntu-latest
@@ -379,6 +381,7 @@ jobs:
   # They will be actually delivered when the commit has a tag
   # starting with "v" (e.g., v4.2.1).
   publish-binaries:
+    if: false
     name: Publish binaries to GitHub Releases
     needs:
       - build-src
