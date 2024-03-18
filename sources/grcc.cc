@@ -3967,7 +3967,7 @@ Bool MGraph::visit(int nd)
     }
     nodes[nd]->visited = 0;
     for (td = 0; td < nNodes; td++) {
-        if ((adjMat[nd][td] > 0) and (nodes[td]->visited < 0)) {
+        if ((adjMat[nd][td] > 0) && (nodes[td]->visited < 0)) {
             if (visit(td)) {
                 return True;
             }
