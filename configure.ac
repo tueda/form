@@ -673,6 +673,7 @@ AS_IF([test "x$enable_float" = xyes],
 	[AS_IF([test "x$with_mpfr" = xyes],
 		[AC_MSG_WARN([mpfr is not required without the float feature. Build without mpfr.])
 		with_mpfr=no])])
+AM_CONDITIONAL([WITHFLOAT], [test "x$enable_float" = xyes])
 
 # Check for wall-clock time
 ok=no
