@@ -193,6 +193,12 @@ jobs:
         if: runner.os == 'Windows' && matrix.shell == 'bash'
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Install cccl (Windows, bash)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        run: |
+          wget https://raw.githubusercontent.com/swig/cccl/master/cccl
+          chmod +x cccl
+
       - name: Download tarball
         uses: actions/download-artifact@v4
         with:
@@ -212,7 +218,7 @@ jobs:
             tform) opts="$opts --enable-threaded";;
           esac
           if [ "$RUNNER_OS" = "Windows" ] && [ "${{ matrix.shell }}" = "bash" ]; then
-            opts="$opts CC=cl.exe CXX=cl.exe --with-api=windows"
+            opts="$opts CC=./cccl CXX=./cccl LD=./cccl --with-api=windows"
           fi
           echo ./configure $opts  # debug
           ./configure $opts || cat config.log
