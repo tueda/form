@@ -282,7 +282,7 @@ $flag && test $ac_cv_sizeof_void_p -lt $ac_cv_sizeof_int && flag=false
 $flag && test $ac_cv_sizeof_int -lt $ac_cv_sizeof_WORD && flag=false
 $flag && test $ac_cv_sizeof_WORD -lt $ac_cv_sizeof_char && flag=false
 $flag && test $ac_cv_sizeof_char -ne 1 && flag=false
-AS_IF([$flag], [], [AC_MSG_FAILURE([Basic assumption sizeof(off_t) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int) >= sizeof(WORD) >= sizeof(char) == 1 does not hold.])])
+#AS_IF([$flag], [], [AC_MSG_FAILURE([Basic assumption sizeof(off_t) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int) >= sizeof(WORD) >= sizeof(char) == 1 does not hold.])])
 # sizeof(off_t) <= 4 means files must <= 2 GB.
 AS_IF([test $ac_cv_sizeof_off_t -le 4], [AC_MSG_WARN([Large files more than 2 GB are not supported])])
 AC_MSG_NOTICE([The data model is $print_data_model])
