@@ -218,7 +218,7 @@ jobs:
             tform) opts="$opts --enable-threaded";;
           esac
           if [ "$RUNNER_OS" = "Windows" ] && [ "${{ matrix.shell }}" = "bash" ]; then
-            opts="$opts CC=./cccl CXX=./cccl LD=./cccl --with-api=windows"
+            opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl --with-api=windows"
           fi
           ./configure $opts
 
