@@ -220,14 +220,13 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ] && [ "${{ matrix.shell }}" = "bash" ]; then
             opts="$opts CC=./cccl CXX=./cccl LD=./cccl --with-api=windows"
           fi
-          echo ./configure $opts  # debug
-          ./configure $opts || cat config.log
+          ./configure $opts
 
       - name: Build
         id: build
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
-          make -j 4 || { pwd; ls -a -R; }
+          make -j 4
 
   # Generate the PDF reference manual, e.g., "form-4.2.1-manual.pdf" for v4.2.1.
   build-doc-pdf:
