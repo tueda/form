@@ -227,6 +227,12 @@ jobs:
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: make -j 4
 
+      - name: Debug
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: |
+          type ruby
+          make check --dry-run
+
       - name: Test
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: make check
