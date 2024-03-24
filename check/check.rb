@@ -1092,8 +1092,8 @@ class FormConfig
     p TempDir.root
     p "cd #{TempDir.root} && where #{bin} >NUL 2>&1"
     if is_windows then
-      system("cd #{TempDir.root} && where #{bin}")
-      system("cd #{TempDir.root} && where #{bin} >NUL 2>&1")
+      system("cd #{TempDir.root} && dir #{bin}")
+      system("cd #{TempDir.root} && dir #{bin} >NUL 2>&1")
     else
       system("cd #{TempDir.root}; type #{bin} >/dev/null 2>&1")
     end
