@@ -230,6 +230,8 @@ jobs:
       - name: Debug
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
+          pwd
+          ls sources
           type ruby
           make check --dry-run
 
