@@ -1085,7 +1085,12 @@ class FormConfig
 
   def check_bin(name, bin)
     # Check if the executable is available.
-    system("cd #{TempDir.root}; type #{bin} >/dev/null 2>&1")
+    is_windows = (RUBY_PLATFORM =~ /mswin|mingw|cygwin/)
+    if is_windows then
+      system("cd #{TempDir.root} && where #{bin} >NUL 2>&1")
+    else
+      system("cd #{TempDir.root}; type #{bin} >/dev/null 2>&1")
+    end
     if $? == 0
       # OK.
       return
