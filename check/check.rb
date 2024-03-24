@@ -73,12 +73,16 @@ end
 
 # Get the total size of the physical memory available on the host machine.
 def get_total_physical_memory
-  if RUBY_PLATFORM.downcase.include?("linux")
+  platform = RUBY_PLATFORM.downcase
+  if platform.include?("linux")
     mem_info = `free -b | grep Mem`
     mem_info.split[1].to_i
-  elsif RUBY_PLATFORM.downcase.include?("darwin")
+  elsif platform.include?("darwin")
     mem_info = `sysctl -n hw.memsize`
     mem_info.to_i
+  elsif platform.include?("mingw") || platform.include?("mswin")
+    mem_info = `wmic ComputerSystem get TotalPhysicalMemory`
+    mem_info.split[1].to_i
   else
     nil
   end
@@ -1086,9 +1090,7 @@ class FormConfig
 
   def check_bin(name, bin)
     # Check if the executable is available.
-    system("cd #{TempDir.root}; type #{bin} >/dev/null 2>&1")
-    if $? == 0
-      # OK.
+    if File.executable?(bin)
       return
     end
 
@@ -1121,7 +1123,8 @@ class FormConfig
       end
 
       @head = ""
-      `#{@form_bin} #{frmname} 2>/dev/null`.split("\n").each do |output_line|
+      out, _status = Open3.capture2e("#{@form_bin} #{frmname}")
+      out.split("\n").each do |output_line|
         if output_line =~ /FORM/
           @head = output_line
           break
@@ -1191,14 +1194,16 @@ class FormConfig
       end
       @form_cmd = cmdlist.join(" ")
       # Check the output header.
-      @head = `#{@form_cmd} #{frmname} 2>/dev/null`.split("\n").first
-      if $? != 0
-        system("#{form_cmd} #{frmname}")
+      out, _err, status = Open3.capture3("#{@form_cmd} #{frmname}")
+      if status.success?
+        @head = out.split("\n").first
+      else
         fatal("failed to execute '#{@form_cmd}'")
       end
       if !@valgrind.nil?
         # Include valgrind version information.
-        @head += "\n#{`#{@form_cmd} @{frmname} 2>&1 >/dev/null | grep Valgrind`.split("\n")[0]}"
+        out, _status = Open3.capture2e("#{@form_cmd} #{frmname}")
+        @head += "\n" + out.split("\n").select { |line| line.include?("Valgrind") }.first
       end
     ensure
       FileUtils.rm_rf(tmpdir)
