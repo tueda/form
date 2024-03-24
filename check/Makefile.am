@@ -1,12 +1,12 @@
 TEST_BINS =
 if BUILD_FORM
-TEST_BINS += $(top_builddir)/sources/form
+TEST_BINS += $(top_builddir)/sources/form$(EXEEXT)
 endif
 if BUILD_TFORM
-TEST_BINS += $(top_builddir)/sources/tform
+TEST_BINS += $(top_builddir)/sources/tform$(EXEEXT)
 endif
 if BUILD_PARFORM
-TEST_BINS += $(top_builddir)/sources/parform
+TEST_BINS += $(top_builddir)/sources/parform$(EXEEXT)
 endif
 
 TEST_OPTS =
