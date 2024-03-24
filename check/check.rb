@@ -14,6 +14,7 @@ if RUBY_VERSION < "1.9.0"
 end
 
 require "fileutils"
+require "io/console/size"
 require "open3"
 require "optparse"
 require "ostruct"
@@ -1486,7 +1487,7 @@ def finalize
 
   # Print detailed statistics.
 
-  term_width = guess_term_width
+  term_width = IO.console_size[1]
 
   max_foldname_width = infos.map { |info| info.foldname.length }.max
   max_where_width = infos.map { |info| info.where.length }.max + 2
@@ -1580,24 +1581,6 @@ def format_time(time, max_time)
   t = t % 1
   ms = Integer(t * 1000)
   format("%s%02d:%02d:%02d.%03d", overflow ? ">" : " ", h, m, s, ms)
-end
-
-# Return a guessed terminal width.
-def guess_term_width
-  require "io/console"
-  IO.console.winsize[1]
-rescue LoadError, NoMethodError
-  system("type tput >/dev/null 2>&1")
-  if $? == 0
-    cols = `tput cols 2>/dev/null`
-  else
-    cols = ENV["COLUMNS"] || ENV["TERM_WIDTH"]
-  end
-  begin
-    Integer(cols)
-  rescue ArgumentError, TypeError
-    80
-  end
 end
 
 if $0 == __FILE__
