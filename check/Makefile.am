@@ -17,12 +17,12 @@ TESTS_ENVIRONMENT = \
 	RUBY="$(RUBY)" \
 	TEST_BINS="$(TEST_BINS)" \
 	TEST_OPTS="$(TEST_OPTS)" \
-	$(SHELL)
+	"$(SHELL)"
 TESTS += check-help.sh
 else
 TESTS_ENVIRONMENT = \
 	TEST_BINS="$(TEST_BINS)" \
-	$(SHELL)
+	"$(SHELL)"
 endif
 TESTS += benchmark-fu.sh
 
