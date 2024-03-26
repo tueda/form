@@ -33,19 +33,19 @@ extern "C" {
 // optimization : best combination depends on process by process
 #define SIMPSEL
 
-// optimization : lower and upper bound of deg of taget node of connection.
+// optimization : lower and upper bound of deg of target node of connection.
 #define MINMAXLEG
 
 // optimization : optimization with respect to 'extonly' particles
 #define OPTEXTONLY
 
-// check uniqe interaction by name or by code
+// check unique interaction by name or by code
 #define UNIQINTR
 
 // possible extensions of the program
 // #define ORBITS
 
-// reverse direction of an adge of agraph when anti-particle flows on it.
+// reverse direction of an edge of agraph when anti-particle flows on it.
 // In this case the direction of edges will be diffrent
 // from ones of original mgraph.
 // #define EDGEPORDER
@@ -85,8 +85,8 @@ static OptDef optDef0[] = {
  {"NoAdj2PtV",  "Exclude graphs with an edge connecting 2-pt vertices",  False, 0},
  {"Block",      "Exclude graphs with more than one block",               False, 0},
  {"NoMultiEdge","Exclude graphs with multi-edges",                       False, 0},
- {"SymmInitial","Symmetrize initial particls",                           False, 0},
- {"SymmFinal",  "Symmetrize final particls",                             False, 0},
+ {"SymmInitial","Symmetrize initial particles",                          False, 0},
+ {"SymmFinal",  "Symmetrize final particles",                            False, 0},
 };
 static OptDef optDef1[] = {
  {"Step",       "Generate particle assigned graphs",               GRCC_AGraph, 0},
@@ -250,7 +250,7 @@ void Options::setDefaultValues(void)
 {
     int j;
 
-    // defualt values
+    // default values
     for (j = 0; j < GRCC_OPT_Size; j++) {
         values[j] = optDef[j].defaultv;
     }
@@ -1805,7 +1805,7 @@ Interaction::Interaction(Model *modl, int iid, const char *nam, int icd, int *cp
     mdl    = modl;         // the model
     id     = iid;          // id of this interaction
     icode  = icd;          // id of this interaction
-    csum   = csm;          // the total oders of coupling constants
+    csum   = csm;          // the total orders of coupling constants
     nlegs  = nlgs;         // the size of plist[]
     loop   = lp;           // the number of loops
 
@@ -3503,7 +3503,7 @@ void Process::outProcP(FILE *fp)
 void Process::mkSProcess(void)
 {
     //  Construct sprocesses
-    //  Each sprocess is a set of nodes whose degree and oder of 
+    //  Each sprocess is a set of nodes whose degree and order of 
     //  coupling constants are determined.
     //  Only the total coupling constants are considered here even if
     //  two or more coupling constants are defined in the model
@@ -3949,7 +3949,7 @@ MNode::MNode(int vid, int vclss, NCInput *mgi)
     //   vclss  : class of the node
 
     id      = vid;           // id of the node
-    clss    = vclss;         // class to which the node belogns
+    clss    = vclss;         // class to which the node belongs
     deg     = mgi->cldeg;    // degree of the node
     freelg  = mgi->cldeg;    // number of free legs
     extloop = mgi->cltyp;    // external node or not
@@ -3969,7 +3969,7 @@ MNode::MNode(int vid, int vdeg, int vextlp, int vclss, int cmin, int cmax)
     id      = vid;       // id of the node
     deg     = vdeg;      // degree of the node
     freelg  = vdeg;      // number of free legs
-    clss    = vclss;     // class to which the node belogns
+    clss    = vclss;     // class to which the node belongs
     extloop = vextlp;    // external node or not
     cmindeg = cmin;      // min(deg of connectable vertex)
     cmaxdeg = cmax;      // max(deg of connectable vertex)
@@ -4655,7 +4655,7 @@ void MGraph::bisearchME(int nd, int pd, int ned,  int col,
     *next   = 0;     // # external below 'nd' inclusive
     *nart   = 0;     // # articulation points 'nd' inclusive
     nart1   = 0;     // # articlulation points below 'nd'.
-    nart2   = 0;    // # 'nd' is articlulation point then 1 
+    nart2   = 0;     // # 'nd' is articlulation point then 1 
     ndart   = 0;     // # the number of blocks attached to 'nd'
 
     newv = (bidef[nd] < 0);
@@ -4817,7 +4817,7 @@ void MGraph::bisearchME(int nd, int pd, int ned,  int col,
 
             mconn->pushEdge(nd, td);
 
-            // visit childe
+            // visit child
             bisearchME(td, nd, adjMat[td][nd], - col,
                 &mopi1, &mblk1, &momset1, &next1, &nart1);
   
@@ -4852,7 +4852,7 @@ void MGraph::bisearchME(int nd, int pd, int ned,  int col,
                     // block
                     ndart++;
                     mconn->addArtic(nd, 1);
-                    // dicad nparts from nodes below td
+                    // discard nparts from nodes below td
                     mblk1.nartps = 2; 
                     mconn->addBlock(&mblk1, blkt);
                     mblk1.init();
@@ -5286,7 +5286,7 @@ void MGraph::newGraph(MNodeClass *cl)
                                 c1PI++;
                             }
           
-                            // # no tadpolses
+                            // # no tadpoles
                             if (!tadpole) {
                                 cNoTadpole++;
                             }
@@ -7562,7 +7562,7 @@ void EGraph::biinitE(void)
 //--------------------------------------------------------------
 void EGraph::bisearchE(int nd, int *extlst, int *intlst, int *opiext, int *opiloop)
 {
-    // Searchs in the spanning tree below 'nd'.
+    // Search in the spanning tree below 'nd'.
     // Arguments:
     //   nd      : input  : node to be visited
     //   extlst  : output : set of external lines in the current 1PI comp.
@@ -8359,7 +8359,7 @@ Assign::~Assign(void)
 //---------------------------------------------------------------
 void Assign::prCand(const char *msg)
 {
-    //  Print candidte table
+    //  Print candidate table
     int    n, e, ne;
     AEdge *ed;
 
@@ -8641,7 +8641,7 @@ Bool Assign::assignVertex(int v)
     astack->checkPoint(sav);
     saveCouple(savc0);
 
-    // assign to all vertices with only one candicate
+    // assign to all vertices with only one candidate
     done = False;
     for (n = 0; n < nNodes; n++) {
 
@@ -8801,7 +8801,7 @@ Bool Assign::allAssigned(void)
 #ifdef CHECK
     checkAG("allAssigned");
 #endif
-    // fill imformation to resulting Egraph
+    // fill information to resulting Egraph
     fillEGraph(nAGraphs, nsym, esym, nsym1);
 
 #ifdef OPTEXTONLY
@@ -8841,7 +8841,7 @@ Bool Assign::fromMGraph(void)
         nodes[j] = new ANode(mgraph->nodes[j]->deg);
     }
 
-    // initializaion of edge table
+    // initialization of edge table
     nETotal = 0;
 
     // List of all particles
@@ -9680,7 +9680,7 @@ Bool Assign::updateCandNode(int v)
         return False;
     }
 
-    // list of possible particles on the leges of the vertex.
+    // list of possible particles on the edges of the vertex.
     // pdass = (set of assigned particles)
     // puass = (list of particles of edges with two of more candidates)
 
@@ -10018,8 +10018,8 @@ int Assign::cmpPermGraph(int *p, MNodeClass *cl)
 //--------------------------------------------------------------
 int Assign::cmpNodes(int nd0, int nd1, MNodeClass *cn)
 {
-    //  Comarison of two nodes 'nd0' and 'nd1'
-    //    Ordering is lexcographical (class, connection configuration)
+    //  Comparison of two nodes 'nd0' and 'nd1'
+    //    Ordering is lexicographical (class, connection configuration)
     //
 
     int cmp;
@@ -10636,7 +10636,7 @@ static void   prilist(int n, const int *a, const char *msg)
 //------------------------------------------------------------
 static int nextPerm(int nelem, int nclass, int *cl, int *r, int *q, int *p, int count)
 {
-    // Sequatial generation of all permutations.
+    // Sequential generation of all permutations.
 
     int  j, k, n, e, t;
     Bool b;

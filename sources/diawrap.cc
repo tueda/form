@@ -291,7 +291,7 @@ void ProcessDiagram(EGraph *eg, void *ti)
 		startfill[1] = fill-startfill;
 	}
 //
-//	Topology counter. We have exagerated a bit with the eye on the far future.
+//	Topology counter. We have exaggerated a bit with the eye on the far future.
 //
 	if ( info->numtopo < MAXPOSITIVE ) {
 		*fill++ = TOPO; *fill++ = FUNHEAD+2; FILLFUN(fill)
@@ -401,7 +401,7 @@ void ProcessTopology(EGraph *eg, void *ti)
 		startfill[1] = fill-startfill;
 	}
 //
-//	Topology counter. We have exagerated a bit with the eye on the far future.
+//	Topology counter. We have exaggerated a bit with the eye on the far future.
 //
 	if ( info->numtopo < MAXPOSITIVE ) {
 		*fill++ = TOPO; *fill++ = FUNHEAD+2; FILLFUN(fill)
