@@ -216,9 +216,14 @@ jobs:
             opts="$opts --with-api=windows"
             if [ "${{ matrix.shell }}" = "bash" ]; then
               lib_install_dir=$(pwd)/*/vcpkg_installed/x64-windows-static-release
+              echo "$lib_install_dir"
+              echo VCPKG_INSTALLED_DIR:$VCPKG_INSTALLED_DIR
+              echo VCPKG_INSTALLED_DIR${{ env.VCPKG_INSTALLED_DIR }}
+              ls -R $lib_install_dir
               opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl CPPFLAGS=-I$lib_install_dir/include LDFLAGS=-L$lib_install_dir/lib"
             fi
           fi
+          echo ./configure $opts
           ./configure $opts
 
       - name: Debug
