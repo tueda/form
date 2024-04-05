@@ -65,6 +65,8 @@ jobs:
           # Unfortunately, "allow-failure" is not available on GitHub Actions
           # (https://github.com/actions/toolkit/issues/399).
           # We have to use "continue-on-error", instead.
+          - {os: windows-2019, shell: bash, bin: form}
+          - {os: windows-2019, shell: bash, bin: tform}
           - {os: windows-2019, shell: msys2, bin: form}
           - {os: windows-2019, shell: msys2, bin: tform}
     steps:
@@ -75,8 +77,14 @@ jobs:
           packages: libmpfr-dev
           version: 1.0
 
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
+      - name: Install dependencies (Windows, MSVC)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        run: |
+          curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
+          chmod +x cccl
+
+      - name: Install dependencies (Windows, MSYS2)
+        if: runner.os == 'Windows' && matrix.shell == 'msys2'
         uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -87,6 +95,10 @@ jobs:
             mingw-w64-x86_64-mpfr
             mingw-w64-x86_64-zlib
             ruby
+
+      - name: Setup MSVC path (Windows, MSVC)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Download tarball
         uses: actions/download-artifact@v4
@@ -119,6 +131,9 @@ jobs:
           fi
           if [ "$RUNNER_OS" == "Windows" ]; then
             opts="$opts --with-api=windows"
+            if [ "${{ matrix.shell }}" = "bash" ]; then
+              opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl"
+            fi
           fi
           ./configure $opts
 
