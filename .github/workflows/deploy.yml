@@ -152,17 +152,6 @@ jobs:
               ]
             }
 
-      - name: Create custom triplet (Windows, MSVC)
-        if: runner.os == 'Windows' && matrix.shell == 'bash' && matrix.bin == 'form'
-        uses: 1arp/create-a-file-action@0.3
-        with:
-          file: x64-windows-static-release.cmake
-          content: |
-            set(VCPKG_TARGET_ARCHITECTURE x64)
-            set(VCPKG_CRT_LINKAGE static)
-            set(VCPKG_LIBRARY_LINKAGE static)
-            set(VCPKG_BUILD_TYPE release)
-
       - name: Set up vcpkg (Windows, MSVC)
         if: runner.os == 'Windows' && matrix.shell == 'bash'
         uses: lukka/run-vcpkg@v11
