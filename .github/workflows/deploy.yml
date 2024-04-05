@@ -176,6 +176,11 @@ jobs:
       - name: Debug
         if: runner.os == 'Windows' && matrix.shell == 'bash'
         run: |
+          ls -R -l */*/x64-windows-static-release
+
+      - name: Debug
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        run: |
           vcpkg list
 
       - name: Download tarball
