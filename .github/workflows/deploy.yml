@@ -206,7 +206,7 @@ jobs:
             fi
           fi
           echo ./configure $opts
-          ./configure $opts
+          ./configure $opts || cat config.log
 
       - name: Build
         id: build
