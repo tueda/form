@@ -66,7 +66,7 @@ jobs:
           # (https://github.com/actions/toolkit/issues/399).
           # We have to use "continue-on-error", instead.
           - {os: windows-2019, shell: bash, bin: form}
-          # - {os: windows-2019, shell: bash, bin: tform}
+          - {os: windows-2019, shell: bash, bin: tform}
           # - {os: windows-2019, shell: msys2, bin: form}
           # - {os: windows-2019, shell: msys2, bin: tform}
     steps:
@@ -76,12 +76,6 @@ jobs:
         with:
           packages: libmpfr-dev
           version: 1.0
-
-      - name: Install dependencies (Windows, MSVC)
-        if: runner.os == 'Windows' && matrix.shell == 'bash'
-        run: |
-          curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
-          chmod +x cccl
 
       - name: Install dependencies (Windows, MSYS2)
         if: runner.os == 'Windows' && matrix.shell == 'msys2'
@@ -99,6 +93,77 @@ jobs:
       - name: Setup MSVC path (Windows, MSVC)
         if: runner.os == 'Windows' && matrix.shell == 'bash'
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Create vcpkg.json (Windows, MSVC, FORM)
+        if: runner.os == 'Windows' && matrix.shell == 'bash' && matrix.bin == 'form'
+        uses: 1arp/create-a-file-action@0.4.5
+        with:
+          file: vcpkg.json
+          content: |
+            {
+              "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+              "name": "build-form",
+              "version-string": "1.0.0",
+              "builtin-baseline": "a34c873a9717a888f58dc05268dea15592c2f0ff",
+              "dependencies": [
+                {"name": "gmp", "version>=": "6.3.0"},
+                {"name": "mpfr", "version>=": "4.2.1"},
+                {"name": "zlib", "version>=": "1.3.1"}
+              ]
+            }
+
+      - name: Create vcpkg.json (Windows, MSVC, TFORM)
+        if: runner.os == 'Windows' && matrix.shell == 'bash' && matrix.bin == 'tform'
+        uses: 1arp/create-a-file-action@0.4.5
+        with:
+          file: vcpkg.json
+          content: |
+            {
+              "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+              "name": "build-form",
+              "version-string": "1.0.0",
+              "builtin-baseline": "a34c873a9717a888f58dc05268dea15592c2f0ff",
+              "dependencies": [
+                {"name": "gmp", "version>=": "6.3.0"},
+                {"name": "mpfr", "version>=": "4.2.1"},
+                {"name": "pthreads", "version>=": "3.0.0#14"},
+                {"name": "zlib", "version>=": "1.3.1"}
+              ]
+            }
+
+      - name: Set up vcpkg (Windows, MSVC)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: a34c873a9717a888f58dc05268dea15592c2f0ff # 2024.03.25
+          runVcpkgInstall: true
+        env:
+          VCPKG_DEFAULT_TRIPLET: x64-windows-static-release
+          VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static-release
+          VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+
+      - name: Copy libraries (Windows, MSVC, FORM)
+        if: runner.os == 'Windows' && matrix.shell == 'bash' && matrix.bin == 'form'
+        run: |
+          cp vcpkg_installed/x64-windows-static-release/lib/zlib.lib vcpkg_installed/x64-windows-static-release/lib/z.lib
+
+      - name: Copy libraries (Windows, MSVC, TFORM)
+        if: runner.os == 'Windows' && matrix.shell == 'bash' && matrix.bin == 'tform'
+        run: |
+          cp vcpkg_installed/x64-windows-static-release/lib/zlib.lib vcpkg_installed/x64-windows-static-release/lib/z.lib
+          cp vcpkg_installed/x64-windows-static-release/lib/pthreadVC3.lib vcpkg_installed/x64-windows-static-release/lib/pthread.lib
+
+      - name: Install cccl (Windows, MSVC)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        run: |
+          curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
+          chmod +x cccl
+
+      - name: Install dependencies (Windows, MSVC)
+        if: runner.os == 'Windows' && matrix.shell == 'bash'
+        run: |
+          curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
+          chmod +x cccl
 
       - name: Download tarball
         uses: actions/download-artifact@v4
@@ -132,7 +197,8 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             opts="$opts --with-api=windows"
             if [ "${{ matrix.shell }}" = "bash" ]; then
-              opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl"
+              lib_install_dir=$(pwd)/vcpkg_installed/x64-windows-static-release
+              opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl CPPFLAGS=-I$lib_install_dir/include LDFLAGS=-L$lib_install_dir/lib"
             fi
           fi
           ./configure $opts
