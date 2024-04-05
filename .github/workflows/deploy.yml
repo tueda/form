@@ -201,7 +201,7 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             opts="$opts --with-api=windows"
             if [ "${{ matrix.shell }}" = "bash" ]; then
-              lib_install_dir=${{ github.workspace }}/vcpkg_installed/x64-windows-static-release
+              lib_install_dir=$(pwd)/vcpkg_installed/x64-windows-static-release
               opts="$opts CC=$(pwd)/cccl CXX=$(pwd)/cccl LD=$(pwd)/cccl CPPFLAGS=-I$lib_install_dir/include LDFLAGS=-L$lib_install_dir/lib"
             fi
           fi
