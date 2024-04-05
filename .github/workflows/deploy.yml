@@ -56,19 +56,19 @@ jobs:
         include:
           # To maximize compatibility, we build executables on the oldest
           # platforms available.
-          - {os: ubuntu-20.04, shell: bash, bin: form}
-          - {os: ubuntu-20.04, shell: bash, bin: tform}
-          - {os: macos-11, shell: bash, bin: form}
-          - {os: macos-11, shell: bash, bin: tform}
+          # - {os: ubuntu-20.04, shell: bash, bin: form}
+          # - {os: ubuntu-20.04, shell: bash, bin: tform}
+          # - {os: macos-11, shell: bash, bin: form}
+          # - {os: macos-11, shell: bash, bin: tform}
           # NOTE: Windows native executables have too many problems.
           # We include them in artifacts but not in releases.
           # Unfortunately, "allow-failure" is not available on GitHub Actions
           # (https://github.com/actions/toolkit/issues/399).
           # We have to use "continue-on-error", instead.
           - {os: windows-2019, shell: bash, bin: form}
-          - {os: windows-2019, shell: bash, bin: tform}
-          - {os: windows-2019, shell: msys2, bin: form}
-          - {os: windows-2019, shell: msys2, bin: tform}
+          # - {os: windows-2019, shell: bash, bin: tform}
+          # - {os: windows-2019, shell: msys2, bin: form}
+          # - {os: windows-2019, shell: msys2, bin: tform}
     steps:
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
