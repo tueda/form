@@ -171,9 +171,7 @@ jobs:
       - name: Debug
         if: runner.os == 'Windows' && matrix.shell == 'bash'
         run: |
-          vcpkg list
-          ls -l vcpkg
-          ls -R -l vcpkg/installed
+          find . -name x64-windows-static-release
 
       - name: Debug
         if: runner.os == 'Windows' && matrix.shell == 'bash'
