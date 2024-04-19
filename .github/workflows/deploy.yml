@@ -67,8 +67,8 @@ jobs:
           # We have to use "continue-on-error", instead.
           - {os: windows-2019, shell: bash, bin: form}
           - {os: windows-2019, shell: bash, bin: tform}
-          - {os: windows-2019, shell: msys2, bin: form}
-          - {os: windows-2019, shell: msys2, bin: tform}
+          # - {os: windows-2019, shell: msys2, bin: form}
+          # - {os: windows-2019, shell: msys2, bin: tform}
     steps:
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
