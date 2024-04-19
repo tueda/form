@@ -110,14 +110,14 @@ jobs:
           # -l:libgmp.a to make partial static links possible.
           # As a workaround, we make a library directory with libgmp.a
           # but without libgmp.dylib so that the linker has to link libgmp.a.
-          if [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "$RUNNER_OS" = "macOS" ]; then
             mkdir static-lib
             ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
             ln -s /usr/local/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
             export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
             opts="$opts --disable-static-link"
           fi
-          if [ "$RUNNER_OS" == "Windows" ]; then
+          if [ "$RUNNER_OS" = "Windows" ]; then
             opts="$opts --with-api=windows"
           fi
           ./configure $opts
@@ -126,7 +126,7 @@ jobs:
         id: build
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "$RUNNER_OS" = "macOS" ]; then
               export LIBRARY_PATH="$(pwd)/static-lib:${LIBRARY_PATH:-}"
           fi
           make -j 4
@@ -143,12 +143,12 @@ jobs:
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           binname=${{ matrix.bin }}
-          if [ "$RUNNER_OS" == "Windows" ]; then
+          if [ "$RUNNER_OS" = "Windows" ]; then
             binname=$binname.exe
           fi
           ls -l sources/$binname
           file sources/$binname
-          if [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "$RUNNER_OS" = "macOS" ]; then
             otool -L sources/$binname
             # Check if brewed libraries are statically linked.
             if otool -L sources/$binname | grep -q '/usr/local/opt'; then
@@ -156,7 +156,7 @@ jobs:
               exit 1
             fi
           fi
-          if [ "$RUNNER_OS" == "Windows" ]; then
+          if [ "$RUNNER_OS" = "Windows" ]; then
             ldd sources/$binname
             # Check if MSYS2 DLLs are not linked.
             if ldd sources/$binname | grep -q 'msys'; then
