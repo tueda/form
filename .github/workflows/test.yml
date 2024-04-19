@@ -68,7 +68,7 @@ jobs:
           key: formlib-${{ matrix.test }}
 
       - name: Install library if necessary
-        if: steps.cache-formlib.outputs.cache-hit != 'true'
+        if: contains(fromJson('["forcer"]'), matrix.test) && steps.cache-formlib.outputs.cache-hit != 'true'
         run: |
           mkdir -p formlib
           case ${{ matrix.test }} in
