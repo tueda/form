@@ -44,7 +44,7 @@ jobs:
   # The executables must not be too optimized for the build machine and must be
   # statically linked in such a way that they are suitable for binary distributions.
   build-bin:
-    name: Build ${{ matrix.bin }} on ${{ matrix.os }}
+    name: Build ${{ matrix.bin }}-${{ matrix.os }}${{ matrix.suffix }}
     needs: build-src
     runs-on: ${{ matrix.os }}
     defaults:
@@ -65,8 +65,8 @@ jobs:
           # Unfortunately, "allow-failure" is not available on GitHub Actions
           # (https://github.com/actions/toolkit/issues/399).
           # We have to use "continue-on-error", instead.
-          - {os: windows-2019, shell: bash, bin: form}
-          - {os: windows-2019, shell: bash, bin: tform}
+          - {os: windows-2019, shell: bash, bin: form, suffix: -msvc}
+          - {os: windows-2019, shell: bash, bin: tform, suffix: -msvc}
           - {os: windows-2019, shell: msys2, bin: form}
           - {os: windows-2019, shell: msys2, bin: tform}
     steps:
@@ -258,7 +258,7 @@ jobs:
         if: steps.check-portability.outcome == 'success' && steps.check-portability.conclusion == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.bin }}-${{ matrix.os }}
+          name: ${{ matrix.bin }}-${{ matrix.os }}${{ matrix.suffix }}
           path: |
             sources/${{ matrix.bin }}
             sources/${{ matrix.bin }}.exe
