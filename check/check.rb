@@ -361,6 +361,11 @@ module FormTest
             break
           end
         end
+
+        # Unify newline characters to Unix style (even on Windows).
+        @stdout.gsub!(/\r\n?/, "\n")
+        @stderr.gsub!(/\r\n?/, "\n")
+
         yield
       # NOTE: Here we catch all exceptions, though it is a very bad style. This
       #       is because, in Ruby 1.9, test/unit is implemented based on
