@@ -286,6 +286,14 @@ module FormTest
   @@cached_total_memory = nil
   @@total_memory_mutex = Mutex.new
 
+  def convert_newlines(str)
+    if FormTest.cfg.show_newlines
+      str.gsub(/\r/, "<CR>").gsub(/\n/, "<LF>\n")
+    else
+      str
+    end
+  end
+
   # Override methods in Test::Unit::TestCase.
 
   def setup
@@ -377,7 +385,7 @@ module FormTest
         $stderr.puts("=" * 79)
         $stderr.puts("#{info.desc} FAILED")
         $stderr.puts("=" * 79)
-        $stderr.puts(@stdout)
+        $stderr.puts(convert_newlines(@stdout))
         $stderr.puts("=" * 79)
         $stderr.puts
         if info.status.nil?
@@ -395,7 +403,7 @@ module FormTest
           $stderr.puts("=" * 79)
           $stderr.puts("#{info.desc} SUCCEEDED")
           $stderr.puts("=" * 79)
-          $stderr.puts(@stdout)
+          $stderr.puts(convert_newlines(@stdout))
           $stderr.puts("=" * 79)
           $stderr.puts
         end
@@ -1047,7 +1055,7 @@ end
 
 # FORM configuration.
 class FormConfig
-  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, wordsize, ncpu, timeout, retries, stat, full, verbose)
+  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, wordsize, ncpu, timeout, retries, stat, full, verbose, show_newlines)
     @form     = form
     @mpirun   = mpirun
     @mpirun_opts = mpirun_opts
@@ -1059,6 +1067,7 @@ class FormConfig
     @stat     = stat
     @full     = full
     @verbose  = verbose
+    @show_newlines = show_newlines
 
     @form_bin      = nil
     @mpirun_bin    = nil
@@ -1073,7 +1082,7 @@ class FormConfig
     @form_cmd    = nil
   end
 
-  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :ncpu, :timeout, :retries, :stat, :full, :verbose,
+  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :ncpu, :timeout, :retries, :stat, :full, :verbose, :show_newlines,
               :form_bin, :mpirun_bin, :valgrind_bin, :valgrind_supp, :head, :wordsize, :form_cmd
 
   def serial?
@@ -1303,6 +1312,7 @@ def main
   opts.group_count = nil
   opts.files = []
   opts.verbose = false
+  opts.show_newlines = false
 
   parser = OptionParser.new
   parser.banner = "Usage: #{File.basename($0)} [options] [--] [binname] [files|tests..]"
@@ -1346,6 +1356,8 @@ def main
             "Split tests and run only one group") { |group| opts.group_id, opts.group_count = parse_group(group) }
   parser.on("-v", "--verbose",
             "Enable verbose output")              { opts.verbose = true }
+  parser.on("--show-newlines",
+            "Show newline characters")            { opts.show_newlines = true }
   parser.on("-D TEST=NAME",
             "Alternative way to run tests NAME")  { |pat| opts.name_patterns << parse_def(pat) }
   begin
@@ -1476,7 +1488,8 @@ def main
                                 opts.retries > 1 ? opts.retries : 1,
                                 opts.stat,
                                 opts.full,
-                                opts.verbose)
+                                opts.verbose,
+                                opts.show_newlines)
   FormTest.cfg.check
   puts("Check #{FormTest.cfg.form_bin}")
   puts(FormTest.cfg.head)
