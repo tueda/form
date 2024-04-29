@@ -17,6 +17,7 @@ require "fileutils"
 require "open3"
 require "optparse"
 require "ostruct"
+require "rbconfig"
 require "set"
 require "thread"
 require "tmpdir"
@@ -240,19 +241,23 @@ module FormTest
   # Host environment.
 
   def cygwin?
-    RUBY_PLATFORM =~ /cygwin/i
+    RbConfig::CONFIG["host_os"] =~ /cygwin/i
   end
 
   def mac?
-    RUBY_PLATFORM =~ /darwin/i
+    RbConfig::CONFIG["host_os"] =~ /darwin|mac os/i
   end
 
   def linux?
-    RUBY_PLATFORM =~ /linux/i
+    RbConfig::CONFIG["host_os"] =~ /linux/i
   end
 
   def unix?
-    cygwin? || mac? || linux?
+    cygwin? || mac? || linux? || RbConfig::CONFIG["host_os"] =~ /solaris|bsd/i
+  end
+
+  def windows?
+    RbConfig::CONFIG["host_os"] =~ /mswin|msys|mingw|bccwin|wince|emc/i
   end
 
   def travis?
