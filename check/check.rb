@@ -697,6 +697,9 @@ module FormTest
 
   # A pattern from the given string with escaping any special characters.
   def exact_pattern(str)
+    if windows?
+      str = str.gsub(/\n/, "\r\n")
+    end
     san_str = Regexp.quote(str)
     Regexp.new(san_str)
   end
