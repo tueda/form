@@ -358,7 +358,7 @@ jobs:
 
       # For now, do not include Windows binaries into the distribution.
       - name: Delete Windows binaries
-        run: rm dist/*windows*
+        run: rm -fv dist/*windows*
 
       # Publish the distributions to GitHub Releases, only if the commit has
       # a versioning tag.
