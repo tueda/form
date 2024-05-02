@@ -14,9 +14,11 @@ if RUBY_VERSION < "1.9.0"
 end
 
 require "fileutils"
+require "io/console/size"
 require "open3"
 require "optparse"
 require "ostruct"
+require "rbconfig"
 require "set"
 require "thread"
 require "tmpdir"
@@ -72,12 +74,16 @@ end
 
 # Get the total size of the physical memory available on the host machine.
 def get_total_physical_memory
-  if RUBY_PLATFORM.downcase.include?("linux")
+  platform = RUBY_PLATFORM.downcase
+  if platform.include?("linux")
     mem_info = `free -b | grep Mem`
     mem_info.split[1].to_i
-  elsif RUBY_PLATFORM.downcase.include?("darwin")
+  elsif platform.include?("darwin")
     mem_info = `sysctl -n hw.memsize`
     mem_info.to_i
+  elsif platform.include?("mingw") || platform.include?("mswin")
+    mem_info = `wmic ComputerSystem get TotalPhysicalMemory`
+    mem_info.split[1].to_i
   else
     nil
   end
@@ -240,19 +246,24 @@ module FormTest
   # Host environment.
 
   def cygwin?
-    RUBY_PLATFORM =~ /cygwin/i
+    RbConfig::CONFIG["host_os"] =~ /cygwin/i
   end
 
   def mac?
-    RUBY_PLATFORM =~ /darwin/i
+    RbConfig::CONFIG["host_os"] =~ /darwin|mac os/i
   end
 
   def linux?
-    RUBY_PLATFORM =~ /linux/i
+    RbConfig::CONFIG["host_os"] =~ /linux/i
   end
 
   def unix?
-    cygwin? || mac? || linux?
+    cygwin? || mac? || linux? || RbConfig::CONFIG["host_os"] =~ /solaris|bsd/i
+  end
+
+  def windows?
+    # NOTE: "cygwin" is intentionally excluded.
+    RbConfig::CONFIG["host_os"] =~ /mswin|msys|mingw|bccwin|wince|emc/i
   end
 
   def travis?
@@ -280,6 +291,14 @@ module FormTest
 
   @@cached_total_memory = nil
   @@total_memory_mutex = Mutex.new
+
+  def reveal_newlines(str)
+    if FormTest.cfg.show_newlines
+      str.gsub(/\r/, "<CR>").gsub(/\n/, "<LF>\n")
+    else
+      str
+    end
+  end
 
   # Override methods in Test::Unit::TestCase.
 
@@ -372,7 +391,7 @@ module FormTest
         $stderr.puts("=" * 79)
         $stderr.puts("#{info.desc} FAILED")
         $stderr.puts("=" * 79)
-        $stderr.puts(@stdout)
+        $stderr.puts(reveal_newlines(@stdout))
         $stderr.puts("=" * 79)
         $stderr.puts
         if info.status.nil?
@@ -390,7 +409,7 @@ module FormTest
           $stderr.puts("=" * 79)
           $stderr.puts("#{info.desc} SUCCEEDED")
           $stderr.puts("=" * 79)
-          $stderr.puts(@stdout)
+          $stderr.puts(reveal_newlines(@stdout))
           $stderr.puts("=" * 79)
           $stderr.puts
         end
@@ -1061,7 +1080,7 @@ end
 
 # FORM configuration.
 class FormConfig
-  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, wordsize, ncpu, timeout, retries, stat, full, verbose)
+  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, wordsize, ncpu, timeout, retries, stat, full, verbose, show_newlines)
     @form     = form
     @mpirun   = mpirun
     @mpirun_opts = mpirun_opts
@@ -1073,6 +1092,7 @@ class FormConfig
     @stat     = stat
     @full     = full
     @verbose  = verbose
+    @show_newlines = show_newlines
 
     @form_bin      = nil
     @mpirun_bin    = nil
@@ -1087,7 +1107,7 @@ class FormConfig
     @form_cmd    = nil
   end
 
-  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :ncpu, :timeout, :retries, :stat, :full, :verbose,
+  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :ncpu, :timeout, :retries, :stat, :full, :verbose, :show_newlines,
               :form_bin, :mpirun_bin, :valgrind_bin, :valgrind_supp, :head, :wordsize, :form_cmd
 
   def serial?
@@ -1104,9 +1124,7 @@ class FormConfig
 
   def check_bin(name, bin)
     # Check if the executable is available.
-    system("cd #{TempDir.root}; type #{bin} >/dev/null 2>&1")
-    if $? == 0
-      # OK.
+    if File.executable?(bin)
       return
     end
 
@@ -1139,7 +1157,8 @@ class FormConfig
       end
 
       @head = ""
-      `#{@form_bin} #{frmname} 2>/dev/null`.split("\n").each do |output_line|
+      out, _status = Open3.capture2e("#{@form_bin} #{frmname}")
+      out.split("\n").each do |output_line|
         if output_line =~ /FORM/
           @head = output_line
           break
@@ -1209,14 +1228,16 @@ class FormConfig
       end
       @form_cmd = cmdlist.join(" ")
       # Check the output header.
-      @head = `#{@form_cmd} #{frmname} 2>/dev/null`.split("\n").first
-      if $? != 0
-        system("#{form_cmd} #{frmname}")
+      out, _err, status = Open3.capture3("#{@form_cmd} #{frmname}")
+      if status.success?
+        @head = out.split("\n").first
+      else
         fatal("failed to execute '#{@form_cmd}'")
       end
       if !@valgrind.nil?
         # Include valgrind version information.
-        @head += "\n#{`#{@form_cmd} @{frmname} 2>&1 >/dev/null | grep Valgrind`.split("\n")[0]}"
+        out, _status = Open3.capture2e("#{@form_cmd} #{frmname}")
+        @head += "\n" + out.split("\n").select { |line| line.include?("Valgrind") }.first
       end
     ensure
       FileUtils.rm_rf(tmpdir)
@@ -1317,6 +1338,7 @@ def main
   opts.group_count = nil
   opts.files = []
   opts.verbose = false
+  opts.show_newlines = false
 
   parser = OptionParser.new
   parser.banner = "Usage: #{File.basename($0)} [options] [--] [binname] [files|tests..]"
@@ -1360,6 +1382,8 @@ def main
             "Split tests and run only one group") { |group| opts.group_id, opts.group_count = parse_group(group) }
   parser.on("-v", "--verbose",
             "Enable verbose output")              { opts.verbose = true }
+  parser.on("--show-newlines",
+            "Show newline characters")            { opts.show_newlines = true }
   parser.on("-D TEST=NAME",
             "Alternative way to run tests NAME")  { |pat| opts.name_patterns << parse_def(pat) }
   begin
@@ -1490,7 +1514,8 @@ def main
                                 opts.retries > 1 ? opts.retries : 1,
                                 opts.stat,
                                 opts.full,
-                                opts.verbose)
+                                opts.verbose,
+                                opts.show_newlines)
   FormTest.cfg.check
   puts("Check #{FormTest.cfg.form_bin}")
   puts(FormTest.cfg.head)
@@ -1505,7 +1530,7 @@ def finalize
 
   # Print detailed statistics.
 
-  term_width = guess_term_width
+  term_width = IO.console_size[1]
 
   max_foldname_width = infos.map { |info| info.foldname.length }.max
   max_where_width = infos.map { |info| info.where.length }.max + 2
@@ -1599,24 +1624,6 @@ def format_time(time, max_time)
   t = t % 1
   ms = Integer(t * 1000)
   format("%s%02d:%02d:%02d.%03d", overflow ? ">" : " ", h, m, s, ms)
-end
-
-# Return a guessed terminal width.
-def guess_term_width
-  require "io/console"
-  IO.console.winsize[1]
-rescue LoadError, NoMethodError
-  system("type tput >/dev/null 2>&1")
-  if $? == 0
-    cols = `tput cols 2>/dev/null`
-  else
-    cols = ENV["COLUMNS"] || ENV["TERM_WIDTH"]
-  end
-  begin
-    Integer(cols)
-  rescue ArgumentError, TypeError
-    80
-  end
 end
 
 if $0 == __FILE__
