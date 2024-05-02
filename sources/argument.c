@@ -439,6 +439,10 @@ HaveTodo:
 								r3[jGCD+kLCM] = LCMbuffer[jGCD];
 							k = kLCM;
 						}
+/*
+						r3 points into GCDbuffer, so we can't free it yet, but rather
+						at the end of the while loop.
+*/
 /*						NumberFree(GCDbuffer,"execarg"); GCDbuffer = 0; */
 						NumberFree(GCDbuffer2,"execarg");
 						NumberFree(LCMbuffer,"execarg");
@@ -446,11 +450,6 @@ HaveTodo:
 						j = 2*k+1;
 /*
 						Now we have to correct the overall factor
-
-						We have a little problem here.
-						r3 is in GCDbuffer and we returned that.
-						At the same time we still use it.
-						This works as long as each worker has its own TermMalloc
 */
 						if ( scale && ( factor == 0 || *factor > 0 ) )
 							goto ScaledVariety;
@@ -729,6 +728,9 @@ do_shift:
 			}
 		}
 		t += t[1];
+/*
+		If TYPENORM4, we still have an allocated GCDbuffer which needs freeing.
+*/
 		if ( GCDbuffer ) {
 			NumberFree(GCDbuffer,"execarg"); GCDbuffer = 0;
 		}
@@ -1740,7 +1742,6 @@ oneterm:;
 	AT.WorkPointer = oldwork;
 	if ( AT.WorkPointer < term + *term ) AT.WorkPointer = term + *term;
 	AT.pWorkPointer = oldppointer;
-	if ( GCDbuffer ) NumberFree(GCDbuffer,"execarg");
 	return(action);
 execargerr:
 	AT.WorkPointer = oldwork;
