@@ -729,6 +729,9 @@ do_shift:
 			}
 		}
 		t += t[1];
+		if ( GCDbuffer ) {
+			NumberFree(GCDbuffer,"execarg"); GCDbuffer = 0;
+		}
 	}
 	if ( didpolyratfun ) {
 		PolyFunDirty(BHEAD term);
