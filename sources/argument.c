@@ -66,7 +66,7 @@ WORD execarg(PHEAD WORD *term, WORD level)
 	WORD *oldwork = AT.WorkPointer, *oldwork2, scale, renorm;
 	WORD kLCM = 0, kGCD = 0, kGCD2, kkLCM = 0, jLCM = 0, jGCD, sign = 1;
 	int ii, didpolyratfun;
-	UWORD *EAscrat, *GCDbuffer = 0, *GCDbuffer2, *LCMbuffer, *LCMb, *LCMc;
+	UWORD *EAscrat, *GCDbuffer = 0, *GCDbuffer2 = 0, *LCMbuffer = 0, *LCMb = 0, *LCMc = 0;
 	AT.WorkPointer += *term;
 	start = C->lhs[level];
 	AR.Cnumlhs = start[2];
@@ -124,6 +124,16 @@ WORD execarg(PHEAD WORD *term, WORD level)
 /*
   	#[ Argument detection : + argument statement
 */
+/*
+	Allocate Numbers for MakeInteger here, for re-use in case multiple
+	functions are treated in the same term.
+*/
+	if ( type == TYPENORM4 ) {
+		GCDbuffer = NumberMalloc("execarg");
+		GCDbuffer2 = NumberMalloc("execarg");
+		LCMbuffer = NumberMalloc("execarg");
+		LCMb = NumberMalloc("execarg"); LCMc = NumberMalloc("execarg");
+	}
 	didpolyratfun = 0;
 	while ( t < rstop ) {
 		if ( *t >= FUNCTION && functions[*t-FUNCTION].spec <= 0 ) {
@@ -341,11 +351,8 @@ HaveTodo:
 						For normalizing everything to integers we have to
 						determine for all elements of this argument the LCM of
 						the denominators and the GCD of the numerators.
+						The buffers have been allocated already.
 */
-						GCDbuffer = NumberMalloc("execarg");
-						GCDbuffer2 = NumberMalloc("execarg");
-						LCMbuffer = NumberMalloc("execarg");
-						LCMb = NumberMalloc("execarg"); LCMc = NumberMalloc("execarg");
 						r4 = r + *r;
 						r1 = r + ARGHEAD;
 /*
@@ -439,14 +446,7 @@ HaveTodo:
 								r3[jGCD+kLCM] = LCMbuffer[jGCD];
 							k = kLCM;
 						}
-/*
-						r3 points into GCDbuffer, so we can't free it yet, but rather
-						at the end of the while loop.
-*/
-/*						NumberFree(GCDbuffer,"execarg"); GCDbuffer = 0; */
-						NumberFree(GCDbuffer2,"execarg");
-						NumberFree(LCMbuffer,"execarg");
-						NumberFree(LCMb,"execarg"); NumberFree(LCMc,"execarg");
+
 						j = 2*k+1;
 /*
 						Now we have to correct the overall factor
@@ -728,12 +728,15 @@ do_shift:
 			}
 		}
 		t += t[1];
+	}
 /*
-		If TYPENORM4, we still have an allocated GCDbuffer which needs freeing.
+		If TYPENORM4, we allocated Number buffers before the above while loop. Free them.
 */
-		if ( GCDbuffer ) {
-			NumberFree(GCDbuffer,"execarg"); GCDbuffer = 0;
-		}
+	if ( type == TYPENORM4 ) {
+		NumberFree(GCDbuffer,"execarg");
+		NumberFree(GCDbuffer2,"execarg");
+		NumberFree(LCMbuffer,"execarg");
+		NumberFree(LCMb,"execarg"); NumberFree(LCMc,"execarg");
 	}
 	if ( didpolyratfun ) {
 		PolyFunDirty(BHEAD term);
