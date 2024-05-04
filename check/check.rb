@@ -1668,5 +1668,11 @@ def format_time(time, max_time)
 end
 
 if $0 == __FILE__
+  p RUBY_PLATFORM
+  p RbConfig::CONFIG["host_os"]
+  p ENV["TRAVIS"]
+  p ENV["GITHUB_ACTIONS"]
+  p ENV["PATH"]
+  p ENV["FORMPATH"]
   main
 end
