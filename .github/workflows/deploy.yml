@@ -145,12 +145,12 @@ jobs:
       - name: Debug
         continue-on-error: true
         run: |
-          ./sources/form -D TEST=Issue135_3 check/features.frm
+          ./sources/form -D TEST=Sta_Fill_1 check/examples.frm
 
       - name: Debug
         continue-on-error: true
         run: |
-          ./sources/form -D TEST=Sta_Fill_1 check/examples.frm
+          ./sources/form -D TEST=Issue135_3 check/features.frm
 
       - name: Print executable information
         id: check-portability
