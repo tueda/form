@@ -122,6 +122,11 @@ jobs:
           fi
           ./configure $opts
 
+      - name: Debug
+        run: |
+          type gcc
+          gcc --version
+
       - name: Build
         id: build
         continue-on-error: ${{ runner.os == 'Windows' }}
