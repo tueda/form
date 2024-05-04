@@ -174,7 +174,7 @@ def which(name)
     result = File.expand_path(name)
   else
     # Search from $PATH.
-    ENV["PATH"].split(":").each do |path|
+    ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
       candidate = File.join(path, name)
       if File.executable?(candidate)
         result = File.expand_path(candidate)
@@ -1517,7 +1517,7 @@ def main
 
   # --path option.
   if !opts.path.nil?
-    ENV["PATH"] = "#{opts.path}:#{ENV['PATH']}"
+    ENV["PATH"] = "#{opts.path}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
   end
 
   # Set FORMPATH
