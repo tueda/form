@@ -7109,8 +7109,10 @@ static int DoAddPath(UBYTE *s, int bPrepend)
 	*s = '\0';
 
 	/* Update AM.Path. */
+	MesPrint("Old AM.Path|%s|", AM.Path);
 	if ( AM.Path ) M_free(AM.Path,"add path");
 	AM.Path = NewPath;
+	MesPrint("New AM.Path|%s|", AM.Path);
 
 	return(0);
 

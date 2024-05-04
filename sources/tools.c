@@ -115,7 +115,9 @@ UBYTE *LoadInputFile(UBYTE *filename, int type)
 	LONG filesize;
 	UBYTE *buffer, *name = filename;
 	POSITION scrpos;
+	MesPrint("Locate In [%s]", name);
 	handle = LocateFile(&name,type);
+	MesPrint("Locate Out[%s]", name);
 	if ( handle < 0 ) return(0);
 	PUTZERO(scrpos);
 	SeekFile(handle,&scrpos,SEEK_END);
@@ -334,7 +336,9 @@ STREAM *OpenStream(UBYTE *name, int type, int prevarmode, int raiselow)
 			Hence we do not worry about files longer than 2 Gbytes.
 */
 			newname = name;
+			MesPrint("Locate In [%s]", newname);
 			handle = LocateFile(&newname,-1);
+			MesPrint("Locate Out[%s]", newname);
 			if ( handle < 0 ) return(0);
 			PUTZERO(scrpos);
 			SeekFile(handle,&scrpos,SEEK_END);
