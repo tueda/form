@@ -86,7 +86,7 @@ jobs:
             mingw-w64-x86_64-gmp
             mingw-w64-x86_64-mpfr
             mingw-w64-x86_64-zlib
-            ruby
+            mingw-w64-x86_64-ruby
 
       - name: Download tarball
         uses: actions/download-artifact@v4
