@@ -74,7 +74,7 @@ end
 
 # Get the total size of the physical memory available on the host machine.
 def get_total_physical_memory
-  platform = RUBY_PLATFORM.downcase
+  platform = RbConfig::CONFIG["host_os"].downcase
   if platform.include?("linux")
     mem_info = `free -b | grep Mem`
     mem_info.split[1].to_i
