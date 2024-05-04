@@ -250,7 +250,7 @@ assert result("G") =~ expr("5678")
 assert result("H") =~ expr("9012")
 *--#] AppendPath_unix :
 *--#[ AppendPath_windows :
-#include foo/foo1.h
+#include foo\foo1.h
 * foo/bar/p1.prc
 #call p1
 P;
