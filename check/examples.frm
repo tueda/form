@@ -1950,4 +1950,12 @@ Print;
 *    assert succeeded?
 *    assert nterms("F") == 4999
 *--#] Diagrams_6 : 
-
+*--#[ tmp1 :
+.end
+assert warning?
+*--#] tmp1 : 
+*--#[ tmp2 :
+#terminate
+.end
+assert succeeded?
+*--#] tmp2 : 
