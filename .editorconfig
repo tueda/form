@@ -1,17 +1,29 @@
 root = true
 
-[*.{ac,am,c,cc,h}]
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.{c,cc,h}]
 indent_size = 4
 indent_style = tab
+
+[*.{ac,am}]
+indent_size = 4
+indent_style = tab
+trim_trailing_whitespace = true
 
 [*.py]
 indent_size = 4
 indent_style = space
+trim_trailing_whitespace = true
 
 [*.{rb,yml}]
 indent_size = 2
 indent_style = space
+trim_trailing_whitespace = true
 
 [.pre-commit-config.yaml]
 indent_size = 4
 indent_style = space
+trim_trailing_whitespace = true
