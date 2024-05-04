@@ -375,6 +375,14 @@ module FormTest
             break
           end
         end
+        # On Windows, we convert newline characters in stdout/stderr into
+        # the Unix-style newline characters used in our test cases.
+        @raw_stdout = @stdout
+        @raw_stderr = @stderr
+        if windows?
+          @stdout = @stdout.gsub(/\r\n/, "\n")
+          @stderr = @stderr.gsub(/\r\n/, "\n")
+        end
         # MesPrint inevitably inserts newline characters when a line exceeds
         # its length limit. To verify error/warning messages, here we remove
         # newline characters that seem to be part of continuation lines
@@ -398,7 +406,7 @@ module FormTest
         $stderr.puts("=" * 79)
         $stderr.puts("#{info.desc} FAILED")
         $stderr.puts("=" * 79)
-        $stderr.puts(reveal_newlines(@stdout))
+        $stderr.puts(reveal_newlines(@raw_stdout))
         $stderr.puts("=" * 79)
         $stderr.puts
         if info.status.nil?
@@ -416,7 +424,7 @@ module FormTest
           $stderr.puts("=" * 79)
           $stderr.puts("#{info.desc} SUCCEEDED")
           $stderr.puts("=" * 79)
-          $stderr.puts(reveal_newlines(@stdout))
+          $stderr.puts(reveal_newlines(@raw_stdout))
           $stderr.puts("=" * 79)
           $stderr.puts
         end
@@ -604,7 +612,13 @@ module FormTest
   def file(filename)
     begin
       File.open(File.join(@tmpdir, filename), "r") do |f|
-        return f.read
+        result = f.read
+        # On Windows, we convert newline characters in the file into
+        # the Unix-style newline characters used in our test cases.
+        if windows?
+          result = result.gsub(/\r\n/, "\n")
+        end
+        return result
       end
     rescue StandardError
       $stderr.puts("warning: failed to read '#{filename}'")
