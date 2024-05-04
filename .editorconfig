@@ -1,0 +1,17 @@
+root = true
+
+[*.{ac,am,c,cc,h}]
+indent_size = 4
+indent_style = tab
+
+[*.py]
+indent_size = 4
+indent_style = space
+
+[*.{rb,yml}]
+indent_size = 2
+indent_style = space
+
+[.pre-commit-config.yaml]
+indent_size = 4
+indent_style = space

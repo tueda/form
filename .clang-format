@@ -1,0 +1,14 @@
+ColumnLimit: 0
+IndentWidth: 4
+TabWidth: 4
+UseTab: AlignWithSpaces
+
+AllowShortBlocksOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: Never
+  AfterFunction: true
+  BeforeElse: true
+SpacesInConditionalStatement: true

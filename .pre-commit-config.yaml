@@ -1,3 +1,6 @@
+default_language_version:
+    python: python3
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -5,6 +8,7 @@ repos:
     -   id: check-added-large-files
     -   id: check-case-conflict
     -   id: check-executables-have-shebangs
+#   -   id: check-illegal-windows-names
     -   id: check-merge-conflict
     -   id: check-shebang-scripts-are-executable
     -   id: check-symlinks
@@ -15,3 +19,21 @@ repos:
     -   id: mixed-line-ending
     -   id: trailing-whitespace
         exclude: '\.(c|cc|frm|h|md|tex)$'
+
+-   repo: local
+    hooks:
+    -   id: fix-folds
+        name: Check for folds
+        entry: python scripts/stedi-folds.py
+        language: python
+#       args: ["-x", "clang-format", "-a", "-style=file", "-n", "1"]
+        additional_dependencies:
+        -   clang-format==18.1.4
+
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.3
+    hooks:
+    -   id: ruff
+        args: [ --fix ]
+    -   id: ruff-format
