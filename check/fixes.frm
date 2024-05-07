@@ -2684,7 +2684,10 @@ id f(N?) = N^50;
 id g(N?) = 1;
 print;
 .end
+#require linux?
 #ulimit -v 8_000_000
+# We assume more memory than a 32bit system can provide
+#require wordsize >= 4
 assert succeeded?
 assert result("F") =~ expr("5000")
 *--#] Issue508 :
