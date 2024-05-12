@@ -13,7 +13,9 @@
   #terminate
 #else
   #ifndef `DONTAPPENDPATH'
+    #message `path_'
     #appendpath .
+    #message `path_'
   #endif
   #include `NAME_' # `TEST'
 #endif
@@ -1954,6 +1956,7 @@ Print;
 *    assert nterms("F") == 4999
 *--#] Diagrams_6 : 
 *--#[ example_1 :
+#message `path_'
 S x1,...,x9;
 L F =
 #include example1.dat
