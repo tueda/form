@@ -137,6 +137,26 @@ jobs:
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: make check
 
+      - name: Test2
+        if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: |
+          binname=${{ matrix.bin }}
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            binname=$binname.exe
+          fi
+          sources/$binname -D TEST=example_1 check/examples.frm
+
+      - name: Test3
+        if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: |
+          binname=${{ matrix.bin }}
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            binname=$binname.exe
+          fi
+          sources/$binname -D TEST=example_1 -D DONTAPPENDPATH check/examples.frm
+  
       - name: Print executable information
         id: check-portability
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'

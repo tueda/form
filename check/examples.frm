@@ -12,6 +12,9 @@
   #message Use -D TEST=XXX
   #terminate
 #else
+  #ifndef `DONTAPPENDPATH'
+    #appendpath .
+  #endif
   #include `NAME_' # `TEST'
 #endif
 .end
@@ -1950,4 +1953,10 @@ Print;
 *    assert succeeded?
 *    assert nterms("F") == 4999
 *--#] Diagrams_6 : 
-
+*--#[ example_1 :
+S x1,...,x9;
+L F =
+#include example1.dat
+;
+.end
+*--#] example_1 :
