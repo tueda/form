@@ -6,8 +6,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Simple tests on Linux; except the ParFORM case, they probably pass unless
-  # the committer has forgotten running "make check".
+  # Simple tests on Linux; except the ParFORM case, the "default" test cases
+  # probably pass unless the committer has forgotten running "make check".
+  # We also run specific tests that are not executed by default.
   check:
     name: Test (${{ matrix.test }}) for ${{ matrix.bin }}${{ matrix.nthreads && format(' -w{0}', matrix.nthreads) || '' }}
     runs-on: ubuntu-20.04
@@ -21,9 +22,9 @@ jobs:
           - {bin: parform, test: default, timeout: 15}
           - {bin: form, test: checkpoint}
           - {bin: tform, test: checkpoint}
-          - {bin: form, test: forcer, timeout: 60}
-          - {bin: tform, test: forcer, timeout: 60}
-          - {bin: tform, test: forcer, nthreads: 2, timeout: 60}
+          - {bin: form, test: forcer, lib: forcer, timeout: 60}
+          - {bin: tform, test: forcer, lib: forcer, timeout: 60}
+          - {bin: tform, test: forcer, lib: forcer, nthreads: 2, timeout: 60}
           - {bin: tform, test: multithreaded}
     steps:
       - name: Checkout repository
@@ -63,17 +64,20 @@ jobs:
 
       - name: Cache library
         id: cache-formlib
-        if: contains(fromJson('["forcer"]'), matrix.test)
+        if: matrix.lib
         uses: actions/cache@v4
         with:
           path: formlib
-          key: formlib-${{ matrix.test }}
+          key: formlib-${{ matrix.lib }}
 
       - name: Install library if necessary
-        if: steps.cache-formlib.outputs.cache-hit != 'true'
+        if: matrix.lib && steps.cache-formlib.outputs.cache-hit != 'true'
         run: |
           mkdir -p formlib
-          case ${{ matrix.test }} in
+          case ${{ matrix.lib }} in
+            color)
+              wget https://www.nikhef.nl/~form/maindir/packages/color/color.h -P formlib
+              ;;
             forcer)
               wget https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz -O - | tar -x --gzip
               mv forcer-1.0.0/forcer.h formlib
