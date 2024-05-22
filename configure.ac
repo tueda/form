@@ -881,7 +881,7 @@ if test "$my_test_LINKFLAGS" != set; then
 		# Profilers needs symbol tables.
 		LINKFLAGS=
 	else
-		LINKFLAGS=-s
+		LINKFLAGS=-rdynamic
 	fi
 fi
 my_test_DEBUGCOMPILEFLAGS=${DEBUGCOMPILEFLAGS+set}

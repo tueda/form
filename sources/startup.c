@@ -43,6 +43,7 @@
 #else
 #include <signal.h>
 #endif
+#include <execinfo.h>
 
 /*
  * A macro for translating the contents of `x' into a string after expanding.
@@ -1782,6 +1783,8 @@ VOID Terminate(int errorcode)
 {
 	if ( errorcode && firstterminate ) {
 		firstterminate = 0;
+
+		MLOCK(ErrorMessageLock);
 #ifdef WITHPTHREADS
 		MesPrint("Program terminating in thread %w at &");
 #elif defined(WITHMPI)
@@ -1789,6 +1792,29 @@ VOID Terminate(int errorcode)
 #else
 		MesPrint("Program terminating at &");
 #endif
+
+		void *stack[64];
+		int stacksize, stop = 0;
+		stacksize = backtrace(stack, sizeof(stack)/sizeof(stack[0]));
+
+		MesPrint("Backtrace:");
+		for (int i = 0; i < stacksize && !stop; i++) {
+			FILE *fp;
+			char cmd[512];
+			MesPrint("%#%2d: %", i);
+			snprintf(cmd, sizeof(cmd)/sizeof(cmd[0]), "eu-addr2line -s --pretty-print -f -i '%p' --pid=%d\n", stack[i], getpid());
+			fp = popen(cmd, "r");
+			while ( fgets(cmd, sizeof(cmd), fp) != NULL ) {
+				MesPrint("%s", cmd);
+				/* Don't show functions lower than "main" */
+				if ( strstr(cmd, "main") || strstr(cmd, "start_thread")  ) {
+					stop = 1;
+				}
+			}
+			pclose(fp);
+		}
+		MUNLOCK(ErrorMessageLock);
+
 		Crash();
 	}
 #ifdef TRAPSIGNALS
