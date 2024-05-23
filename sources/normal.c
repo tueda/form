@@ -1828,7 +1828,7 @@ gcdcalc:					if ( GcdLong(BHEAD (UWORD *)num1,size1,(UWORD *)num2,size2
 #endif
 #else
 				MesPrint(" Unexpected call to EvaluateGCD");
-				Terminate(-1);
+				TERMINATE(-1);
 #endif
 				break;
 			case MINFUNCTION:
@@ -3633,7 +3633,7 @@ regularratfun:;
 									MLOCK(ErrorMessageLock);
 									MesPrint("Internal error in Normalize with extra compiler buffer");
 									MUNLOCK(ErrorMessageLock);
-									Terminate(-1);
+									TERMINATE(-1);
 								}
 								ma += 2 + ma[2];
 								continue;
@@ -4132,19 +4132,19 @@ NormInf:
 	MLOCK(ErrorMessageLock);
 	MesPrint("Division by zero during normalization");
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 
 NormZZ:
 	MLOCK(ErrorMessageLock);
 	MesPrint("0^0 during normalization of term");
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 
 NormPRF:
 	MLOCK(ErrorMessageLock);
 	MesPrint("0/0 in polyratfun during normalization of term");
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 
 NormZero:
 	*term = 0;
@@ -4189,7 +4189,7 @@ WORD ExtraSymbol(WORD sym, WORD pow, WORD nsym, WORD *ppsym, WORD *ncoef)
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal wildcard power combination.");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			*m += pow;
 
@@ -4580,7 +4580,7 @@ WORD *PolyNormPoly (PHEAD WORD *Poly) {
 	GETBIDENTITY;
 	WORD *buffer = AT.WorkPointer;
 	WORD *p;
-	if ( NewSort(BHEAD0) ) { Terminate(-1); }
+	if ( NewSort(BHEAD0) ) { TERMINATE(-1); }
 	AR.CompareRoutine = (COMPAREDUMMY)(&CompareSymbols);
 	while ( *Poly ) {
 		p = Poly + *Poly;
@@ -4588,13 +4588,13 @@ WORD *PolyNormPoly (PHEAD WORD *Poly) {
 		if ( StoreTerm(BHEAD Poly) ) {
 			AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
 			LowerSortLevel();
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		Poly = p;
 	}
 	if ( EndSort(BHEAD buffer,1) < 0 ) {
 		AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	p = buffer;
 	while ( *p ) p += *p;
@@ -4620,7 +4620,7 @@ WORD *PolyNormPoly (PHEAD WORD *Poly) {
      proces.c:				if ( Normalize(BHEAD AT.WorkPointer) ) goto PasErr;
 2308!proces.c:		if ( ( retnorm = Normalize(BHEAD term) ) != 0 ) {
      proces.c:					ReNumber(BHEAD term); Normalize(BHEAD term);
-     proces.c:				if ( Normalize(BHEAD v) ) Terminate(-1);
+     proces.c:				if ( Normalize(BHEAD v) ) TERMINATE(-1);
      proces.c:		if ( Normalize(BHEAD w) ) { LowerSortLevel(); goto PolyCall; }
      proces.c:		if ( Normalize(BHEAD term) ) goto PolyCall;
 */

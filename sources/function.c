@@ -882,7 +882,7 @@ WORD MatchFunction(PHEAD WORD *pattern, WORD *interm, WORD *wilds)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	AT.WorkPointer = t;
 
@@ -1645,7 +1645,7 @@ WORD ScanFunctions(PHEAD WORD *inpat, WORD *inter, WORD par)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	AT.WorkPointer = t;
 	do {

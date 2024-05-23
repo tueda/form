@@ -776,7 +776,7 @@ classic:;
 					t[-7] = 0;
 					MesPrint("Please remove files of the type %s or try a different directory"
 						,FG.fname);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				else t[-7] = (UBYTE)(c+1);
 			}
@@ -1556,7 +1556,7 @@ static VOID onErrSig(int i)
 	}
 	trappedTerminate = 1;
 	/*[13jul2005 mt]*//*Terminate(-1) on signal is here:*/
-	Terminate(-1);
+	TERMINATE(-1);
 }
 
 #ifdef INTSIGHANDLER
@@ -1650,21 +1650,21 @@ int main(int argc, char **argv)
 #endif
 
 	if ( ( retval = DoTail(argc,(UBYTE **)argv) ) != 0 ) {
-		if ( retval > 0 ) Terminate(0);
-		else              Terminate(-1);
+		if ( retval > 0 ) TERMINATE(0);
+		else              TERMINATE(-1);
 	}
-	if ( DoSetups() ) Terminate(-2);
+	if ( DoSetups() ) TERMINATE(-2);
 #ifdef WITHMPI
 	/* It is messy if all errors in OpenInput() on slaves are printed. */
 	AS.printflag = 0;
 #endif
-	if ( OpenInput() ) Terminate(-3);
+	if ( OpenInput() ) TERMINATE(-3);
 #ifdef WITHMPI
 	AS.printflag = -1;
 #endif
-	if ( TryEnvironment() ) Terminate(-2);
-	if ( TryFileSetups() ) Terminate(-2);
-	if ( MakeSetupAllocs() ) Terminate(-2);
+	if ( TryEnvironment() ) TERMINATE(-2);
+	if ( TryFileSetups() ) TERMINATE(-2);
+	if ( MakeSetupAllocs() ) TERMINATE(-2);
 	StartMore();
 	InitRecovery();
 	CheckRecoveryFile();
@@ -1689,7 +1689,7 @@ int main(int argc, char **argv)
 	TimeChildren(0);
 	TimeWallClock(0);
 	PreProcessor();
-	Terminate(0);
+	TERMINATE(0);
 	return(0);
 }
 /*
@@ -1779,7 +1779,7 @@ dontremove:;
 
 static int firstterminate = 1;
 
-VOID Terminate(int errorcode)
+VOID Terminate(int errorcode, const char* file, int line, const char* function)
 {
 	if ( errorcode && firstterminate ) {
 		firstterminate = 0;
@@ -1792,6 +1792,7 @@ VOID Terminate(int errorcode)
 #else
 		MesPrint("Program terminating at &");
 #endif
+		MesPrint("Terminate called from %s:%d (%s)", file, line, function);
 
 		void *stack[64];
 		int stacksize, stop = 0;

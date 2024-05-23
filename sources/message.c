@@ -56,7 +56,7 @@ static char hex[] = {'0','1','2','3','4','5','6','7','8','9',
 VOID Error0(char *s)
 {
 	MesPrint("=== %s",s);
-	Terminate(-1);
+	TERMINATE(-1);
 }
 
 /*
@@ -67,7 +67,7 @@ VOID Error0(char *s)
 VOID Error1(char *s, UBYTE *t)
 {
 	MesPrint("@%s %s",s,t);
-	Terminate(-1);
+	TERMINATE(-1);
 }
 
 /*
@@ -78,7 +78,7 @@ VOID Error1(char *s, UBYTE *t)
 VOID Error2(char *s1, char *s2, UBYTE *t)
 {
 	MesPrint("@%s%s %s",s1,s2,t);
-	Terminate(-1);
+	TERMINATE(-1);
 }
 
 /*
@@ -90,7 +90,7 @@ int MesWork(VOID)
 {
 	MesPrint("=== Workspace overflow. %l bytes is not enough.",AM.WorkSize);
 	MesPrint("=== Change parameter WorkSpace in %s",setupfilename);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 }
 
@@ -361,7 +361,7 @@ va_dcl
 					AddToLine((UBYTE *)Out);
 					if ( *s == 'T' ) noleadsign = 1;
 					else noleadsign = 0;
-					if ( WriteInnerTerm(AN.currentTerm,noleadsign) ) Terminate(-1);
+					if ( WriteInnerTerm(AN.currentTerm,noleadsign) ) TERMINATE(-1);
 					t = Out;
 					u = (char *)AO.OutputLine;
 					*(AO.OutFill) = 0;
@@ -464,7 +464,7 @@ va_dcl
 						}
 						if ( num > d->nfactors ) {
 							MesPrint("\nFactor number for dollar is too large.");
-							Terminate(-1);
+							TERMINATE(-1);
 						}
 						term = d->factors[num-1].where;
 						if ( term == 0 ) {
@@ -494,7 +494,7 @@ printterms:				first = 1;
 #ifdef WITHPTHREADS
 								if ( dtype > 0 && dtype != MODLOCAL ) { UNLOCK(d->pthreadslockread); }
 #endif
-								Terminate(-1);
+								TERMINATE(-1);
 							}
 							first = 0;
 							t = Out;
@@ -525,7 +525,7 @@ dosubterm:				if ( AC.LineLength > MAXLINELENGTH ) AC.LineLength = MAXLINELENGTH
 #ifdef WITHPTHREADS
 							if ( dtype > 0 && dtype != MODLOCAL ) { UNLOCK(d->pthreadslockread); }
 #endif
-							Terminate(-1);
+							TERMINATE(-1);
 						}
 						t = Out;
 						u = (char *)AO.OutputLine;
@@ -611,7 +611,7 @@ dollarzero:				*t++ = '0'; *t = 0;
 								AO.OutStop = AO.OutputLine + AC.LineLength;
 								*t = 0;
 								AddToLine((UBYTE *)Out);
-								if ( WriteSubTerm(indsubterm,1) ) Terminate(-1);
+								if ( WriteSubTerm(indsubterm,1) ) TERMINATE(-1);
 								if ( i > 0 ) TokenToLine((UBYTE *)",");
 								t = Out;
 								u = (char *)AO.OutputLine;

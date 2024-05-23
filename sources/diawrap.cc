@@ -182,7 +182,7 @@ int ConvertParticle(Model *model,int formnum)
         else if ( model->particles[i]->acode == formnum ) { return(-i); }
     }
     MesPrint("Particle %d not found in model %s",formnum,model->name);
-    Terminate(-1);
+    TERMINATE(-1);
     return(0);
 }
 
@@ -209,7 +209,7 @@ int numParticle(MODEL *m,WORD n)
 		if ( m->vertices[i]->particles[1].number == n ) return(i);
 	}
 	MesPrint("numParticle: particle %d not found in model",n);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 }
 
@@ -1051,13 +1051,13 @@ WORD GenTopologies(PHEAD WORD *term, WORD level)
 		MLOCK(ErrorMessageLock);
 		MesPrint("GenTopologies: %d loops and %d legs considered excessive",nloops,nlegs);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( processVertex(&TopoInf,points,0) != 0 ) {
 		MLOCK(ErrorMessageLock);
 		MesPrint("Called from GenTopologies with %d loops and %d legs",nloops,nlegs);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	delete opt;
 	return(0);

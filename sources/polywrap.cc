@@ -86,14 +86,14 @@ WORD poly_determine_modulus (PHEAD bool multi_error, bool is_fun_arg, string mes
 			MLOCK(ErrorMessageLock);
 			MesPrint ((char*)"ERROR: %s with modulus > WORDSIZE not implemented",message.c_str());
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 			
 		if (multi_error && AN.poly_num_vars>1) {
 			MLOCK(ErrorMessageLock);
 			MesPrint ((char*)"ERROR: multivariate %s with modulus not implemented",message.c_str());
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 			
 		return *AC.cmod;
@@ -168,7 +168,7 @@ WORD *poly_gcd(PHEAD WORD *a, WORD *b, WORD fit) {
 			MLOCK(ErrorMessageLock);
 			MesPrint("poly_gcd: Term too complex. Maybe increasing MaxTermSize can help");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		res = TermMalloc("poly_gcd");
 	}
@@ -268,7 +268,7 @@ WORD *poly_divmod(PHEAD WORD *a, WORD *b, int divmod, WORD fit) {
 					MLOCK(ErrorMessageLock);
 					MesPrint ((char*)"ERROR: pseudo-division failed in poly_divmod (denompower > INT_MAX)");
 					MUNLOCK(ErrorMessageLock);
-					Terminate(1);
+					TERMINATE(1);
 				}
 
 				if(denompower != 0)
@@ -353,7 +353,7 @@ WORD *poly_divmod(PHEAD WORD *a, WORD *b, int divmod, WORD fit) {
 				MLOCK(ErrorMessageLock);
 				MesPrint("poly_divmod: Term too complex. Maybe increasing MaxTermSize can help");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			res = TermMalloc("poly_divmod");
 		}
@@ -487,7 +487,7 @@ void poly_ratfun_read (WORD *a, poly &num, poly &den) {
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: PolyRatFun cannot have zero arguments");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	poly den_num(BHEAD 1),den_den(BHEAD 1);
@@ -509,7 +509,7 @@ void poly_ratfun_read (WORD *a, poly &num, poly &den) {
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: PolyRatFun cannot have more than two arguments");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// JD: At this point, num and den are certainly sorted into the correct order by
@@ -567,20 +567,20 @@ void poly_sort(PHEAD WORD *a) {
 #ifdef DEBUG
 	cout << "*** [" << thetime() << "]  CALL : poly_sort" << endl;
 #endif
-	if (NewSort(BHEAD0)) { Terminate(-1); }
+	if (NewSort(BHEAD0)) { TERMINATE(-1); }
 	AR.CompareRoutine = (COMPAREDUMMY)(&CompareSymbols);
 	
 	for (int i=ARGHEAD; i<a[0]; i+=a[i]) {
 		if (SymbolNormalize(a+i)<0 || StoreTerm(BHEAD a+i)) {
 			AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
 			LowerSortLevel();
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 	
 	if (EndSort(BHEAD a+ARGHEAD,1) < 0) {
 		AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	
 	AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
@@ -673,7 +673,7 @@ WORD *poly_ratfun_add (PHEAD WORD *t1, WORD *t2) {
 		MesPrint ("(1) num size = %d, den size = %d,  MaxTer = %d",num.size_of_form_notation(),
 				den.size_of_form_notation(),AM.MaxTer);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// Format result in Form notation
@@ -818,7 +818,7 @@ int poly_ratfun_normalize (PHEAD WORD *term) {
 		MesPrint ("(2) num size = %d, den size = %d,  MaxTer = %d",num1.size_of_form_notation(),
 				den1.size_of_form_notation(),AM.MaxTer);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// Format result in Form notation
@@ -975,7 +975,7 @@ WORD *poly_factorize (PHEAD WORD *argin, WORD *argout, bool with_arghead, bool i
 			MLOCK(ErrorMessageLock);
 			MesPrint ("ERROR: factorization doesn't fit in a term");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 	else {
@@ -1118,7 +1118,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	
 	WORD *term = AT.WorkPointer;
@@ -1151,7 +1151,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 	// dummy indices are not allowed
 	if (expr->numdummies > 0) {
 		MesPrint("ERROR: factorization with dummy indices not implemented");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// determine whether the expression in on file or in memory
@@ -1160,7 +1160,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 		SeekFile(file->handle,&pos,SEEK_SET);
 		if (ISNOTEQUALPOS(pos,expr->onfile)) {
 			MesPrint("ERROR: something wrong in scratch file [poly_factorize_expression]");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		file->POposition = expr->onfile;
 		file->POfull = file->PObuffer;
@@ -1179,7 +1179,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 	WORD size = GetTerm(BHEAD term);
 	if (size <= 0) {
 		MesPrint ("ERROR: something wrong with expression [poly_factorize_expression]");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// store position: this is where the output will go
@@ -1197,12 +1197,12 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 		sumcommu += DoesCommu(term);
 		if ( sumcommu > 1 ) {
 			MesPrint("ERROR: Cannot factorize an expression with more than one noncommuting object");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		buffer.check_memory(bufpos);		
 		if (LocalConvertToPoly(BHEAD term, buffer.terms + bufpos, startebuf,0) < 0) {
 			MesPrint("ERROR: in LocalConvertToPoly [factorize_expression]");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		bufpos += *(buffer.terms + bufpos);
 	}
@@ -1339,7 +1339,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 						if (ConvertFromPoly(BHEAD t, term, numxsymbol, CC->numrhs-startebuf+numxsymbol,
 																startebuf-numxsymbol, 1) <= 0 ) {
 							MesPrint("ERROR: in ConvertFromPoly [factorize_expression]");
-							Terminate(-1);
+							TERMINATE(-1);
 							return(-1);
 						}
 						
@@ -1416,7 +1416,7 @@ int poly_factorize_expression(EXPRESSIONS expr) {
 	// final sorting
 	if (EndSort(BHEAD NULL,0) < 0) {
 		LowerSortLevel();
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	// set factorized flag
@@ -1489,7 +1489,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	oldpos = AS.OldOnFile[nexpr];
@@ -1519,7 +1519,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 		SeekFile(file->handle,&pos,SEEK_SET);
 		if (ISNOTEQUALPOS(pos,expr->onfile)) {
 			MesPrint("ERROR: something wrong in scratch file unfactorize_expression");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		file->POposition = expr->onfile;
 		file->POfull = file->PObuffer;
@@ -1535,7 +1535,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 /*
 	Test for whether the first factor is zero.
 */
-	if ( GetFirstBracket(term,nexpr) < 0 ) Terminate(-1);
+	if ( GetFirstBracket(term,nexpr) < 0 ) TERMINATE(-1);
 	if ( term[4] != 1 || *term != 8 || term[1] != SYMBOL || term[3] != FACTORSYMBOL || term[4] != 1 ) {
 		expriszero = 1;
 	}
@@ -1546,7 +1546,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 	size = GetTerm(BHEAD term);
 	if ( size <= 0 ) {
 		MesPrint ("ERROR: something wrong with expression unfactorize_expression");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	pos = expr->onfile;
 	ADDPOS(pos, size*sizeof(WORD));
@@ -1599,7 +1599,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 		}
 		if ( EndSort(BHEAD AM.S0->sBuffer,0) < 0 ) {
 			LowerSortLevel();
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 /*
 		Set the file back into reading position
@@ -1648,7 +1648,7 @@ int poly_unfactorize_expression(EXPRESSIONS expr)
 	}
 	if ( EndSort(BHEAD AM.S0->sBuffer,0) < 0 ) {
 		LowerSortLevel();
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 /*
 	Final Cleanup
@@ -1687,7 +1687,7 @@ WORD *poly_inverse(PHEAD WORD *arga, WORD *argb) {
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: multivariate polynomial inverse is generally impossible");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	
 	// Convert to polynomials
@@ -1716,7 +1716,7 @@ WORD *poly_inverse(PHEAD WORD *arga, WORD *argb) {
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: polynomial inverse does not exist");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);		
+		TERMINATE(-1);		
 	}
 
 	// estimate of the size of the Form notation; might be extended later

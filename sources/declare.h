@@ -59,7 +59,7 @@
 #else
 #define AddLineFeed(s,n) { (s)[(n)++] = LINEFEED; }
 #endif
-#define TryRecover(x) Terminate(-1)
+#define TryRecover(x) TERMINATE(-1)
 #define UngetChar(c) { pushbackchar = c; }
 #define ParseNumber(x,s) {(x)=0;while(*(s)>='0'&&*(s)<='9')(x)=10*(x)+*(s)++ -'0';}
 #define ParseSign(sgn,s) {(sgn)=0;while(*(s)=='-'||*(s)=='+'){\
@@ -185,7 +185,8 @@
  
 #define PREV(x) prevorder?prevorder:x
 
-#define SETERROR(x) { Terminate(-1); return(-1); }
+#define TERMINATE(x) do { Terminate(x, __FILE__, __LINE__, __FUNCTION__); } while(0)
+#define SETERROR(x) { TERMINATE(-1); return(-1); }
 
 /* use this macro to avoid the unused parameter warning */
 #define DUMMYUSE(x) (void)(x);
@@ -408,31 +409,31 @@ static inline ULONG LongAbs(LONG x)
  */
 static inline int UnsignedToInt(unsigned int x)
 {
-	extern void Terminate(int);
+	extern void Terminate(int, const char*, int, const char*);
 	if ( x <= INT_MAX ) return(x);
 	if ( x >= (unsigned int)INT_MIN )
 		return((int)(x - (unsigned int)INT_MIN) + INT_MIN);
-	Terminate(1);
+	TERMINATE(1);
 	return(0);
 }
 
 static inline WORD UWordToWord(UWORD x)
 {
-	extern void Terminate(int);
+	extern void Terminate(int, const char*, int, const char*);
 	if ( x <= WORD_MAX_VALUE ) return(x);
 	if ( x >= (UWORD)WORD_MIN_VALUE )
 		return((WORD)(x - (UWORD)WORD_MIN_VALUE) + WORD_MIN_VALUE);
-	Terminate(1);
+	TERMINATE(1);
 	return(0);
 }
 
 static inline LONG ULongToLong(ULONG x)
 {
-	extern void Terminate(int);
+	extern void Terminate(int, const char*, int, const char*);
 	if ( x <= LONG_MAX_VALUE ) return(x);
 	if ( x >= (ULONG)LONG_MIN_VALUE )
 		return((LONG)(x - (ULONG)LONG_MIN_VALUE) + LONG_MIN_VALUE);
-	Terminate(1);
+	TERMINATE(1);
 	return(0);
 }
 
@@ -788,7 +789,7 @@ extern VOID   PositionStream(STREAM *,LONG);
 extern int    ReverseStatements(STREAM *);
 extern int    ProcessOption(UBYTE *,UBYTE *,int);
 extern int    DoSetups(VOID);
-extern VOID   Terminate(int);
+extern VOID   Terminate(int, const char *,int, const char *);
 extern NAMENODE *GetNode(NAMETREE *,UBYTE *);
 extern int    AddName(NAMETREE *,UBYTE *,WORD,WORD,int *);
 extern int    GetName(NAMETREE *,UBYTE *,WORD *,int);

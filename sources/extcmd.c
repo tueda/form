@@ -811,7 +811,7 @@ int ret;
 	/*Master broadcasts result to slaves, slaves read it from the master:*/
 	if( PF_BroadcastString((UBYTE *)h->INbuf) ){/*Fail!*/
 		  MesPrint("Fail broadcasting external channel results");
-		  Terminate(-1);
+		  TERMINATE(-1);
 	}/*if( PF_BroadcastString((UBYTE *)h->INbuf) )*/
 
 	if( *(h->INbuf) == '\0'){/*Empty line? This shouldn't be!*/
@@ -875,7 +875,7 @@ int ret;
 		/*Master broadcasts results to slaves, slaves read it from the master:*/
 		if( PF_BroadcastString((UBYTE *)h->IBfull) ){/*Fail!*/
 		  MesPrint("Fail broadcasting external channel results");
-		  Terminate(-1);
+		  TERMINATE(-1);
 		}/*if( PF_BroadcastString(h->IBfull) )*/
 
 		/*The string "\0!\0" is used as the image of NULL.*/

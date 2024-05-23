@@ -92,7 +92,7 @@ int SetupOutputGZIP(FILEHANDLE *f)
 			MLOCK(ErrorMessageLock);
 			MesCall("SetupOutputGZIP");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 /*
@@ -121,7 +121,7 @@ int SetupOutputGZIP(FILEHANDLE *f)
 		MesPrint("Error from zlib: %s",f->zsp->msg);
 		MesCall("SetupOutputGZIP");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 
 	return(0);
@@ -398,7 +398,7 @@ int SetupAllInputGZIP(SORTING *S)
 			MLOCK(ErrorMessageLock);
 			MesCall("SetupAllInputGZIP");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 /*
 		We add 128 bytes in the hope that if it can happen that it goes
@@ -415,7 +415,7 @@ int SetupAllInputGZIP(SORTING *S)
 			MLOCK(ErrorMessageLock);
 			MesCall("SetupAllInputGZIP");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		for ( i  = 0 ; i < S->MaxFpatches; i++ ) {
 			AN.ziobufnum[i] = AN.ziobuffers + i * (S->file.ziosize+128);
@@ -456,7 +456,7 @@ int SetupAllInputGZIP(SORTING *S)
 				else            MesPrint("%wError from inflateInit");
 				MesCall("SetupAllInputGZIP");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			NumberOpened++;
 		}

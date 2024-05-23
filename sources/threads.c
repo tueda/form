@@ -336,7 +336,7 @@ MesPrint("AB = %x %x %x  %d",AB[0],AB[1],AB[2], identityofthreads);
 	return(0);
 failure:
 	MesPrint("Cannot start %d threads",number);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 }
 
@@ -771,7 +771,7 @@ OnError:;
 	MLOCK(ErrorMessageLock);
 	MesPrint("Error initializing thread %d",identity);
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(B);
 }
 
@@ -1280,7 +1280,7 @@ void *RunThread(void *dummy)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Update error in starting expression in thread %d in module %d",identity,AC.CModule);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				AR.DeferFlag = AC.ComDefer;
 				AR.sLevel = AS.sLevel;
@@ -1395,7 +1395,7 @@ void *RunThread(void *dummy)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Error in processing one term in thread %d in module %d",identity,AC.CModule);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				  }
 				  AN.ninterms++;
 				  }
@@ -1476,7 +1476,7 @@ bucketstolen:;
 					MLOCK(ErrorMessageLock);
 					MesPrint("Error terminating sort in thread %d in module %d",identity,AC.CModule);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				break;
 /*
@@ -1533,7 +1533,7 @@ bucketstolen:;
 					MLOCK(ErrorMessageLock);
 					MesPrint("Error in load balancing one term at level %d in thread %d in module %d",AR.level,AT.identity,AC.CModule);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				AT.WorkPointer = term;
 				break;
@@ -1611,7 +1611,7 @@ bucketstolen:;
 					MLOCK(ErrorMessageLock);
 					MesPrint("Expression %d has problems in scratchfile (t)",i);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				if ( AT.bracketindexflag > 0 ) OpenBracketIndex(i);
 				term[3] = i;
@@ -1841,7 +1841,7 @@ bucketstolen:;
 						MLOCK(ErrorMessageLock);
 						MesPrint("Error in processing one term in thread %d in module %d",identity,AC.CModule);
 						MUNLOCK(ErrorMessageLock);
-						Terminate(-1);
+						TERMINATE(-1);
 					}
 					AN.ninterms++;
 					SetScratch(fi,&(where));
@@ -1885,7 +1885,7 @@ bucketstolen:;
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal wakeup signal %d for thread %d",wakeupsignal,identity);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 				break;
 		}
 		/* we need the following update in case we are using checkpoints. then we
@@ -1899,7 +1899,7 @@ EndOfThread:;
 	FinalizeOneThread(identity);
 	return(0);
 ProcErr:
-	Terminate(-1);
+	TERMINATE(-1);
 	return(0);
 }
 
@@ -1991,7 +1991,7 @@ void *RunSortBot(void *dummy)
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal wakeup signal %d for thread %d",wakeupsignal,identity);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 				break;
 		}
 	}
@@ -2375,7 +2375,7 @@ void WakeupThread(int identity, int signalnumber)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal wakeup signal for thread %d",identity);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	LOCK(wakeuplocks[identity]);
 	wakeup[identity] = signalnumber;
@@ -2401,7 +2401,7 @@ void WakeupMasterFromThread(int identity, int signalnumber)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal wakeup signal for master %d",identity);
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	LOCK(wakeupmasterthreadlocks[identity]);
 	wakeupmasterthread[identity] = signalnumber;
@@ -3763,7 +3763,7 @@ OneTerm:
 							MLOCK(ErrorMessageLock);
 							MesPrint("Term too complex in PolyRatFun addition. MaxTermSize of %10l is too small",AM.MaxTer);
 							MUNLOCK(ErrorMessageLock);
-							Terminate(-1);
+							TERMINATE(-1);
 						}
 						AT0.WorkPointer = w;
 						if ( w[FUNHEAD] == -SNUMBER && w[FUNHEAD+1] == 0 && w[1] > FUNHEAD ) {
@@ -3776,7 +3776,7 @@ OneTerm:
 							MLOCK(ErrorMessageLock);
 							MesPrint("MasterMerge: A WorkSpace of %10l is too small",AM.WorkSize);
 							MUNLOCK(ErrorMessageLock);
-							Terminate(-1);
+							TERMINATE(-1);
 						}
 						AddArgs(B0,m1,m2,w);
 					}
@@ -4324,7 +4324,7 @@ next2:		im = *term2;
 						MLOCK(ErrorMessageLock);
 						MesPrint("Term too complex in PolyRatFun addition. MaxTermSize of %10l is too small",AM.MaxTer);
 						MUNLOCK(ErrorMessageLock);
-						Terminate(-1);
+						TERMINATE(-1);
 					}
 					AT.WorkPointer = wp;
 					if ( w[FUNHEAD] == -SNUMBER && w[FUNHEAD+1] == 0 && w[1] > FUNHEAD ) {
@@ -4342,7 +4342,7 @@ next2:		im = *term2;
 						PrintTerm(term2,"term2");
 						MesPrint("PolyWise = %d",S->PolyWise);
 						MUNLOCK(ErrorMessageLock);
-						Terminate(-1);
+						TERMINATE(-1);
 					}
 					AddArgs(BHEAD m1,m2,w);
 				}
@@ -4425,7 +4425,7 @@ next2:		im = *term2;
 					MLOCK(ErrorMessageLock);
 					MesPrint("Illegal value %d for AT.SortFloatMode in SortBotMerge.",AT.SortFloatMode);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 					return(0);
 				}
 				mpf_add(aux3,aux1,aux2);
@@ -4730,7 +4730,7 @@ int IniSortBlocks(int numworkers)
 		This should have been taken care of in RecalcSetups.
 */
 		MesPrint("We have a problem with the size of the blocks in IniSortBlocks");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 /*
 	Layout:  For each worker
@@ -4762,7 +4762,7 @@ int IniSortBlocks(int numworkers)
 	}
 	if ( w > S->sTop2 ) {
 		MesPrint("Counting problem in IniSortBlocks");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	return(0);
 }

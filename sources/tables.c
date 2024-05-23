@@ -171,7 +171,7 @@ int InsTableTree(TABLES T, WORD *tp)
 		}
 	}
 	MesPrint("Serious problems in InsTableTree!\n");
-	Terminate(-1);
+	TERMINATE(-1);
 	return(0);
 balance:;
 	for (;;) {
@@ -321,7 +321,7 @@ int FindTableTree(TABLES T, WORD *tp, int inc)
 		}
 	}
 	MesPrint("Serious problems in FindTableTree\n");
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 }
 
@@ -357,7 +357,7 @@ WORD DoTableExpansion(WORD *term, WORD level)
 	}
 	if ( t >= stopper ) {
 		MesPrint("Internal error: Missing table_ function");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 /*
 	Table in T. Now collect the numbers of the symbols;

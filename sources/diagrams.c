@@ -198,7 +198,7 @@ int DoCanonicalize(PHEAD WORD *term, WORD *params)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Value of $-variable in Canonicalize statement should be a function.");
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 		}
@@ -209,7 +209,7 @@ int DoCanonicalize(PHEAD WORD *term, WORD *params)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Value of $-variable in Canonicalize statement should be a nonnegative number < %l.",(LONG)MAXPOSITIVE);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 		}
@@ -274,7 +274,7 @@ int DoCanonicalize(PHEAD WORD *term, WORD *params)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Value of $-variable in Canonicalize statement should be a nonnegative number < %l.",(LONG)MAXPOSITIVE);
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 		}
@@ -291,7 +291,7 @@ NoWildArg:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Value of $-variable in Canonicalize statement should be a argument wildcard of symbol arguments.");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			insym = symlist; ds = d->where+1;
 			while ( *ds ) {
@@ -495,7 +495,7 @@ notgoodvertex:
 			MLOCK(ErrorMessageLock);
 			MesPrint("No momentum conservation or wrong momenta in Canonicalize statement");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		*t++ = EDGE; *t++ = FUNHEAD+10; FILLFUN(t)
 		*t++ = -SNUMBER; *t++ = momenta[i+2];
@@ -518,7 +518,7 @@ notgoodvertex:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal argument in edge function in Canonicalize statement");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			tt = vet+1;
 			while ( tt < tend ) {

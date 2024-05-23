@@ -430,7 +430,7 @@ void FlushSpectators(VOID)
 				MLOCK(ErrorMessageLock);
 				MesPrint("Cannot create spectator file %s",fh->name);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			PUTZERO(sp->position);
 		}
@@ -442,7 +442,7 @@ void FlushSpectators(VOID)
 			MesPrint("Attempt to write %l bytes on file %s at position %15p",
 						size,fh->name,&(sp->position));
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		fh->POfill = fh->PObuffer;
 		SeekFile(fh->handle,&(sp->position),SEEK_END);
@@ -622,7 +622,7 @@ FillBuffer:
 			MLOCK(ErrorMessageLock);
 			MesPrint("Error reading information for %s spectator",sp->name);
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		InIn /= sizeof(WORD);
 		if ( InIn == 0 ) { *term = 0; return(0); }
@@ -645,14 +645,14 @@ FillBuffer:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Error reading information for %s spectator",sp->name);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			InIn /= sizeof(WORD);
 			if ( InIn == 0 ) {
 				MLOCK(ErrorMessageLock);
 				MesPrint("Reading incomplete information for %s spectator",sp->name);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			SeekFile(fh->handle,&(sp->readpos),SEEK_CUR);
 			fh->POposition = sp->readpos;

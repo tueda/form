@@ -173,7 +173,7 @@ int NormPolyTerm(PHEAD WORD *term)
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal code in NormPolyTerm");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 				break;
 		}
 	}
@@ -213,13 +213,13 @@ NormInf:
 	MLOCK(ErrorMessageLock);
 	MesPrint("0^0 in NormPolyTerm");
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 FromNorm:
 	MLOCK(ErrorMessageLock);
 	MesCall("NormPolyTerm");
 	MUNLOCK(ErrorMessageLock);
-	Terminate(-1);
+	TERMINATE(-1);
 	return(-1);
 }
 
@@ -956,7 +956,7 @@ void PrintSubtermList(int from,int to)
 		}
 		else {
 			while ( *term ) {
-				if ( WriteInnerTerm(term,first) ) Terminate(-1);
+				if ( WriteInnerTerm(term,first) ) TERMINATE(-1);
 				term += *term;
 				first = 0;
 			}
@@ -1055,7 +1055,7 @@ void PrintExtraSymbol(int num, WORD *terms,int par)
 			break;
 		default:
 			MesPrint("Illegal option in PrintExtraSymbol");
-			Terminate(-1);
+			TERMINATE(-1);
 	}
 	out = StrCopy((UBYTE *)"=",out);
 	TokenToLine(buffer);
@@ -1067,7 +1067,7 @@ void PrintExtraSymbol(int num, WORD *terms,int par)
 	}
 	else {
 		while ( *term ) {
-			if ( WriteInnerTerm(term,first) ) Terminate(-1);
+			if ( WriteInnerTerm(term,first) ) TERMINATE(-1);
 			term += *term;
 			first = 0;
 		}

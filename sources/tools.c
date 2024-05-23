@@ -215,7 +215,7 @@ UBYTE ReadFromStream(STREAM *stream)
 			 return(ENDOFSTREAM);
 			else{
 				Error0("No current external channel");
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 		}/*if ( cc < 0 )*/
 		/*:[18may20006 mt]*/
@@ -839,7 +839,7 @@ VOID PositionStream(STREAM *stream, LONG position)
 	}
 	else {
 		Error0("Illegal position for stream");
-		Terminate(-1);
+		TERMINATE(-1);
 	} 
 }
 
@@ -1176,7 +1176,7 @@ int CreateHandle(VOID)
         VOID **fl = (VOID **)filelist;
         i = filelistsize;
         if ( DoubleList((VOID ***)(&fl),&filelistsize,(int)sizeof(FILES *),
-			"list of open files") != 0 ) Terminate(-1);
+			"list of open files") != 0 ) TERMINATE(-1);
 		filelist = (FILES **)fl;
 		for ( j = i; j < filelistsize; j++ ) filelist[j] = 0;
 		numinfilelist = i + 1;
@@ -1825,7 +1825,7 @@ VOID WriteString(int type, UBYTE *str, int num)
 		if ( !AM.FileOnlyFlag && WriteFile(AM.StdOut,str,num) != num ) error = 1;
 		if ( AC.LogHandle >= 0 && WriteFile(AC.LogHandle,str,num) != num ) error = 1;
 	}
-	if ( error ) Terminate(-1);
+	if ( error ) TERMINATE(-1);
 }
 
 /*
@@ -1855,7 +1855,7 @@ VOID WriteUnfinString(int type, UBYTE *str, int num)
 		if ( !AM.FileOnlyFlag && WriteFile(AM.StdOut,str,num) != num ) error = 1;
 		if ( AC.LogHandle >= 0 && WriteFile(AC.LogHandle,str,num) != num ) error = 1;
 	}
-	if ( error ) Terminate(-1);
+	if ( error ) TERMINATE(-1);
 }
 
 /*
@@ -2248,7 +2248,7 @@ VOID *Malloc(LONG size)
 #ifdef MALLOCDEBUG
 		UNLOCK(MallocLock);
 #endif
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 #ifdef MALLOCDEBUG
 	mallocsizes[nummalloclist] = size;
@@ -2280,7 +2280,7 @@ VOID *Malloc(LONG size)
 					MesPrint("Writing outside memory for %s",malloclist[i]);
 /*					MUNLOCK(ErrorMessageLock); */
 					UNLOCK(MallocLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				t--;
 			}
@@ -2333,7 +2333,7 @@ VOID *Malloc1(LONG size, const char *messageifwrong)
 #ifdef MALLOCDEBUG
 		UNLOCK(MallocLock);
 #endif
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 #ifdef MALLOCDEBUG
 	mallocsizes[nummalloclist] = size;
@@ -2497,7 +2497,7 @@ void M_check()
 		M_print();
 /*		MUNLOCK(ErrorMessageLock); */
 		UNLOCK(MallocLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 }
 
@@ -2603,7 +2603,7 @@ VOID TermFree2(PHEAD WORD *TermMem, char *text)
 	}
 	if ( i >= AT.TermMemMax ) {
 		MesPrint(" ERROR: TermFree called with an address not given by TermMalloc.");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 #endif
 	DUMMYUSE(text);
@@ -2703,7 +2703,7 @@ VOID NumberFree2(PHEAD UWORD *NumberMem, char *text)
 	}
 	if ( i >= AT.NumberMemMax ) {
 		MesPrint(" ERROR: NumberFree called with an address not given by NumberMalloc.");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 #endif
 	DUMMYUSE(text);
@@ -2844,7 +2844,7 @@ VOID *FromVarList(LIST *L)
 				if ( L->num >= MAXDOLLARVARIABLES ) {
 					MesPrint("!!!More than %l objects in list of $-variables",
 						MAXDOLLARVARIABLES);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 			else {
@@ -2852,7 +2852,7 @@ VOID *FromVarList(LIST *L)
 				if ( L->num >= MAXVARIABLES ) {
 					MesPrint("!!!More than %l objects in list of variables",
 						MAXVARIABLES);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 		}
@@ -2983,7 +2983,7 @@ void DoubleBuffer(void **start, void **stop, int size, char *text)
 	else if ( size % sizeof(int) == 0 ) DODOUBLE(int)
 	else {
 		MesPrint("---Cannot handle doubling buffers of size %d",size);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 }
 
@@ -3010,7 +3010,7 @@ void ExpandBuffer(void **buffer, LONG *oldsize, int type)
 	else if ( type == sizeof(POSITION) ) DOEXPAND(POSITION)
 	else {
 		MesPrint("---Cannot handle expanding buffers with objects of size %d",type);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 }
 
@@ -3194,7 +3194,7 @@ WORD ToPolyFunGeneral(PHEAD WORD *term)
 							MLOCK(ErrorMessageLock);
 							MesPrint("Internal error: Zero in PolyRatFun");
 							MUNLOCK(ErrorMessageLock);
-							Terminate(-1);
+							TERMINATE(-1);
 						}
 					}
 				}
@@ -3449,7 +3449,7 @@ docompare:
  
 argerror:
 	MesPrint("Illegal type of short function argument in Normalize");
-	Terminate(-1); return(0);
+	TERMINATE(-1); return(0);
 }
 
 /*

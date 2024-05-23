@@ -864,7 +864,7 @@ abortlyndon:;
 								MLOCK(ErrorMessageLock);
 								MesPrint("There should be a yes and a no argument in islyndon/tolyndon");
 								MUNLOCK(ErrorMessageLock);
-								Terminate(-1);
+								TERMINATE(-1);
 							}
 							NEXTARG(info)
 							if ( info >= infoend ) goto abortlyndon;
@@ -929,7 +929,7 @@ abortlyndon:;
 						MLOCK(ErrorMessageLock);
 						MesPrint("Irregular code in execution of transform statement");
 						MUNLOCK(ErrorMessageLock);
-						Terminate(-1);
+						TERMINATE(-1);
 				}
 				onetransform += *onetransform;
 			} while ( *onetransform );
@@ -990,7 +990,7 @@ WORD RunEncode(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunEncode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -1007,7 +1007,7 @@ WORD RunEncode(PHEAD WORD *fun, WORD *args, WORD *info)
 				MesPrint("$%s does not have a number value > 1 in base/encode/transform statement in module %l",
 					DOLLARNAME(Dollars,i1),AC.CModule);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 		}
 /*
@@ -1151,7 +1151,7 @@ WORD RunEncode(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Unimplemented type of encoding encountered in RunEncode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	return(0);
 CalledFrom:
@@ -1177,7 +1177,7 @@ WORD RunDecode(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunDecode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -1193,7 +1193,7 @@ WORD RunDecode(PHEAD WORD *fun, WORD *args, WORD *info)
 				MesPrint("$%s does not have a number value > 1 in base/decode/transform statement in module %l",
 					DOLLARNAME(Dollars,i1),AC.CModule);
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 		}
 /*
@@ -1314,7 +1314,7 @@ WORD RunDecode(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Unimplemented type of encoding encountered in RunDecode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	return(0);
 CalledFrom:
@@ -1451,7 +1451,7 @@ WORD RunReplace(PHEAD WORD *fun, WORD *args, WORD *info)
 			MLOCK(ErrorMessageLock);
 			MesPrint("&irregular code found in replace transformation (RunReplace)");
 			MUNLOCK(ErrorMessageLock);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 	AT.WorkPointer = term2;
@@ -1825,7 +1825,7 @@ WORD RunImplode(WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunImplode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -2025,7 +2025,7 @@ WORD RunExplode(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunExplode");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -2138,7 +2138,7 @@ WORD RunPermute(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunPermute");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec != TENSORFUNCTION ) {
 	  tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
@@ -2211,7 +2211,7 @@ IllType:
                     MLOCK(ErrorMessageLock);
 					MesPrint("Illegal type of $-variable in RunPermute");
 					MUNLOCK(ErrorMessageLock);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 				withdollar++;
 			}
@@ -2363,7 +2363,7 @@ WORD RunReverse(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunReverse");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec != TENSORFUNCTION ) {
 	  tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
@@ -2450,7 +2450,7 @@ WORD RunDedup(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunDedup");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec != TENSORFUNCTION ) {
 	  tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
@@ -2539,7 +2539,7 @@ WORD RunCycle(PHEAD WORD *fun, WORD *args, WORD *info)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunCycle");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	ncyc = info[1];
 	if ( ncyc >= MAXPOSITIVE2 ) { /* $ variable */
@@ -2693,13 +2693,13 @@ WORD RunAddArg(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunAddArg");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec == TENSORFUNCTION ) {
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal attempt to add arguments of a tensor in AddArg");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -2781,13 +2781,13 @@ WORD RunMulArg(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunMulArg");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec == TENSORFUNCTION ) {
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal attempt to multiply arguments of a tensor in MulArg");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	t = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( t < tstop ) { totarg++; NEXTARG(t); }
@@ -2920,7 +2920,7 @@ WORD RunIsLyndon(PHEAD WORD *fun, WORD *args, int par)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunIsLyndon");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -2997,7 +2997,7 @@ WORD RunToLyndon(PHEAD WORD *fun, WORD *args, int par)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunToLyndon");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -3162,13 +3162,13 @@ WORD RunZtoHArg(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunZtoHArg.");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec != 0 ) {
 		MLOCK(ErrorMessageLock);
 		MesPrint("The ZtoH transformation can only be executed on regular functions with nonzero integer arguments.");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }
@@ -3217,13 +3217,13 @@ WORD RunHtoZArg(PHEAD WORD *fun, WORD *args)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal range encountered in RunZtoHArg.");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	if ( functions[fun[0]-FUNCTION].spec != 0 ) {
 		MLOCK(ErrorMessageLock);
 		MesPrint("The HtoZ transformation can only be executed on regular functions with nonzero integer arguments.");
 		MUNLOCK(ErrorMessageLock);
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	tt = fun+FUNHEAD; tstop = fun+fun[1]; totarg = 0;
 	while ( tt < tstop ) { totarg++; NEXTARG(tt); }

@@ -379,7 +379,7 @@ VOID FullCleanUp(VOID)
 	NumExpressions = 0;
 	if ( DeleteStore(0) < 0 ) {
 		MesPrint("@Cannot restart the storage file");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	RemoveDollars();
 	CleanUp(1);

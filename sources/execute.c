@@ -1673,7 +1673,7 @@ void ExchangeExpressions(int num1, int num2)
 		if ( WriteFile(AR.StoreData.Handle,(UBYTE *)ind,
 		(LONG)(sizeof(INDEXENTRY))) != sizeof(INDEXENTRY) ) {
 			MesPrint("File error while exchanging expressions");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		FlushFile(AR.StoreData.Handle);
 	}
@@ -1697,7 +1697,7 @@ void ExchangeExpressions(int num1, int num2)
 		if ( WriteFile(AR.StoreData.Handle,(UBYTE *)ind,
 		(LONG)(sizeof(INDEXENTRY))) != sizeof(INDEXENTRY) ) {
 			MesPrint("File error while exchanging expressions");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		FlushFile(AR.StoreData.Handle);
 	}
@@ -2613,7 +2613,7 @@ IllBraReq:;
 				MLOCK(ErrorMessageLock);
 				MesPrint("Illegal bracket request in termsinbracket_ function.");
 				MUNLOCK(ErrorMessageLock);
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 		}
 		t += t[1];

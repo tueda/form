@@ -164,7 +164,7 @@ static const char *PF_recoveryfile(char prefix, int id, int intermed)
 	if ( tmp_recovery == NULL ) {
 		if ( PF.numtasks > 9999 ) {  /* see BASENAME_FMT */
 			MesPrint("Checkpoint: too many number of processors.");
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		tmp_recovery = (char *)Malloc1(strlen(recoveryfile) + strlen(intermedfile) + 2, "PF_recoveryfile");
 		tmp_intermed = tmp_recovery + strlen(recoveryfile) + 1;
@@ -289,7 +289,7 @@ int CheckRecoveryFile(VOID)
 #endif
 	if ( ret < 0 ){/*In ParFORM CheckRecoveryFile() may return a fatal error.*/
 		MesPrint("Fail checking recovery file");
-		Terminate(-1);
+		TERMINATE(-1);
 	}
 	else if  ( ret > 0 ) {
 		if ( AC.CheckpointFlag != -1 ) {
@@ -305,7 +305,7 @@ int CheckRecoveryFile(VOID)
 			if(PF.me != MASTER)
 				remove(RecoveryFilename());
 #endif
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 	else {
@@ -315,7 +315,7 @@ int CheckRecoveryFile(VOID)
 			if ( PF.me == MASTER )
 #endif
 			MesPrint("Option -R for recovery has been given, but the recovery file %s does not exist!", RecoveryFilename());
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}
 	return(ret);
@@ -1819,7 +1819,7 @@ int DoRecovery(int *moduletype)
 		/* reopen file */
 		if ( ( tablebases[i].handle = fopen(tablebases[i].fullname, "r+b") ) == NULL ) {
 			MesPrint("ERROR: Could not reopen tablebase %s!",tablebases[i].name);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		R_COPY_S(tablebases[i].name,char*);
 		R_COPY_S(tablebases[i].fullname,char*);
@@ -1906,7 +1906,7 @@ int DoRecovery(int *moduletype)
 				AC.Streams[i].handle = OpenFile((char *)(AC.Streams[i].name));
 				if ( AC.Streams[i].handle == -1 ) {
 					MesPrint("ERROR: Could not reopen stream %s!",AC.Streams[i].name);
-					Terminate(-1);
+					TERMINATE(-1);
 				}
 			}
 			
@@ -2244,12 +2244,12 @@ int DoRecovery(int *moduletype)
 	if ( AR.outfile->handle >= 0 ) {
 		if ( CopyFile(sortfile, AR.outfile->name) ) {
 			MesPrint("ERROR: Could not copy old output sort file %s!",sortfile);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		AR.outfile->handle = ReOpenFile(AR.outfile->name);
 		if ( AR.outfile->handle == -1 ) {
 			MesPrint("ERROR: Could not reopen output sort file %s!",AR.outfile->name);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		SeekFile(AR.outfile->handle, &AR.outfile->POposition, SEEK_SET);
 	}
@@ -2285,12 +2285,12 @@ int DoRecovery(int *moduletype)
 	if ( AR.hidefile->handle >= 0 ) {
 		if ( CopyFile(hidefile, AR.hidefile->name) ) {
 			MesPrint("ERROR: Could not copy old hide file %s!",hidefile);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		AR.hidefile->handle = ReOpenFile(AR.hidefile->name);
 		if ( AR.hidefile->handle == -1 ) {
 			MesPrint("ERROR: Could not reopen hide file %s!",AR.hidefile->name);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		SeekFile(AR.hidefile->handle, &AR.hidefile->POposition, SEEK_SET);
 	}
@@ -2302,7 +2302,7 @@ int DoRecovery(int *moduletype)
 		R_SET(AR.StoreData, FILEDATA);
 		if ( CopyFile(storefile, FG.fname) ) {
 			MesPrint("ERROR: Could not copy old store file %s!",storefile);
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 		AR.StoreData.Handle = (WORD)ReOpenFile(FG.fname);
 		SeekFile(AR.StoreData.Handle, &AR.StoreData.Position, SEEK_SET);
@@ -2415,7 +2415,7 @@ int DoRecovery(int *moduletype)
 							numtasks,PF.numtasks,numtasks);
 			if(PF.me!=MASTER)
 				remove(RecoveryFilename());
-			Terminate(-1);
+			TERMINATE(-1);
 		}
 	}/*Block*/
 	R_SET(PF.rhsInParallel, int);
@@ -3149,12 +3149,12 @@ void DoCheckpoint(int moduletype)
 				fd = fopen(tmpnam, "w");
 				if(fd == NULL){
 					MesPrint("Error opening recovery file for slave %d",i);
-					Terminate(-1);
+					TERMINATE(-1);
 				}/*if(fd == NULL)*/
 				retvalue=PF_RecvFile(i,fd);
 				if(retvalue<=0){
 					MesPrint("Error receiving recovery file from slave %d",i);
-					Terminate(-1);
+					TERMINATE(-1);
 				}/*if(retvalue<=0)*/
 				fclose(fd);
 			}/*for(i=0; i<PF.numtasks;i++)*/
@@ -3213,17 +3213,17 @@ void DoCheckpoint(int moduletype)
 				fd = fopen(intermedfile, "r");
 				i=PF_SendFile(MASTER, fd);/*if fd==NULL, PF_SendFile seds to a slave the failure tag*/
 				if(fd == NULL)
-					Terminate(-1);
+					TERMINATE(-1);
 				fclose(fd);
 				if(i<=0)
-					Terminate(-1);
+					TERMINATE(-1);
 				/*Now the slave need not the recovery file so remove it:*/
 				remove(intermedfile);
 			}
 			else{
 				/*send the error tag to the master:*/
 				PF_SendFile(MASTER,NULL);/*if fd==NULL, PF_SendFile seds to a slave the failure tag*/
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			done_snapshot = 1;
 		}/*if(tag=PF_DATA_MSGTAG)*/

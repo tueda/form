@@ -1172,7 +1172,7 @@ andagain:;
 			if ( T->totind >= newreservation ) {
 				MesPrint("@More than %ld elements in sparse table",MAXTABLECOMBUF);
 				AC.cbufnum = oldcbufnum;
-				Terminate(-1);
+				TERMINATE(-1);
 			}
 			wold = (WORD *)Malloc1(newreservation*sizeof(WORD)*
 								(ABS(T->numind)+TABLEEXTENSION),"tablepointers");
@@ -1657,14 +1657,14 @@ Wrong!!!!			C->rhs[T->tablepointers[sum]] = C->Pointer;
 						MesPrint("@More than %ld elements in sparse table",MAXTABLECOMBUF);
 						AC.cbufnum = oldcbuf;
 						AT.WorkPointer = oldwork;
-						Terminate(-1);
+						TERMINATE(-1);
 					}
 /*---Copied from Fill---------------------------*/
 					if ( T->totind >= newreservation ) {
 						MesPrint("@More than %ld elements in sparse table",MAXTABLECOMBUF);
 						AC.cbufnum = oldcbuf;
 						AT.WorkPointer = oldwork;
-						Terminate(-1);
+						TERMINATE(-1);
 					}
 					w = (WORD *)Malloc1(newreservation*sizeof(WORD)*
 							(ABS(T->numind)+TABLEEXTENSION),"tablepointers");
