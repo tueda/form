@@ -827,10 +827,12 @@ if test "$my_test_COMPILEFLAGS" != set; then
 		COMPILEFLAGS="-Wall -Wextra"
 		AX_HANDLE_EXTRA_WARNING([COMPILEFLAGS])
 		# Enable optimizations.
-		COMPILEFLAGS="$COMPILEFLAGS -O3"
+		COMPILEFLAGS="$COMPILEFLAGS -O3 -g"
 		if test "x$enable_profile" != xgprof; then
 			# -pg conflicts with -fomit-frame-pointer.
-			COMPILEFLAGS="$COMPILEFLAGS -fomit-frame-pointer"
+#			COMPILEFLAGS="$COMPILEFLAGS -fomit-frame-pointer"
+#			Keep frame pointers for useful backtrace on crash.
+			COMPILEFLAGS="$COMPILEFLAGS"
 		fi
 		if test "x$enable_native" = xyes; then
 			# Use -march=native if available.
@@ -876,10 +878,10 @@ if test "$my_test_LINKFLAGS" != set; then
 		# On OS X Mavericks, -s option has a funny effect: though the linker
 		# warns the option is obsolete and being ignored, it causes an internal
 		# error "atom not found in symbolIndex...".
-		LINKFLAGS=
+		LINKFLAGS=-rdynamic
 	elif test "x$enable_profile" != xno && test "x$enable_profile" != xunavailable; then
 		# Profilers needs symbol tables.
-		LINKFLAGS=
+		LINKFLAGS=-rdynamic
 	else
 		LINKFLAGS=-rdynamic
 	fi
@@ -952,7 +954,7 @@ if test "$my_test_DEBUGCOMPILEFLAGS" != set && test "x$enable_debug" = xyes; the
 fi
 my_test_DEBUGLINKFLAGS=${DEBUGLINKFLAGS+set}
 if test "$my_test_DEBUGLINKFLAGS" != set && test "x$enable_debug" = xyes; then
-	DEBUGLINKFLAGS=
+	DEBUGLINKFLAGS=-rdynamic
 	if test "x$vendor" = xgnu; then
 		# Coverage option.
 		if test "x$enable_coverage" = xyes; then
