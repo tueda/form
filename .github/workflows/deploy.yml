@@ -324,10 +324,10 @@ jobs:
               mv artifacts/$1 $pkgname
               case $3 in
                 zip)
-                  zip -9 dist/$pkgname.zip $pkgname/*
+                  zip -9 -v dist/$pkgname.zip $pkgname/*
                   ;;
                 *)
-                  tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
+                  tar -c $pkgname/* | gzip -c -9 -v >dist/$pkgname.tar.gz
                   ;;
               esac
               rm -rf $pkgname
