@@ -167,12 +167,6 @@ jobs:
           curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
           chmod +x cccl
 
-      - name: Install dependencies (Windows, MSVC)
-        if: runner.os == 'Windows' && matrix.shell == 'bash'
-        run: |
-          curl -O https://raw.githubusercontent.com/swig/cccl/cccl-1.3/cccl
-          chmod +x cccl
-
       - name: Download tarball
         uses: actions/download-artifact@v4
         with:
