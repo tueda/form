@@ -263,8 +263,7 @@ case $ac_cv_sizeof_char-$ac_cv_sizeof_short-$ac_cv_sizeof_int-$ac_cv_sizeof_long
 		AC_DEFINE(LLP64, , [Compiling for LLP64 data model])
 		AS_IF([test $ac_cv_sizeof_off_t -eq 4],
 			[AC_SEARCH_LIBS([_fseeki64], [],
-				[use_fseeki64=:
-				AC_DEFINE([HAVE_FSEEKI64], [1], [Define to 1 if you have _fseeki64.])
+				[AC_DEFINE([HAVE_FSEEKI64], [1], [Define to 1 if you have _fseeki64.])
 				AC_CHECK_SIZEOF([__int64])
 				ac_cv_sizeof_OFF_T=$ac_cv_sizeof___int64])])
 		;;
