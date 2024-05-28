@@ -702,7 +702,7 @@ LONG EndSort(PHEAD WORD *buffer, int par)
   WORD j, **ss, *to, *t;
   LONG sSpace, over, tover, spare, retval = 0, jj;
   POSITION position, pp;
-  off_t lSpace;
+  OFF_T lSpace;
   FILEHANDLE *fout = 0, *oldoutfile = 0, *newout = 0;
 
   if ( AM.exitflag && AR.sLevel == 0 ) return(0);

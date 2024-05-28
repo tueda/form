@@ -242,6 +242,7 @@ AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([long long])
 AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([off_t])
+ac_cv_sizeof_OFF_T=$ac_cv_sizeof_off_t
 
 case $ac_cv_sizeof_char-$ac_cv_sizeof_short-$ac_cv_sizeof_int-$ac_cv_sizeof_long-$ac_cv_sizeof_long_long-$ac_cv_sizeof_void_p-$ac_cv_sizeof_off_t in
 	1-2-4-4-*-4-*)
@@ -260,6 +261,12 @@ case $ac_cv_sizeof_char-$ac_cv_sizeof_short-$ac_cv_sizeof_int-$ac_cv_sizeof_long
 		ac_cv_sizeof_WORD=$ac_cv_sizeof_int
 		ac_cv_sizeof_LONG=$ac_cv_sizeof_long_long
 		AC_DEFINE(LLP64, , [Compiling for LLP64 data model])
+		AS_IF([test $ac_cv_sizeof_off_t -eq 4],
+			[AC_SEARCH_LIBS([_fseeki64], [],
+				[use_fseeki64=:
+				AC_DEFINE([HAVE_FSEEKI64], [1], [Define to 1 if you have _fseeki64.])
+				AC_CHECK_SIZEOF([__int64])
+				ac_cv_sizeof_OFF_T=$ac_cv_sizeof___int64])])
 		;;
 	1-2-4-8-*-8-*)
 		# Most Unix and Unix-like systems, e.g., Solaris, Linux and Mac OS X.
@@ -273,18 +280,18 @@ case $ac_cv_sizeof_char-$ac_cv_sizeof_short-$ac_cv_sizeof_int-$ac_cv_sizeof_long
 		;;
 esac
 # Our basic assumption:
-#  sizeof(off_t) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int)
+#  sizeof(OFF_T) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int)
 #                >= sizeof(WORD) >= sizeof(char) == 1.
 flag=:
-$flag && test $ac_cv_sizeof_off_t -lt $ac_cv_sizeof_LONG && flag=false
+$flag && test $ac_cv_sizeof_OFF_T -lt $ac_cv_sizeof_LONG && flag=false
 $flag && test $ac_cv_sizeof_LONG -lt $ac_cv_sizeof_void_p && flag=false
 $flag && test $ac_cv_sizeof_void_p -lt $ac_cv_sizeof_int && flag=false
 $flag && test $ac_cv_sizeof_int -lt $ac_cv_sizeof_WORD && flag=false
 $flag && test $ac_cv_sizeof_WORD -lt $ac_cv_sizeof_char && flag=false
 $flag && test $ac_cv_sizeof_char -ne 1 && flag=false
-AS_IF([$flag], [], [AC_MSG_FAILURE([Basic assumption sizeof(off_t) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int) >= sizeof(WORD) >= sizeof(char) == 1 does not hold.])])
-# sizeof(off_t) <= 4 means files must <= 2 GB.
-AS_IF([test $ac_cv_sizeof_off_t -le 4], [AC_MSG_WARN([Large files more than 2 GB are not supported])])
+AS_IF([$flag], [], [AC_MSG_FAILURE([Basic assumption sizeof(OFF_T) >= sizeof(LONG) >= sizeof(void *) >= sizeof(int) >= sizeof(WORD) >= sizeof(char) == 1 does not hold.])])
+# sizeof(OFF_T) <= 4 means files must <= 2 GB.
+AS_IF([test $ac_cv_sizeof_OFF_T -le 4], [AC_MSG_WARN([Large files more than 2 GB are not supported])])
 AC_MSG_NOTICE([The data model is $print_data_model])
 
 # Check for gmp
@@ -1228,7 +1235,7 @@ fi
 if test $atleastone = no; then
 	echo "    <NONE>"
 fi
-if test $ac_cv_sizeof_off_t -le 4; then
+if test $ac_cv_sizeof_OFF_T -le 4; then
 	echo
 	echo "***CAUTION***  Large files more than 2 GB will be"
 	echo "not supported."

@@ -240,7 +240,7 @@ va_dcl
 /*	#ifdef __GLIBC_HAVE_LONG_LONG */
 			else if ( *s == 'p' ) {
 				POSITION *pp;
-				off_t ly;
+				OFF_T ly;
 				pp = va_arg(ap, POSITION *);
 				ly = BASEPOSITION(*pp);
 				if ( ly < 0 ) { *t++ = '-'; ly = -ly; }
@@ -715,7 +715,7 @@ dollarzero:				*t++ = '0'; *t = 0;
 				else if ( *s == 'p' ) {
 					POSITION *pp;
 /*#ifdef __GLIBC_HAVE_LONG_LONG */
-					off_t ly;
+					OFF_T ly;
 /*
 #else
 					LONG ly;

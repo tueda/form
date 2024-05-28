@@ -364,7 +364,7 @@ template<typename T> struct calc {
  * In the currently available systems,
  *   sizeof(POSITION) >= sizeof(pointers) == sizeof(LONG) >= sizeof(int)
  *                    >= sizeof(WORD) >= sizeof(UBYTE) = 1.
- * (POSITION is defined in struct.h and contains only an off_t variable.)
+ * (POSITION is defined in struct.h and contains only an OFF_T variable.)
  * Thus, if we put members of a structure in this order and use those macros,
  * then we can align the data without relying on extra paddings added by
  * the compiler. For example,
@@ -389,7 +389,7 @@ template<typename T> struct calc {
  * Numbers for the arguments have to be calculated manually and so very
  * error-prone. Be careful!
  *
- * Note that there is a 32-bit system in which off_t is aligned on 8-byte
+ * Note that there is a 32-bit system in which OFF_T is aligned on 8-byte
  * boundary, (e.g., Cygwin with large file support), but still the above
  * inequalities are satisfied.
  *
@@ -402,7 +402,7 @@ template<typename T> struct calc {
 #define PADDUMMY(type, size) \
 	UBYTE d_u_m_m_y[alignof(type) - ((size) & (alignof(type) - 1))]
 #define PADPOSITION(ptr_,long_,int_,word_,byte_) \
-	PADDUMMY(off_t, \
+	PADDUMMY(OFF_T, \
 		+ sizeof(int *) * (ptr_) \
 		+ sizeof(LONG)  * (long_) \
 		+ sizeof(int)   * (int_) \
@@ -465,6 +465,12 @@ template<typename T> struct calc {
 #include <pthread.h>
 #endif
 
+#ifdef HAVE_FSEEKI64
+typedef __int64 OFF_T;
+#else
+typedef off_t OFF_T;
+#endif 
+
 /*
 	PARALLELCODE indicates code that is common for TFORM and ParFORM but
 	should not be there for sequential FORM.
@@ -493,8 +499,8 @@ extern FILES *Uopen(char *,char *);
 extern int    Uclose(FILES *);
 extern size_t Uread(char *,size_t,size_t,FILES *);
 extern size_t Uwrite(char *,size_t,size_t,FILES *);
-extern int    Useek(FILES *,off_t,int);
-extern off_t  Utell(FILES *);
+extern int    Useek(FILES *,OFF_T,int);
+extern OFF_T  Utell(FILES *);
 extern void   Uflush(FILES *);
 extern int    Ugetpos(FILES *,fpos_t *);
 extern int    Usetpos(FILES *,fpos_t *);
@@ -522,8 +528,13 @@ extern FILES *Ustdout;
 #define Uread(x,y,z,u) fread(x,y,z,u)
 #define Uwrite(x,y,z,u) fwrite(x,y,z,u)
 #define Usetbuf(x,y) setbuf(x,y)
+#ifdef HAVE_FSEEKI64
+#define Useek(x,y,z) _fseeki64(x,y,z)
+#define Utell(x) _ftelli64(x)
+#else
 #define Useek(x,y,z) fseek(x,y,z)
 #define Utell(x) ftell(x)
+#endif 
 #define Ugetpos(x,y) fgetpos(x,y)
 #define Usetpos(x,y) fsetpos(x,y)
 #define Usync(x) fflush(x)

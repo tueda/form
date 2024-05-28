@@ -194,13 +194,13 @@
 #if _FILE_OFFSET_BITS==64
 /*:[19mar2004 mt]*/
 
-#define ADDPOS(pp,x) (pp).p1 = ((pp).p1+(off_t)(x))
-#define SETBASELENGTH(ss,x) (ss).p1 = (off_t)(x)
-#define SETBASEPOSITION(pp,x) (pp).p1 = (off_t)(x)
-#define ISEQUALPOSINC(pp1,pp2,x) ( (pp1).p1 == ((pp2).p1+(off_t)(x)) )
-#define ISGEPOSINC(pp1,pp2,x) ( (pp1).p1 >= ((pp2).p1+(off_t)(x)) )
-#define DIVPOS(pp,n) ( (pp).p1/(off_t)(n) )
-#define MULPOS(pp,n) (pp).p1 *= (off_t)(n)
+#define ADDPOS(pp,x) (pp).p1 = ((pp).p1+(OFF_T)(x))
+#define SETBASELENGTH(ss,x) (ss).p1 = (OFF_T)(x)
+#define SETBASEPOSITION(pp,x) (pp).p1 = (OFF_T)(x)
+#define ISEQUALPOSINC(pp1,pp2,x) ( (pp1).p1 == ((pp2).p1+(OFF_T)(x)) )
+#define ISGEPOSINC(pp1,pp2,x) ( (pp1).p1 >= ((pp2).p1+(OFF_T)(x)) )
+#define DIVPOS(pp,n) ( (pp).p1/(OFF_T)(n) )
+#define MULPOS(pp,n) (pp).p1 *= (OFF_T)(n)
 
 #else
 
@@ -991,7 +991,7 @@ extern int    MesPrint(const char *,...);
 extern int    MesCall(char *);
 extern UBYTE *NumCopy(WORD,UBYTE *);
 extern char  *LongCopy(LONG,char *);
-extern char  *LongLongCopy(off_t *,char *);
+extern char  *LongLongCopy(OFF_T *,char *);
 extern VOID   ReserveTempFiles(int);
 extern VOID   PrintTerm(WORD *,char *);
 extern VOID   PrintTermC(WORD *,char *);

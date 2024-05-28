@@ -57,7 +57,7 @@
  */
 
 typedef struct PoSiTiOn {
-	off_t p1;
+	OFF_T p1;
 } POSITION;
 
 /*	Next are the index structs for stored and saved expressions */
@@ -734,9 +734,9 @@ typedef struct FiLe {
  */
  
 typedef struct StreaM {
-	off_t fileposition;
-	off_t linenumber;
-	off_t prevline;
+	OFF_T fileposition;
+	OFF_T linenumber;
+	OFF_T prevline;
 	UBYTE *buffer;        /**< [D] Size in buffersize */
 	UBYTE *pointer;       /**< pointer into buffer memory */
 	UBYTE *top;           /**< pointer into buffer memory */

@@ -176,7 +176,7 @@ size_t thesize=size*nobj;
   	#[ Useek :
 */
 
-int Useek(FILES *f, off_t offset, int origin)
+int Useek(FILES *f, OFF_T offset, int origin)
 {
 	if ( f && ( lseek(f->descriptor,offset,origin) >= 0 ) ) return(0);
 	return(-1);
@@ -187,9 +187,9 @@ int Useek(FILES *f, off_t offset, int origin)
   	#[ Utell :
 */
 
-off_t Utell(FILES *f)
+OFF_T Utell(FILES *f)
 {
-	if ( f ) return((off_t)lseek(f->descriptor,0L,SEEK_CUR));
+	if ( f ) return((OFF_T)lseek(f->descriptor,0L,SEEK_CUR));
 	else return(-1);
 }
 

@@ -2048,7 +2048,7 @@ char *LongCopy(LONG y, char *to)
 	Bugfix feb 2003. y was not pointer!
 */
 
-char *LongLongCopy(off_t *y, char *to)
+char *LongLongCopy(OFF_T *y, char *to)
 {
 	/*
 	 * This code fails to print the maximum negative value on systems with two's
@@ -2058,7 +2058,7 @@ char *LongLongCopy(off_t *y, char *to)
 	 * 2^63 ~ 10^18 as of 2016. If one really reach such a big number, then it
 	 * would be the time to move on a 128-bit off_t.
 	 */
-	off_t x = *y;
+	OFF_T x = *y;
 	char *s;
 	WORD i = 0, j;
 	if ( x < 0 ) { x = -x; *to++ = '-'; }
