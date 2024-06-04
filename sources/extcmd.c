@@ -149,15 +149,17 @@ Uncomment to get a self-consistent program:
 #else
 #define FORM_INLINE inline
 #endif
-/*
-	from declare.h:
-*/
+
+#include <stddef.h>
+#include <stdint.h>
+
+typedef unsigned char UBYTE;
+typedef intptr_t LONG;
+#define DUMMYUSE(x) (void)(x);
+#define PADPOINTER(a,b,c,d) char dummy[1]
 #define VOID void
 
-/* 
-	From form3.h:
-*/
-typedef unsigned char UBYTE;
+int closeExternalChannel(int);
 
 /*The following variables should be defined in variable.h:*/
 extern int (*writeBufToExtChannel)(char *buffer, size_t n);
