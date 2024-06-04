@@ -476,7 +476,7 @@ static FORM_INLINE pid_t writepid(int fd, pid_t thepid)
 	return (pid_t)0;
 }/*readpid*/
 
-/*Wrtites exactly count bytes from the  buffer buf into the descriptor fd, independently on
+/*Writes exactly count bytes from the  buffer buf into the descriptor fd, independently on
   nonblocked signals and the MPU/buffer hits. Returns 0 or -1:
 */
 static FORM_INLINE int writexactly(int fd, char *buf, size_t count)
@@ -832,7 +832,7 @@ int ret;
 				t++;
 			else
 				break;/*not a terminator*/
-		/*Continue moving IBfullto the end of read line:*/
+		/*Continue moving IBfull to the end of read line:*/
 		while(*(h->IBfull)!='\0')(h->IBfull)++;
 
 		if( (t-h->terminator) == (h->IBfull-h->INbuf) ){
@@ -1160,7 +1160,7 @@ static FORM_INLINE pid_t run_cmd(char *cmd,
 char **argv;
 pid_t thepid;
 
-	cmd=(char*)strDup1((UBYTE*)cmd, "run_cmd: cmd");/*detouch cmd*/
+	cmd=(char*)strDup1((UBYTE*)cmd, "run_cmd: cmd");/*detach cmd*/
 
 	 
 	/* Prepare arguments for execvp:*/
@@ -1168,7 +1168,7 @@ pid_t thepid;
 		int nopt;
 		/*Allocate space which is definitely enough:*/
 		argv=Malloc1(StrLen((UBYTE*)shellpath)*sizeof(char*)+2,"run_cmd:argv");
-		shellpath=(char*)strDup1((UBYTE*)shellpath, "run_cmd: shellpath");/*detouch shellpath*/
+		shellpath=(char*)strDup1((UBYTE*)shellpath, "run_cmd: shellpath");/*detach shellpath*/
 		/*Parse a shell (e.g., "/bin/sh -c"):*/
 		nopt=parseline(argv, shellpath);
 		/* and add the command as a shell argument:*/
@@ -1585,7 +1585,7 @@ void help(void)
 	printf("Nn<command> -- start a new command\n");
 	printf("S<command> -- start a new command in a subshell,daemon,stderr>/dev/null\n");
 	printf("C# -- destroy channel #\n");
-	printf("R# -- set a new cahhel(number#) as a current one\n");
+	printf("R# -- set a new channel(number#) as a current one\n");
 	printf("K#1 #2 --  set signal for kill and kill mode (0 or !=0)\n");
 	printf("   ^d to quit\n");
 }/*help*/
