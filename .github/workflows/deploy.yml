@@ -79,6 +79,12 @@ jobs:
           packages: libmpfr-dev
           version: 1.0
 
+      - name: Install dependencies (macOS M1)
+        if: matrix.os == 'macos-14'
+        run: |
+          brew update
+          brew install gmp mpfr
+  
       - name: Install dependencies (Windows, MSYS2)
         if: runner.os == 'Windows' && matrix.shell == 'msys2'
         uses: msys2/setup-msys2@v2
