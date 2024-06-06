@@ -56,19 +56,19 @@ jobs:
         include:
           # To maximize compatibility, we build executables on the oldest
           # platforms available.
-          - {os: ubuntu-20.04, shell: bash, bin: form}
-          - {os: ubuntu-20.04, shell: bash, bin: tform}
-          - {os: macos-11, shell: bash, bin: form}
-          - {os: macos-11, shell: bash, bin: tform}
+          - {os: ubuntu-20.04, shell: bash, bin: form, suffix: -x86_64}
+          - {os: ubuntu-20.04, shell: bash, bin: tform, suffix: -x86_64}
+          - {os: macos-11, shell: bash, bin: form, suffix: -x86_64}
+          - {os: macos-11, shell: bash, bin: tform, suffix: -x86_64}
           # NOTE: Windows native executables have too many problems.
           # We include them in artifacts but not in releases.
           # Unfortunately, "allow-failure" is not available on GitHub Actions
           # (https://github.com/actions/toolkit/issues/399).
           # We have to use "continue-on-error", instead.
-          - {os: windows-2019, shell: msys2, bin: form, suffix: -gcc}
-          - {os: windows-2019, shell: msys2, bin: tform, suffix: -gcc}
-          - {os: windows-2019, shell: bash, bin: form, suffix: -msvc}
-          - {os: windows-2019, shell: bash, bin: tform, suffix: -msvc}
+          - {os: windows-2019, shell: msys2, bin: form, suffix: -x86_64-gnu}
+          - {os: windows-2019, shell: msys2, bin: tform, suffix: -x86_64-gnu}
+          - {os: windows-2019, shell: bash, bin: form, suffix: -x86_64-msvc}
+          - {os: windows-2019, shell: bash, bin: tform, suffix: -x86_64-msvc}
     steps:
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
@@ -416,10 +416,10 @@ jobs:
               rm -rf $pkgname
             fi
           }
-          make_bin_dist '*-ubuntu-*/*form' x86_64-linux tar.gz
-          make_bin_dist '*-macos-*/*form' x86_64-osx tar.gz
-          make_bin_dist '*-windows-*-gcc/*form.exe' x86_64-windows zip
-          make_bin_dist '*-windows-*-msvc/*form.exe' x86_64-windows-msvc zip
+          make_bin_dist '*-ubuntu-*-x86_64/*form' x86_64-linux tar.gz
+          make_bin_dist '*-macos-*-x86_64/*form' x86_64-osx tar.gz
+          make_bin_dist '*-windows-*-x86_64-gnu/*form.exe' x86_64-windows zip
+          make_bin_dist '*-windows-*-x86_64-msvc/*form.exe' x86_64-windows-msvc zip
 
       - name: Print distributions
         run: ls -l dist
