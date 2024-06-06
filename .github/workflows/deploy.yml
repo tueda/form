@@ -60,6 +60,8 @@ jobs:
           - {os: ubuntu-20.04, shell: bash, bin: tform, suffix: -x86_64}
           - {os: macos-11, shell: bash, bin: form, suffix: -x86_64}
           - {os: macos-11, shell: bash, bin: tform, suffix: -x86_64}
+          - {os: macos-14, shell: bash, bin: form, suffix: -aarch64}
+          - {os: macos-14, shell: bash, bin: tform, suffix: -aarch64}
           # NOTE: Windows native executables have too many problems.
           # We include them in artifacts but not in releases.
           # Unfortunately, "allow-failure" is not available on GitHub Actions
@@ -418,6 +420,7 @@ jobs:
           }
           make_bin_dist '*-ubuntu-*-x86_64/*form' x86_64-linux tar.gz
           make_bin_dist '*-macos-*-x86_64/*form' x86_64-osx tar.gz
+          make_bin_dist '*-macos-*-aarch64/*form' aarch64-osx tar.gz
           make_bin_dist '*-windows-*-x86_64-gnu/*form.exe' x86_64-windows zip
           make_bin_dist '*-windows-*-x86_64-msvc/*form.exe' x86_64-windows-msvc zip
 
