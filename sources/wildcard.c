@@ -609,7 +609,7 @@ NextDot:;
 */
 				temp = accu + (((AR.ComprTop - accu)>>1)&(-2));
 				if ( ResolveSet(BHEAD t,temp,sub) ) {
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				setlist = t + 2 + t[3];
 				setflag = t[1] - 2 - t[3];	/* Number of elements * 2 */
@@ -1682,7 +1682,7 @@ DEBUG(MesPrint("Thread %w(f): w=(%d,%d,%d,%d)(%d)",mm[0],mm[1],mm[2],mm[3],C->nu
 					MLOCK(ErrorMessageLock);
 					MesPrint("Internal problems with extra compiler buffer");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				goto FlipOn;
 			}
@@ -1731,7 +1731,7 @@ FlipOn:
 			*s++ = 1;
 		}
 #endif
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(0);
 }

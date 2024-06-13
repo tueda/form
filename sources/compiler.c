@@ -785,7 +785,7 @@ int CompileSubExpressions(SBYTE *tokens)
 */
 			if ( insubexpbuffers >= MAXSUBEXPRESSIONS ) {
 				MesPrint("&More than %d subexpressions inside one expression",(WORD)MAXSUBEXPRESSIONS);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			if ( subexpbuffers+insubexpbuffers >= topsubexpbuffers ) {
 				DoubleBuffer((void **)((VOID *)(&subexpbuffers))
@@ -1639,7 +1639,7 @@ dofunction:			firstsumarg = 1;
 					s++;
 					if ( *s != TSUBEXP ) {
 						MesPrint("&Internal error 23");
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					s++; x2 = 0; while ( *s >= 0 ) { x2 = 128*x2 + *s++; }
 					r = cbuf[subexpbuffers[x2].buffernum].rhs[subexpbuffers[x2].subexpnum];
@@ -1652,7 +1652,7 @@ dofunction:			firstsumarg = 1;
 					}
 					if ( *s != RBRACE ) {
 						MesPrint("&Internal error 23b");
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					s++;
 				}
@@ -1974,7 +1974,7 @@ int CodeFactors(SBYTE *tokens)
 				if ( subexp < 0 ) error = -1;
 				if ( insubexpbuffers >= MAXSUBEXPRESSIONS ) {
 					MesPrint("&More than %d subexpressions inside one expression",(WORD)MAXSUBEXPRESSIONS);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( subexpbuffers+insubexpbuffers >= topsubexpbuffers ) {
 					DoubleBuffer((void **)((VOID *)(&subexpbuffers))
@@ -2215,7 +2215,7 @@ dopowerd:
 	if ( subexp < 0 ) error = -1;
 	if ( insubexpbuffers >= MAXSUBEXPRESSIONS ) {
 		MesPrint("&More than %d subexpressions inside one expression",(WORD)MAXSUBEXPRESSIONS);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( subexpbuffers+insubexpbuffers >= topsubexpbuffers ) {
 		DoubleBuffer((void **)((VOID *)(&subexpbuffers))
@@ -2262,7 +2262,7 @@ WORD GenerateFactors(WORD n,WORD inc)
 	M_free(tokenbuffer,"GenerateFactors");
 	if ( insubexpbuffers >= MAXSUBEXPRESSIONS ) {
 		MesPrint("&More than %d subexpressions inside one expression",(WORD)MAXSUBEXPRESSIONS);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( subexpbuffers+insubexpbuffers >= topsubexpbuffers ) {
 		DoubleBuffer((void **)((VOID *)(&subexpbuffers))

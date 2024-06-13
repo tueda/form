@@ -156,7 +156,7 @@ static POSITION PF_exprsize;   /* (master) The size of the expression at PF_EndS
 	do { \
 		if ( !(condition) ) { \
 			Error0("Fatal error at " file ":" #line); \
-			TERMINATE(-1); \
+			Terminate(-1); \
 		} \
 	} while (0)
 
@@ -713,7 +713,7 @@ newright:
 					w = poly_ratfun_add(BHEAD ml,mr);
 					if ( *tt1 + w[1] - ml[1] > AM.MaxTer/((LONG)sizeof(WORD)) ) {
 						MesPrint("Term too complex in PolyRatFun addition. MaxTermSize of %10l is too small",AM.MaxTer);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					AT.WorkPointer = w;
 				}
@@ -721,7 +721,7 @@ newright:
 					w = AT.WorkPointer;
 					if ( w + ml[1] + mr[1] > AT.WorkTop ) {
 						MesPrint("A WorkSpace of %10l is too small",AM.WorkSize);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					AddArgs(BHEAD ml,mr,w);
 				}
@@ -2168,8 +2168,8 @@ int PF_BroadcastString(UBYTE *str)
 /*
 				initialize buffers
 */
-			if ( PF_PreparePack() != 0 ) TERMINATE(-1);
-			if ( ( clength = PF_PackString(cstr) ) <0  ) TERMINATE(-1);
+			if ( PF_PreparePack() != 0 ) Terminate(-1);
+			if ( ( clength = PF_PackString(cstr) ) <0  ) Terminate(-1);
 		}
 		PF_Broadcast();
 
@@ -2178,7 +2178,7 @@ int PF_BroadcastString(UBYTE *str)
 				Slave - unpack received string
 				For slaves buffers are initialised automatically.
 */
-			if ( ( clength = PF_UnpackString(cstr) ) < 0 ) TERMINATE(-1);
+			if ( ( clength = PF_UnpackString(cstr) ) < 0 ) Terminate(-1);
 		}
 	} while ( cstr[clength-1] != '\0' );
 	return (0);
@@ -3803,7 +3803,7 @@ static int PF_DoOneExpr(void)/*the processor*/
 				AR.KeptInHold = 0;
 				if ( GetTerm(BHEAD term) <= 0 ) {
 					MesPrint("Expression %d has problems in scratchfile",i);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( AT.bracketindexflag > 0 ) OpenBracketIndex(i);
 				term[3] = i;

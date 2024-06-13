@@ -1148,7 +1148,7 @@ RetRetval:
 			MesPrint("(2)Output should fit inside a single term. Increase MaxTermSize?");
 			MesCall("EndSort");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		  }
 		  else if ( newout->POfill > newout->PObuffer ) {
 /*
@@ -1246,7 +1246,7 @@ WorkSpaceError:
 	MesWork();
 	MesCall("EndSort");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -1282,7 +1282,7 @@ LONG PutIn(FILEHANDLE *file, POSITION *position, WORD *buffer, WORD **take, int 
 		MLOCK(ErrorMessageLock);
 		MesPrint("Problems in PutIn");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	to = buffer;
 	while ( --i >= 0 ) *--to = *--from;
@@ -1294,7 +1294,7 @@ LONG PutIn(FILEHANDLE *file, POSITION *position, WORD *buffer, WORD **take, int 
 		MesPrint("PutIn: We have RetCode = %x while reading %x bytes",
 			RetCode,file->POsize);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 #else
 #ifdef ALLLOCK
@@ -1309,7 +1309,7 @@ LONG PutIn(FILEHANDLE *file, POSITION *position, WORD *buffer, WORD **take, int 
 		MesPrint("PutIn: We have RetCode = %x while reading %x bytes",
 			RetCode,file->POsize);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 #ifdef ALLLOCK
 	UNLOCK(file->pthreadslock);
@@ -2010,7 +2010,7 @@ WORD AddCoef(PHEAD WORD **ps1, WORD **ps2)
 		MLOCK(ErrorMessageLock);
 		MesCall("AddCoef");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( AN.ncmod != 0 ) {
 		if ( ( AC.modmode & POSNEG ) != 0 ) {
@@ -2086,7 +2086,7 @@ RegEnd:
 		MesPrint("Term too complex after addition in sort. MaxTermSize = %10l",
 		AM.MaxTer/sizeof(WORD));
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(1);
 }
@@ -2241,7 +2241,7 @@ WORD AddPoly(PHEAD WORD **ps1, WORD **ps2)
 				MesPrint("Please increase SmallExtension in %s",setupfilename);
 				MUNLOCK(ErrorMessageLock);
 #endif
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 		t = *ps1;
@@ -2262,7 +2262,7 @@ WORD AddPoly(PHEAD WORD **ps1, WORD **ps2)
 			MesPrint("Term too complex after polynomial addition. MaxTermSize = %10l",
 			AM.MaxTer/sizeof(WORD));
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 	return(1);
@@ -2394,7 +2394,7 @@ VOID AddArgs(PHEAD WORD *s1, WORD *s2, WORD *m)
 							m[1] = i1;
 							m[2] = 1;
 							m[3] = i2;
-							if ( Modulus(m) ) TERMINATE(-1);
+							if ( Modulus(m) ) Terminate(-1);
 							if ( *m == 0 ) w[1] = 0;
 							else {
 								if ( *m == 4 && ( m[1] & MAXPOSITIVE ) == m[1]
@@ -2506,7 +2506,7 @@ twogen:
 					MLOCK(ErrorMessageLock);
 					MesPrint("Addition of coefficients of PolyFun");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( i == 0 ) {
 					m = mm;
@@ -2517,7 +2517,7 @@ twogen:
 					m[-1] = i1;
 					*mm = WORDDIF(m,mm);
 					if ( AN.ncmod != 0 ) {
-						if ( Modulus(mm) ) TERMINATE(-1);
+						if ( Modulus(mm) ) Terminate(-1);
 						if ( !*mm ) m = mm;
 						else m = mm + *mm;
 					}
@@ -4056,7 +4056,7 @@ OneTerm:
 								MLOCK(ErrorMessageLock);
 								MesPrint("Term too complex in PolyRatFun addition. MaxTermSize of %10l is too small",AM.MaxTer);
 								MUNLOCK(ErrorMessageLock);
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 							AT.WorkPointer = w;
 						}
@@ -4066,7 +4066,7 @@ OneTerm:
 								MLOCK(ErrorMessageLock);
 								MesPrint("A WorkSpace of %10l is too small",AM.WorkSize);
 								MUNLOCK(ErrorMessageLock);
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 							AddArgs(BHEAD m1,m2,w);
 						}
@@ -4558,7 +4558,7 @@ VOID StageSort(FILEHANDLE *fout)
 			MesPrint("Currently Stage 4 sorts are not allowed for function arguments or $ variables.");
 			MesPrint("Please increase correspondingsorting parameters (sub-) in the setup.");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		PUTZERO(position);
 		MLOCK(ErrorMessageLock);
@@ -4584,7 +4584,7 @@ VOID StageSort(FILEHANDLE *fout)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Write error while staging sort. Disk full?");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		AN.OldPosOut = position;
 		fout->filesize = position;
@@ -4917,7 +4917,7 @@ WORD *PolyRatFunSpecial(PHEAD WORD *t1, WORD *t2)
 	return(oldworkpointer);
 Illegal:
 	MesPrint("Illegal occurrence of PolyRatFun with divergent option");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 

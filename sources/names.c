@@ -119,7 +119,7 @@ int AddName(NAMETREE *nametree, UBYTE *name, WORD type, WORD number, int *nodenu
 		if ( newsize > MAXINNAMETREE ) newsize = MAXINNAMETREE;
 		if ( nametree->nodefill >= MAXINNAMETREE ) {
 			MesPrint("!!!More than %l names in one object",(LONG)MAXINNAMETREE);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		nnn = (NAMENODE *)Malloc1(2*((LONG)newsize*sizeof(NAMENODE)),
 			"extra names in AddName");
@@ -232,7 +232,7 @@ int AddName(NAMETREE *nametree, UBYTE *name, WORD type, WORD number, int *nodenu
 	else {	/* Cannot be. Code here for debugging only */
 		MesPrint("We ran into an impossible case in AddName\n");
 		DumpTree(nametree);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 #endif
 	return(retval);
@@ -2796,7 +2796,7 @@ int GetLabel(UBYTE *name)
 		if ( newnum > 32765 ) newnum = 32765;
 		if ( newnum == AC.MaxLabels ) {
 			MesPrint("&More than 32765 labels in one module. Please simplify.");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		NewLabelNames = (UBYTE **)Malloc1((sizeof(UBYTE *)+sizeof(int))
 				*newnum,"Labels");

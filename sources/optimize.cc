@@ -883,7 +883,7 @@ vector<WORD> Horner_tree (const WORD *expr, const vector<WORD> &order) {
 		sumsize = (AT.WorkPointer-AT.WorkSpace+sumsize)*sizeof(WORD);
 		MesPrint("=== At least %l bytes are needed.",sumsize);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 	for (const WORD *t=expr; *t!=0; t+=*t) {
@@ -1161,7 +1161,7 @@ vector<WORD> generate_instructions (const vector<WORD> &tree, bool do_CSE) {
 					//MesPrint("strange");
 					if (numinstr == MAXPOSITIVE) {
 						MesPrint((char *)"ERROR: too many temporary variables needed in optimization");
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 
 					// new power greater than 1 of a symbol
@@ -1246,7 +1246,7 @@ vector<WORD> generate_instructions (const vector<WORD> &tree, bool do_CSE) {
 			if (!do_CSE || it == ID.end()) {
 				if (numinstr == MAXPOSITIVE) {
 					MesPrint((char *)"ERROR: too many temporary variables needed in optimization");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 
 				instr.push_back(numinstr); // expr.nr.
@@ -1436,7 +1436,7 @@ int count_operators_cse (const vector<WORD> &tree) {
 			if (it == ID.end()) {
 				if (numinstr == MAXPOSITIVE) {
 					MesPrint((char *)"ERROR: too many temporary variables needed in optimization");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 
 				if (oper == OPER_COMMA) numcommas++;
@@ -4427,13 +4427,13 @@ WORD generate_expression (WORD exprnr) {
 
 	if ( GetTerm(BHEAD term) <= 0 ) {
 		MesPrint("Expression %d has problems in scratchfile",exprnr);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	SeekScratch(AR.outfile,&position);
 	e->onfile = position;
 	if ( PutOut(BHEAD term,&position,AR.outfile,0) < 0 ) {
 		MesPrint("Expression %d has problems in output scratchfile",exprnr);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 	AR.CurExpr = exprnr;
@@ -4462,7 +4462,7 @@ WORD generate_expression (WORD exprnr) {
 	// final sorting
 	if (EndSort(BHEAD NULL,0) < 0) {
 		LowerSortLevel();
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 	AT.WorkPointer = oldWorkPointer;
@@ -4963,7 +4963,7 @@ int ClearOptimize()
 */
 		if ( GetName(AC.exprnames,AO.OptimizeResult.nameofexpr,&numexpr,NOAUTO) != CEXPRESSION ) {
 			MesPrint("@Internal error while clearing optimized expression %s ",AO.OptimizeResult.nameofexpr);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		M_free(AO.OptimizeResult.nameofexpr, "optimize expression name");
 		AO.OptimizeResult.nameofexpr = NULL;

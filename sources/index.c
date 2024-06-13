@@ -395,7 +395,7 @@ problems:;
 				PrintTerm(b->bracketbuffer+bi->bracket,"Last in index");
 				MUNLOCK(ErrorMessageLock);
 				AT.fromindex = 0;
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			i = -1;
 		}
@@ -455,7 +455,7 @@ problems:;
 			MesPrint("Problems with bracket buffer. Increase MaxBracketBufferSize in form.set");
 			MesPrint("Current size is %l",AM.MaxBracketBufferSize*sizeof(WORD));
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		average *= 4;  /* 2*2: one 2 for much longer, one 2 because we have pairs */
 		t2 = b->bracketbuffer;

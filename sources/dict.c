@@ -197,7 +197,7 @@ Numeratoronly:;
 			break;
 		default:
 			MesPrint("Illegal code in TransformRational: %d",AO.CurDictNumbers);
-			TERMINATE(-1);
+			Terminate(-1);
 	}
 	return;
 NotFound:

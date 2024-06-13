@@ -2840,7 +2840,7 @@ TLcall:
 	MUNLOCK(ErrorMessageLock);
 	NumberFree(b,"TakeLongRoot"); NumberFree(c,"TakeLongRoot");
 	NumberFree(d,"TakeLongRoot"); NumberFree(e,"TakeLongRoot");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -3372,7 +3372,7 @@ WORD MakeModTable(VOID)
 		MLOCK(ErrorMessageLock);
 		MesPrint("&No memory for modulus generator power table");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( n == 0 ) return(0);
 	size = (LONG)(*AC.cmod);
@@ -3709,7 +3709,7 @@ nexti:;
 				MesPrint("Try to use a computer with a %d-bits architecture",
 					(int)(BITSINWORD*4));
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 	}
@@ -3926,7 +3926,7 @@ UBYTE *PreRandom(UBYTE *s)
 	while ( *s && *s != ',' ) s++;
 	if ( *s || *maxs == 0 || *mins == 0 ) {
 		MesPrint("@Illegal arguments in macro RANDOM_");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( StrICmp(mode,(UBYTE *)"lin") == 0 ) {
 		linlog = 0;
@@ -3936,7 +3936,7 @@ UBYTE *PreRandom(UBYTE *s)
 	}
 	else {
 		MesPrint("@Illegal mode argument in macro RANDOM_");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 	sscanf((char *)mins,"%f",&num); minval = num;

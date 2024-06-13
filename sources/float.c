@@ -187,7 +187,7 @@ void Form_mpf_init(mpf_t t)
 	if ( d == 0 ) {
 		MesPrint("Fatal error in Malloc1 call in Form_mpf_init. Trying to allocate %ld bytes.",
 			prec*sizeof(mp_limb_t));
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	t->_mp_d = d;
 	for ( i = 0; i < prec; i++ ) d[i] = 0;
@@ -244,7 +244,7 @@ void Form_mpf_set_prec_raw(mpf_t t,ULONG newprec)
 		MesPrint("Trying too big a precision %ld in Form_mpf_set_prec_raw.",newprec);
 		MesPrint("Old maximal precision is %ld.",
 			(size_t)(t->_mp_prec-1)*sizeof(mp_limb_t)*8);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 }
 
@@ -375,7 +375,7 @@ int UnpackFloat(mpf_t outfloat,WORD *fun)
 	if ( AT.aux_ == 0 ) {
 		MesPrint("Illegal attempt at using a float_ function without proper startup.");
 		MesPrint("Please use %#StartFloat <options> first.");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 /*
 	Check first the number and types of the arguments
@@ -832,7 +832,7 @@ SBYTE *ReadFloat(SBYTE *s)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	PackFloat(AT.WorkPointer,aux1);
 	*ss = c;
@@ -1449,7 +1449,7 @@ WORD AddWithFloat(PHEAD WORD **ps1, WORD **ps2)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal value %d for AT.SortFloatMode in AddWithFloat.",AT.SortFloatMode);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 	mpf_add(aux3,aux1,aux2);
@@ -1520,7 +1520,7 @@ Finished:
 		MesPrint("Term too complex after addition in sort. MaxTermSize = %10l",
 		AM.MaxTer/sizeof(WORD));
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(1);
 }
@@ -1567,7 +1567,7 @@ WORD MergeWithFloat(PHEAD WORD **interm1, WORD **interm2)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal value %d for AT.SortFloatMode in MergeWithFloat.",AT.SortFloatMode);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 	mpf_add(aux3,aux1,aux2);
@@ -2314,7 +2314,7 @@ int EvaluateEuler(PHEAD WORD *term, WORD level, WORD par)
 			if ( sumweight > AC.MaxWeight ) {
 				MesPrint("Error: Weight of Euler/MZV sum greater than %d",sumweight);
 				MesPrint("Please increase MaxWeight in form.set.");
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 /*
 			Step 2: evaluate:

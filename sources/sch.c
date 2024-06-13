@@ -112,7 +112,7 @@ VOID AddToLine(UBYTE *s)
 					}
 					BUG.eflag = 1; BUG.printflag = 1;
 #else
-					TERMINATE(-1);
+					Terminate(-1);
 #endif
 				}
 			}
@@ -133,7 +133,7 @@ VOID AddToLine(UBYTE *s)
 					}
 					BUG.eflag = 1; BUG.printflag = 1;
 #else
-					TERMINATE(-1);
+					Terminate(-1);
 #endif
 				}
 			}
@@ -216,7 +216,7 @@ VOID FiniLine(VOID)
 			}
 			BUG.eflag = 1; BUG.printflag = 1;
 #else
-			TERMINATE(-1);
+			Terminate(-1);
 #endif
 		}
 	}
@@ -237,7 +237,7 @@ VOID FiniLine(VOID)
 			}
 			BUG.eflag = 1; BUG.printflag = 1;
 #else
-			TERMINATE(-1);
+			Terminate(-1);
 #endif
 		}
 	}
@@ -589,7 +589,7 @@ VOID TokenToLine(UBYTE *s)
 					}
 					BUG.eflag = 1; BUG.printflag = 1;
 #else
-					TERMINATE(-1);
+					Terminate(-1);
 #endif
 				}
 			}
@@ -609,7 +609,7 @@ VOID TokenToLine(UBYTE *s)
 					}
 					BUG.eflag = 1; BUG.printflag = 1;
 #else
-					TERMINATE(-1);
+					Terminate(-1);
 #endif
 				}
 			}
@@ -1382,7 +1382,7 @@ void WriteDictionary(DICTIONARY *dict)
 							}
 							else {
 								MesPrint("Currently wildcards are not allowed in dictionary elements");
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 						}
 						else {
@@ -2725,7 +2725,7 @@ AboWrite:
 	SetScratch(AR.infile,&pos);
 	f = AR.outfile; AR.outfile = AR.infile; AR.infile = f;
 	MesCall("WriteAll");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -2892,7 +2892,7 @@ AboWrite:
 	f->POposition = pos;
 	f = AR.outfile; AR.outfile = AR.infile; AR.infile = f;
 	MesCall("WriteOne");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 

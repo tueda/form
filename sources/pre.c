@@ -235,11 +235,11 @@ higherlevel:
 					break;
 				}
 				if ( c == '{' ) { /* Try the preprocessor calculator */
-					if ( PreCalc() == 0 ) TERMINATE(-1);
+					if ( PreCalc() == 0 ) Terminate(-1);
 					c = GetInput();    /* This is either a { or a number */
 					if ( c == '{' ) {
 						MesPrint("@Illegal set inside preprocessor variable name");
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 				if ( c == '`' && lastchar != '\\' ) {
@@ -288,7 +288,7 @@ higherlevel:
 					*s = c;
 					MesPrint("@Undefined variable %s used as preprocessor variable",
 						namebuf);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*s = c;
 			}
@@ -412,12 +412,12 @@ higherlevel:
 					p = ThePreVar;
 					if ( p == 0 ) {
 						MesPrint("@Illegal use of arguments in preprocessor variable %s",namebuf);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					if ( p->nargs <= 0 || ( p->wildarg == 0 && nargs != p->nargs )
 						|| ( p->wildarg > 0 && nargs < p->nargs-1 ) ) {
 						MesPrint("@Arguments of macro %s do not match",namebuf);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					if ( p->wildarg > 0 ) {
 /*
@@ -470,7 +470,7 @@ dostream:;
 			c = GetInput();
 		}
 		else if ( c == '{' ) { /* Try the preprocessor calculator */
-			if ( PreCalc() == 0 ) TERMINATE(-1);
+			if ( PreCalc() == 0 ) Terminate(-1);
 			c = GetInput();    /* This is either a { or a number */
 			break;
 		}
@@ -721,7 +721,7 @@ int PutPreVar(UBYTE *name, UBYTE *value, UBYTE *args, int mode)
 	PREVAR *p;
 	if ( value == 0 && name[0] != '?' ) {
 		MesPrint("@Illegal empty value for preprocessor variable %s",name);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( args ) {
 		s = args; num++;
@@ -1021,7 +1021,7 @@ VOID PreProcessor(VOID)
 				if ( AP.PreInsideLevel != 0 ) {
 					MesPrint("@end of module instructions may not be used inside");
 					MesPrint("@the scope of a %#inside %#endinside construction.");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( AC.RepLevel > 0 ) {
 					MesPrint("&EndRepeat statement(s) missing");
@@ -1076,7 +1076,7 @@ endmodule:			if ( error2 == 0 && AM.qError == 0 ) {
 							AP.StopWatchZero = GetRunningTime();
 							break;
 						case ENDMODULE:
-							TERMINATE( -( error1 | error2 ) );
+							Terminate( -( error1 | error2 ) );
 					}
 				}
 				AC.tablecheck = 0;
@@ -1702,7 +1702,7 @@ int ExpandTripleDots(int par)
 					ppp = &(AC.iBuffer); /* to avoid a compiler warning */
 					if ( DoubleLList((VOID ***)ppp,&AC.iBufferSize
 						,sizeof(UBYTE),"statement buffer") ) {
-							TERMINATE(-1);
+							Terminate(-1);
 					}
 					AC.iPointer = AC.iBuffer + position2;
 					AC.iStop = AC.iBuffer + AC.iBufferSize-2;
@@ -1714,7 +1714,7 @@ int ExpandTripleDots(int par)
 					ppp = &(AP.preStart); /* to avoid a compiler warning */
 					if ( DoubleLList((VOID ***)ppp,&AP.pSize,sizeof(UBYTE),
 						"instruction buffer") ) {
-							TERMINATE(-1);
+							Terminate(-1);
 					}
 					AP.preStop = AP.preStart + AP.pSize-3;
 					if ( AP.preFill ) AP.preFill = fillpos + AP.preStart;
@@ -1922,7 +1922,7 @@ theend:			M_free(nums,"Expand ...");
 					ppp = &(AC.iBuffer); /* to avoid a compiler warning */
 					if ( DoubleLList((VOID ***)ppp,&AC.iBufferSize
 						,sizeof(UBYTE),"statement buffer") ) {
-							TERMINATE(-1);
+							Terminate(-1);
 					}
 					AC.iPointer = AC.iBuffer + position2;
 					AC.iStop = AC.iBuffer + AC.iBufferSize-2;
@@ -2466,7 +2466,7 @@ nofold:
 				UngetChar(c);
 				AC.NoShowInput--;
 				M_free(name,"name of include file");
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 		M_free(name,"name of include file");
@@ -2760,10 +2760,10 @@ int DoTerminate(UBYTE *s)
 	if ( AP.PreIfStack[AP.PreIfLevel] != EXECUTINGIF ) return(0);
 	if ( *s ) {
 		NeedNumber(x,s,nonumber)
-		TERMINATE(x);
+		Terminate(x);
 	}
 	else {
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(0);
 nonumber:
@@ -3053,7 +3053,7 @@ improper:
 	}
 	if ( levels > NumDoLoops ) {
 		MesPrint("@Too many loop levels requested in %#breakdo instruction");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	while ( levels > 0 ) {
 		while ( AC.CurrentStream->type != PREREADSTREAM
@@ -3066,7 +3066,7 @@ improper:
 		if ( AC.CurrentStream->type == PREREADSTREAM3
 		|| AP.PreTypes[AP.NumPreTypes] == PRETYPEPROCEDURE ) {
 			MesPrint("@Trying to jump out of a procedure with a %#breakdo instruction");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		loop = &(DoLoops[NumDoLoops-1]);
 		AP.NumPreTypes = loop->NumPreTypes;
@@ -3568,7 +3568,7 @@ int DoEndInside(UBYTE *s)
 	}
 	if ( AP.PreContinuation ) {
 		MesPrint("@%#endinside: previous statement not terminated.");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	AC.compiletype = AP.inside.oldcompiletype;
 	AR.Cnumlhs = cbuf[AM.rbufnum].numlhs;
@@ -3606,7 +3606,7 @@ int DoEndInside(UBYTE *s)
 				if ( Generator(BHEAD oldworkpointer,0) ) {
 					MesPrint("@Called from %#endinside");
 					MesPrint("@Evaluating variable $%s",DOLLARNAME(Dollars,numdol));
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 			}
 			AT.WorkPointer = oldworkpointer;
@@ -4256,7 +4256,7 @@ int DoSystem(UBYTE *s)
 	}
 	else if ( system((char *)s) ) {
 		MesPrint("@System call returned with error condition");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(0);
 #else
@@ -4417,7 +4417,7 @@ VOID StartPrepro(VOID)
 	AP.MaxPreIfLevel = 2;
 	ppp = &AP.PreIfStack;
 	if ( DoubleList((VOID ***)ppp,&AP.MaxPreIfLevel,sizeof(int),
-			"PreIfLevels") ) TERMINATE(-1);
+			"PreIfLevels") ) Terminate(-1);
 	AP.PreIfLevel = 0; AP.PreIfStack[0] = EXECUTINGIF;
 
 	AP.NumPreSwitchStrings = 10;
@@ -4725,7 +4725,7 @@ together:
 					else {
 						MesPrint("@$%s has not (yet) been defined",t);
 						*tt = c;
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 				else {
@@ -4734,7 +4734,7 @@ together:
 					if ( GetName(AC.exprnames,t,&numexp,NOAUTO) == NAMENOTFOUND ) {
 						MesPrint("@%s has not (yet) been defined",t);
 						*tt = c;
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					else {
 						*tt = c;
@@ -4750,7 +4750,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of terms($var) or terms(expr)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -4816,7 +4816,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of exists($var) or exists(expr)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -4834,7 +4834,7 @@ together:
 					c = *tt; *tt = 0;
 					if ( ( numdol = GetDollar(t) ) < 0 ) {
 						MesPrint("@$ variable in isnumerical(%s) does not exist",t);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					x = DolToLong(BHEAD numdol);
 					if ( AN.ErrorInDollar ) {
@@ -4856,7 +4856,7 @@ together:
 					c = *tt; *tt = 0;
 					if ( GetName(AC.exprnames,t,&numexp,NOAUTO) == NAMENOTFOUND ) {
 						MesPrint("@expression in isnumerical(%s) does not exist",t);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					x = TermsInExpression(numexp);
 					if ( x != 1 ) x = 0;
@@ -4864,7 +4864,7 @@ together:
 						WORD *term = AT.WorkPointer;
 						if ( GetFirstTerm(term,numexp) < 0 ) {
 							MesPrint("@error reading expression in isnumerical(%s)",t);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 						if ( *term == ABS(term[*term-1])+1 ) x = 1;
 						else                                 x = 0;
@@ -4875,7 +4875,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of isnumerical($var) or numerical(expr)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -4893,12 +4893,12 @@ together:
 				if ( ( stype = GetName(AC.varnames,t,&numsym,NOAUTO) ) == NAMENOTFOUND ) {
 					MesPrint("@%s has not (yet) been defined",t);
 					*tt = c;
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				else if ( stype != CSYMBOL ) {
 					MesPrint("@%s should be a symbol",t);
 					*tt = c;
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				else {
 					*tt = c;
@@ -4908,7 +4908,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of maxpowerof(symbol)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -4926,12 +4926,12 @@ together:
 				if ( ( stype = GetName(AC.varnames,t,&numsym,NOAUTO) ) == NAMENOTFOUND ) {
 					MesPrint("@%s has not (yet) been defined",t);
 					*tt = c;
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				else if ( stype != CSYMBOL ) {
 					MesPrint("@%s should be a symbol",t);
 					*tt = c;
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				else {
 					*tt = c;
@@ -4941,7 +4941,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of minpowerof(symbol)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -4962,7 +4962,7 @@ together:
 					}
 					else {
 						MesPrint("@ %s should be the name of an expression or a $ variable",t-1);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					*tt = c;
 				}
@@ -4971,7 +4971,7 @@ together:
 					c = *tt; *tt = 0;
 					if ( GetName(AC.exprnames,t,&numexp,NOAUTO) == NAMENOTFOUND ) {
 						MesPrint("@ %s should be the name of an expression or a $ variable",t);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					else {
 						if ( ( Expressions[numexp].vflags & ISFACTORIZED ) != 0 ) x = 1;
@@ -4983,7 +4983,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of isfactorized($var) or isfactorized(expr)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -5003,7 +5003,7 @@ together:
 						 || *tt == '\n' || *tt == '\r' ) tt++;
 				if ( *tt != ')' ) {
 					MesPrint("@Improper use of isdefined(var)");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				*type = 3;
 				s = tt+1;
@@ -5037,7 +5037,7 @@ together:
 				if ( *tt != ')' ) {
 flagerror:
 					MesPrint("@Improper use of flag(num,expr)");
-					TERMINATE(-1);
+					Terminate(-1);
 					return(0);
 				}
 				if ( ( Expressions[numexp].uflags & ( 1 << (x-1) ) ) != 0 )
@@ -5058,7 +5058,7 @@ flagerror:
 		}
 		else {
 			MesPrint("@Illegal use of string in preprocessor condition: %s",s);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 	while ( *t == '-' || *t == '+' || *t == ' ' || *t == '\t' ) {
@@ -5278,7 +5278,7 @@ UBYTE *PreEval(UBYTE *s, LONG *x)
 			else {
 				if ( tobemultiplied > 2 && expsign != 1 ) {
 					MesPrint("&Incorrect use of ^ with & or |. Use brackets!");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				tobemultiplied *= expsign;
 				if ( tobemultiplied == 1 ) a *= y;
@@ -5287,7 +5287,7 @@ UBYTE *PreEval(UBYTE *s, LONG *x)
 				else {
 					if ( y == 0 || tobemultiplied == -2 ) {
 						MesPrint("@Division by zero in preprocessor calculator");
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 					if ( tobemultiplied == 2 ) a %= y;
 					else a /= y;
@@ -5423,7 +5423,7 @@ int DoExternal(UBYTE *s)
 		if ( chartype[*s] == 0 )for(;*s != '"'; s++)switch(chartype[*s]){
 			case 10:/*'\0' fits here*/
 				MesPrint("@Can't finde closing \"");
-				TERMINATE(-1);
+				Terminate(-1);
 			case 0:case 1: continue;
 			default:
 				break;
@@ -5804,7 +5804,7 @@ int DoFromExternal(UBYTE *s)
 		if ( *s=='$' || chartype[*s] == 0 )for(;*s != '"'; s++)switch(chartype[*s]){
 			case 10:/*'\0' fits here*/
 				MesPrint("@Can't finde closing \"");
-				TERMINATE(-1);
+				Terminate(-1);
 			case 0:case 1: continue;
 			default:
 				break;
@@ -6545,7 +6545,7 @@ noexpr:				MesPrint("@expression name expected in #write instruction");
 							AO.OutputLine = Out;
 							AO.OutStop = Out + AC.LineLength;
 							while ( *term ) {
-								if ( WriteInnerTerm(term,first) ) TERMINATE(-1);
+								if ( WriteInnerTerm(term,first) ) Terminate(-1);
 								term += *term;
 								first = 0;
 							}
@@ -6660,7 +6660,7 @@ WORD GetDollarNumber(UBYTE **inp, DOLLARS d)
 		c = *s; *s = 0;
 		if ( GetName(AC.dollarnames,name,&number,NOAUTO) == NAMENOTFOUND ) {
 			MesPrint("@dollar in #write should have been defined previously");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		*s = c;
 		dd = Dollars + number;
@@ -6670,14 +6670,14 @@ WORD GetDollarNumber(UBYTE **inp, DOLLARS d)
 			s = *inp;
 			if ( *s != ']' ) {
 				MesPrint("@Illegal factor for dollar variable");
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			*inp = s+1;
 			if ( nfac == 0 ) {
 				if ( dd->nfactors > d->nfactors ) {
 TooBig:
 					MesPrint("@Factor number for dollar variable too large");
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				return(dd->nfactors);
 			}
@@ -6692,7 +6692,7 @@ TooBig:
 			if ( w[*w] == 0 && w[*w-1] == *w-1 ) goto TooBig;
 IllNum:
 			MesPrint("@Illegal factor number for dollar variable");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		else {	/* The dollar should be a number */
 			if ( dd->type == DOLZERO ) {
@@ -6714,19 +6714,19 @@ IllNum:
 			x = 10*x + *s++ - '0';
 			if ( x > d->nfactors ) {
 				MesPrint("@Factor number %d for dollar variable too large",x);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 		if ( *s != ']' ) {
 			MesPrint("@Illegal factor number for dollar variable");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		s++; *inp = s;
 		return(x);
 	}
 	else {
 		MesPrint("@Illegal factor indicator for dollar variable");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(-1);
 }
@@ -6813,7 +6813,7 @@ int DoOptimize(UBYTE *s)
 				break;
 			default:
 				MesPrint("@Expression %s is not an active unhidden local or global expression.",exprname);
-				TERMINATE(-1);
+				Terminate(-1);
 				break;
 		}
 #ifdef WITHMPI
@@ -6860,7 +6860,7 @@ int DoOptimize(UBYTE *s)
 			SetScratch(AR.infile,&(e->onfile));
 			if ( GetTerm(BHEAD term) <= 0 ) {
 				MesPrint("@Expression %d has problems reading from scratchfile",i);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			term[3] = i;
 			AR.DeferFlag = 0;
@@ -6889,7 +6889,7 @@ int DoOptimize(UBYTE *s)
 			if ( FlushOut(&position,AR.outfile,1) ) {
 DoSerr:
 				MesPrint("@Expression %d has problems writing to scratchfile",i);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 #ifdef WITHMPI
 			}
@@ -6948,7 +6948,7 @@ int DoSkipExtraSymbols(UBYTE *s)
 		while ( *s <= '9' && *s >= '0' ) j = 10*j + *s++ - '0';
 		if ( *s ) {
 			MesPrint("@Illegal use of #SkipExtraSymbols instruction");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		AO.OptimizeResult.minvar += j;
 		if ( AO.OptimizeResult.minvar > AO.OptimizeResult.maxvar )

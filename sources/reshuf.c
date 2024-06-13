@@ -187,7 +187,7 @@ VOID FunLevel(PHEAD WORD *term)
 				  MLOCK(ErrorMessageLock);
 				  MesPrint("Unexpected code in ReNumber");
 				  MUNLOCK(ErrorMessageLock);
-				  TERMINATE(-1);
+				  Terminate(-1);
 				}
 				fun = t+2;
 				if ( *t >= FUNCTION && functions[*t-FUNCTION].spec
@@ -1332,7 +1332,7 @@ WORD DoDistrib(PHEAD WORD *term, WORD level)
 			}
 			*AN.RepPoint = 1;
 			AR.expchanged = 1;
-			if ( Generator(BHEAD termout,level) ) TERMINATE(-1);
+			if ( Generator(BHEAD termout,level) ) Terminate(-1);
 #ifndef NUOVO
 			{
 				WORD k1;
@@ -1418,7 +1418,7 @@ WORD DoDelta3(PHEAD WORD *term, WORD level)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Internal error with dd_ function");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	m1 = t; m2 = t + t[1];
 	num = t[1] - FUNHEAD;
@@ -1775,8 +1775,8 @@ WORD DoPartitions(PHEAD WORD *term, WORD level)
 		n = 0;
 		while ( part.nargs[j] == i ) { n++; j++; }
 		if ( n > 1 ) { /* 1! needs no attention */
-			if ( Factorial(BHEAD n, cfac, &nfac) ) TERMINATE(-1);
-			if ( MulLong(coeffnum,ncoeffnum,cfac,nfac,coeff2,&ncoeff2) ) TERMINATE(-1);
+			if ( Factorial(BHEAD n, cfac, &nfac) ) Terminate(-1);
+			if ( MulLong(coeffnum,ncoeffnum,cfac,nfac,coeff2,&ncoeff2) ) Terminate(-1);
 			c = coeffnum; coeffnum = coeff2; coeff2 = c;
 			n = ncoeffnum; ncoeffnum = ncoeff2; ncoeff2 = n;
 		}
@@ -1914,8 +1914,8 @@ WORD DoPartitions(PHEAD WORD *term, WORD level)
 				} 
 				if ( im == siz ) { n++; j++; continue; }
 				if ( n > 1 ) {
-div1:				if ( Factorial(BHEAD n, cfac, &nfac) ) TERMINATE(-1);
-					if ( DivLong(coeff,ncoeff,cfac,nfac,coeff2,&ncoeff2,coeff3,&ncoeff3) ) TERMINATE(-1);
+div1:				if ( Factorial(BHEAD n, cfac, &nfac) ) Terminate(-1);
+					if ( DivLong(coeff,ncoeff,cfac,nfac,coeff2,&ncoeff2,coeff3,&ncoeff3) ) Terminate(-1);
 					c = coeff; coeff = coeff2; coeff2 = c;
 					n = ncoeff; ncoeff = ncoeff2; ncoeff2 = n;
 				}
@@ -1932,8 +1932,8 @@ div1:				if ( Factorial(BHEAD n, cfac, &nfac) ) TERMINATE(-1);
 					if ( j3[i][j-1] == j3[i][j] ) { n++; j++; }
 					else {
 						if ( n > 1 ) {
-div2:						if ( Factorial(BHEAD n, cfac, &nfac) ) TERMINATE(-1);
-							if ( DivLong(coeff,ncoeff,cfac,nfac,coeff2,&ncoeff2,coeff3,&ncoeff3) ) TERMINATE(-1);
+div2:						if ( Factorial(BHEAD n, cfac, &nfac) ) Terminate(-1);
+							if ( DivLong(coeff,ncoeff,cfac,nfac,coeff2,&ncoeff2,coeff3,&ncoeff3) ) Terminate(-1);
 							c = coeff; coeff = coeff2; coeff2 = c;
 							n = ncoeff; ncoeff = ncoeff2; ncoeff2 = n;
 						}
@@ -1960,7 +1960,7 @@ div2:						if ( Factorial(BHEAD n, cfac, &nfac) ) TERMINATE(-1);
 			while ( t2 < tend ) *to++ = *t2++;
 			*termout = to-termout;
 			AT.WorkPointer = to;
-			if ( Generator(BHEAD termout,level) ) TERMINATE(-1);
+			if ( Generator(BHEAD termout,level) ) Terminate(-1);
 			AT.WorkPointer = termout;
 /*
 			#] Solution : 
@@ -2061,7 +2061,7 @@ WORD DoPermutations(PHEAD WORD *term, WORD level)
 				if ( odd && ( ( perm.sign & 1 ) != 0 ) ) to[-1] = -to[-1];
 				*termout = to - termout;
 				AT.WorkPointer = to;
-				if ( Generator(BHEAD termout,level) ) TERMINATE(-1);
+				if ( Generator(BHEAD termout,level) ) Terminate(-1);
 				AT.WorkPointer = oldworkpointer;
 			}
 			return(0);
@@ -3092,7 +3092,7 @@ DoCoeffi:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Called from StuffRootAdd");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			sgn = sgn1*sgn2*sgn3;
 			if ( nosymbols && size3 == 1 ) {

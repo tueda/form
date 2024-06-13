@@ -647,7 +647,7 @@ int GCDfunction(PHEAD WORD *term,WORD level)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Internal error. Indicated gcd_ function not encountered.");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	WantAddPointers(totargs);
 	args = AT.pWorkPointer; AT.pWorkPointer += totargs;
@@ -772,7 +772,7 @@ doshort:
 			MLOCK(ErrorMessageLock);
 			MesPrint("Internal error. Illegal short argument in GCDfunction.");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 /*
@@ -2060,7 +2060,7 @@ CalledFrom:
 	MLOCK(ErrorMessageLock);
 	MesCall("CreateExpression");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -2465,7 +2465,7 @@ WORD *TakeSymbolContent(PHEAD WORD *in, WORD *term)
 					MLOCK(ErrorMessageLock);
 					MesPrint ((char*)"ERROR: polynomials and polyratfuns must contain symbols only");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(1);
+					Terminate(1);
 				}
 			}
 			else if ( *t == SYMBOL ) {
@@ -2628,7 +2628,7 @@ CalledFrom:
 	MLOCK(ErrorMessageLock);
 	MesCall("TakeSymbolContent");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -2709,7 +2709,7 @@ void GCDclean(PHEAD WORD *num, WORD *den)
 		MLOCK(ErrorMessageLock);
 		MesCall("GCDclean");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	UnPack((UWORD *)r1,csize3,&csize2,&csize1);
 	t2 = r1+ABS(csize3);
@@ -2758,7 +2758,7 @@ WORD *PolyDiv(PHEAD WORD *a,WORD *b,char *text)
 		MLOCK(ErrorMessageLock);
 		MesPrint("PolyDiv: Term too complex. Maybe increasing MaxTermSize can help");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	xx = x; qq = quo;
 	NCOPY(xx,qq,i)
@@ -2798,7 +2798,7 @@ int DIVfunction(PHEAD WORD *term,WORD level,int par)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Internal error. Illegal parameter %d in DIVfunction.",par);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 /*
 	Find the function
@@ -2824,7 +2824,7 @@ int DIVfunction(PHEAD WORD *term,WORD level,int par)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Internal error. Indicated div_ or rem_ function not encountered.");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 /*
 	We have two arguments in arg1 and arg2.
@@ -2835,7 +2835,7 @@ zerozero:;
 			MLOCK(ErrorMessageLock);
 			MesPrint("0/0 in either div_ or rem_ function.");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		if ( numdol >= 0 ) PutTermInDollar(0,numdol);
 		return(0);
@@ -2845,7 +2845,7 @@ divzero:;
 		MLOCK(ErrorMessageLock);
 		MesPrint("Division by zero in either div_ or rem_ function.");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	if ( !division ) {
 		if ( (*arg1 == -SNUMBER && arg1[1] == 0) ||
@@ -2984,7 +2984,7 @@ CalledFrom:
 				MesPrint(" Error %d",error);
 				MesCall("MulFunc");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			tfill = prod+1;
 			t = p1+1; while ( t < (WORD *)num1 ) *tfill++ = *t++;
@@ -3568,7 +3568,7 @@ onerror:
 	MLOCK(ErrorMessageLock);
 	MesPrint(TheErrorMessage[error]);
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -3688,13 +3688,13 @@ onerror:
 	MLOCK(ErrorMessageLock);
 	MesPrint("Incorrect symbol field in InvPoly.");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 calcerror:
 	MLOCK(ErrorMessageLock);
 	MesPrint("Called from InvPoly.");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 

@@ -820,7 +820,7 @@ TooMuch:;
 							MLOCK(ErrorMessageLock);
 							MesPrint("Attempt to generate more terms than FORM can count");
 							MUNLOCK(ErrorMessageLock);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 						GetBinom(AN.BinoScrat,&AN.nbino,(WORD)mm,t[3]);
 						if ( AN.nbino > 2 ) goto TooMuch;
@@ -936,7 +936,7 @@ TooMuch:;
 							MLOCK(ErrorMessageLock);
 							MesPrint("Bracket specification in expression should be one single term");
 							MUNLOCK(ErrorMessageLock);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 						else {
 							m += *m;
@@ -954,7 +954,7 @@ TooMuch:;
 							MLOCK(ErrorMessageLock);
 							MesPrint("Error while picking up contents of bracket");
 							MUNLOCK(ErrorMessageLock);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 						if ( !*m ) {
 							*m++ = 4; *m++ = 1; *m++ = 1; *m++ = 3;
@@ -2370,7 +2370,7 @@ WORD InFunction(PHEAD WORD *term, WORD *termout)
 									if ( StoreTerm(BHEAD rr) ) {
 										AR.CompareRoutine = (COMPAREDUMMY)(&Compare1);
 										LowerSortLevel();
-										TERMINATE(-1);
+										Terminate(-1);
 									}
 								}
 								if ( EndSort(BHEAD to+ARGHEAD,1) < 0 ) goto InFunc;
@@ -2455,7 +2455,7 @@ WORD InFunction(PHEAD WORD *term, WORD *termout)
 #ifdef WITHPTHREADS
 							if ( dtype > 0 && dtype != MODLOCAL ) { UNLOCK(d->pthreadslockread); }
 #endif
-							TERMINATE(-1);
+							Terminate(-1);
 					}
 #ifdef WITHPTHREADS
 					if ( dtype > 0 && dtype != MODLOCAL ) { UNLOCK(d->pthreadslockread); }
@@ -3623,7 +3623,7 @@ CommonEnd:
 						MesPrint("%s",C->lhs[level]+3);
 						MUNLOCK(ErrorMessageLock);
 					}
-					TERMINATE(-1);
+					Terminate(-1);
 					goto GenCall;
 				  case TYPESETEXIT:
 					AM.exitflag = 1; /* no danger of race conditions */
@@ -4951,8 +4951,8 @@ WORD PrepPoly(PHEAD WORD *term,WORD par)
 	if ( AR.PolyFunType == 2 && AR.PolyFunExp != 2 ) {
 		WORD oldtype = AR.SortType;
 		AR.SortType = SORTHIGHFIRST;
-		if ( poly_ratfun_normalize(BHEAD term) != 0 ) TERMINATE(-1);
-/*		if ( ReadPolyRatFun(BHEAD term) != 0 ) TERMINATE(-1); */
+		if ( poly_ratfun_normalize(BHEAD term) != 0 ) Terminate(-1);
+/*		if ( ReadPolyRatFun(BHEAD term) != 0 ) Terminate(-1); */
 		oldworkpointer = AT.WorkPointer;
 		AR.SortType = oldtype;
 	}
@@ -5108,7 +5108,7 @@ WORD PrepPoly(PHEAD WORD *term,WORD par)
 				NCOPY(m,r,i);
 				if ( m >= AT.WorkSpace && m < AT.WorkTop )
 					AT.WorkPointer = m;
-				if ( Normalize(BHEAD v) ) TERMINATE(-1);
+				if ( Normalize(BHEAD v) ) Terminate(-1);
 				AT.WorkPointer = oldworkpointer;
 				m = w;
 				if ( *v == 4 && v[2] == 1 && (v[1]&MAXPOSITIVE) == v[1] ) {
@@ -5181,7 +5181,7 @@ WORD PrepPoly(PHEAD WORD *term,WORD par)
 				ncoef >>= 1;
 				while ( t < vv ) *m++ = *t++;
 				if ( MulRat(BHEAD (UWORD *)vv,ncoef,(UWORD *)tstop,jcoef,
-					(UWORD *)m,&ncoef) ) TERMINATE(-1);
+					(UWORD *)m,&ncoef) ) Terminate(-1);
 				ncoef *= 2;
 				m += ABS(ncoef);
 				if ( ncoef < 0 ) ncoef--;
@@ -5189,7 +5189,7 @@ WORD PrepPoly(PHEAD WORD *term,WORD par)
 				*m++ = ncoef;
 				*ww = WORDDIF(m,ww);
 				if ( AN.ncmod != 0 ) {
-					if ( Modulus(ww) ) TERMINATE(-1);
+					if ( Modulus(ww) ) Terminate(-1);
 					if ( *ww == 0 ) return(1);
 					m = ww + *ww;
 				}
@@ -5295,7 +5295,7 @@ WORD PrepPoly(PHEAD WORD *term,WORD par)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal value for PolyFunType in PrepPoly");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	r = term + *term;
 	AT.PolyAct = WORDDIF(poly,term);
@@ -5359,7 +5359,7 @@ NoLegal:
 				MesPrint("Illegal term with divergence in PolyRatFun");
 				MesCall("PolyFunMul");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			if ( *t < 0 ) {
 				if ( *t == -SYMBOL && t[1] == AR.PolyFunVar ) pow1--;

@@ -129,7 +129,7 @@ WORD TestMatch(PHEAD WORD *term, WORD *level)
 				MLOCK(ErrorMessageLock);
 				MesPrint("Internal problems with REPEAT count");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 		return(0);			/* Force the next level */
@@ -652,7 +652,7 @@ VOID Substitute(PHEAD WORD *term, WORD *pattern, WORD power)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	m = pattern;
 	mstop = m + *m;
@@ -1999,7 +1999,7 @@ VOID SubsInAll(PHEAD0)
 		MLOCK(ErrorMessageLock);
 		MesWork();
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	m = AN.patternbuffer + IDHEAD; m += m[1];
 	mstop = m + *m;

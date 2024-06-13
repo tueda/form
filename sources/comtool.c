@@ -192,7 +192,7 @@ WORD *AddLHS(int num)
 	if ( C->numlhs >= (C->maxlhs-2) ) {
 		WORD ***ppp = &(C->lhs);	/* to avoid compiler warning */
 		if ( DoubleList((VOID ***)ppp,&(C->maxlhs),sizeof(WORD *),
-		"statement lists") ) TERMINATE(-1);
+		"statement lists") ) Terminate(-1);
 	}
 	C->lhs[C->numlhs] = C->Pointer;
 	C->lhs[C->numlhs+1] = 0;
@@ -245,7 +245,7 @@ restart:;
 			}
 			else {
 				MesPrint("@Compiler buffer overflow. Try to make modules smaller");
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 		}
 		old	= C->rhs;
@@ -442,7 +442,7 @@ int InsTree(int bufnum, int h)
 		}
 	}
 	MesPrint("We vallen uit de boom!");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(h);
 balance:;
 	for (;;) {

@@ -1625,7 +1625,7 @@ const poly polygcd::gcd (const poly &a, const poly &b) {
 		if (res.is_zero() || !poly::divides(res,ppa) || !poly::divides(res,ppb)) {
 			MesPrint("Bad gcd found.");
 			std::cout << "Bad gcd:" << res << " for " << ppa << " " << ppb << std::endl;
-			TERMINATE(1);
+			Terminate(1);
 		}
 	}
 

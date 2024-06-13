@@ -1676,7 +1676,7 @@ quicky:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Sorry: no argument field wildcards yet in (anti)symmetric functions");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 		}
 	}
 /*
@@ -1946,7 +1946,7 @@ nextiraise:;
 				if we have funnies. No more than one allowed in antisymmetric
 				functions, or we have serious problems.
 */
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 
 			AN.RepFunList[AN.RepFunNum++] = offset;

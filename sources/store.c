@@ -133,7 +133,7 @@ VOID SetScratch(FILEHANDLE *f, POSITION *position)
 			if ( ISEQUALPOSINC(*position,f->POposition,
 				(f->POfull-f->PObuffer)*sizeof(WORD)) ) goto endpos;
 			MesPrint("Illegal position in SetScratch");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		possize = *position;
 		LOCK(AS.inputslock);
@@ -141,7 +141,7 @@ VOID SetScratch(FILEHANDLE *f, POSITION *position)
 		if ( ISNOTEQUALPOS(possize,*position) ) {
 			UNLOCK(AS.inputslock);
 			MesPrint("Cannot position file in SetScratch");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 #ifdef HIDEDEBUG
 			MesPrint("SetScratch1(%w): position = %12p, size = %l, address = %x",position,f->POsize,f->PObuffer);
@@ -150,7 +150,7 @@ VOID SetScratch(FILEHANDLE *f, POSITION *position)
 		|| ( size & 1 ) != 0 ) {
 			UNLOCK(AS.inputslock);
 			MesPrint("Read error in SetScratch");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		UNLOCK(AS.inputslock);
 		if ( size == 0 ) {
@@ -1155,7 +1155,7 @@ NewIn:
 	}
 	if ( r >= AR.ComprTop ) {
 		MesPrint("CompressSize of %10l is insufficient",AM.CompressSize);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	AR.CompressPointer = r; *r = 0;
 /*
@@ -1231,7 +1231,7 @@ RegRet:;
 	return(*from);
 GTerr:
 	MesPrint("Error while reading scratch file in GetTerm");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -1361,7 +1361,7 @@ WORD GetOneTerm(PHEAD WORD *term, FILEHANDLE *fi, POSITION *pos, int par)
 				MLOCK(ErrorMessageLock);
 				MesPrint("CompressSize of %10l is insufficient",AM.CompressSize);
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			AR.CompressPointer = r; *r = 0;
 			return(*p);
@@ -1391,7 +1391,7 @@ WORD GetOneTerm(PHEAD WORD *term, FILEHANDLE *fi, POSITION *pos, int par)
 				MLOCK(ErrorMessageLock);
 				MesPrint("CompressSize of %10l is insufficient",AM.CompressSize);
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			AR.CompressPointer = r; *r = 0;
 			return((WORD)j);
@@ -1402,7 +1402,7 @@ ErrGet:
 	MLOCK(ErrorMessageLock);
 	MesPrint("Error while reading scratch file in GetOneTerm (%d)",error);
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(-1);
 }
 
@@ -1793,7 +1793,7 @@ PastEnd:
 		MLOCK(ErrorMessageLock);
 		MesPrint("CompressSize of %10l is insufficient",AM.CompressSize);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	AR.CompressPointer = r; *r = 0;
 	if ( !TermRenumber(to,renumber,nexpr) ) {

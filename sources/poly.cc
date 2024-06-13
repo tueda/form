@@ -151,7 +151,7 @@ void poly::expand_memory (int i) {
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: polynomials too large (> WORDSIZE)");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(1);
+		Terminate(1);
 	}
 	
 	WORD *newterms = (WORD *)Malloc1(new_size_of_terms * sizeof(WORD), "poly::expand_memory");
@@ -1863,7 +1863,7 @@ void poly::divmod (const poly &a, const poly &b, poly &q, poly &r, bool only_div
 		MLOCK(ErrorMessageLock);
 		MesPrint ((char*)"ERROR: division by zero polynomial");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(1);
+		Terminate(1);
 	}
 	if (b.is_one()) {
 		q.check_memory(a[0]);
@@ -2414,7 +2414,7 @@ void poly::get_variables (PHEAD vector<WORD *> es, bool with_arghead, bool sort_
 					MLOCK(ErrorMessageLock);
 					MesPrint ((char*)"ERROR: polynomials and polyratfuns must contain symbols only");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(1);
+					Terminate(1);
 				}
 				
 				for (int j=i+3; j<i+e[i]-ABS(e[i+e[i]-1]); j+=2) 

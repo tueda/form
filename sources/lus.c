@@ -406,7 +406,7 @@ Success:;
 						MLOCK(ErrorMessageLock);
 						MesPrint("Illegal attempt to use a non-index-like argument in a tensor in ReplaceLoop statement");
 						MUNLOCK(ErrorMessageLock);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 			}
@@ -915,7 +915,7 @@ LONG StartLoops(PHEAD WORD *term,WORD level,LONG vert,WORD nvert,
 		If we come here, we have a problem.
 */
 		MesPrint("Internal error in StartLoops. Object not found.");
-		TERMINATE(-1);
+		Terminate(-1);
 		return(-1);
 havestart:
 		AT.pWorkSpace[vert+nvert] = vstart;
@@ -1105,7 +1105,7 @@ void LoopOutput(PHEAD WORD *term, WORD level, WORD *loop, WORD nloop)
 	AT.WorkPointer = tt;
 	if ( Generator(BHEAD outterm,level) ) {
 		MesCall("LoopOutput");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	AT.WorkPointer = outterm;
 }
@@ -1520,7 +1520,7 @@ void PathOutput(PHEAD WORD *term, WORD level, WORD *path, WORD npath)
 	AT.WorkPointer = tt;
 	if ( Generator(BHEAD outterm,level) ) {
 		MesCall("PathOutput");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	AT.WorkPointer = outterm;
 }

@@ -114,14 +114,14 @@ WORD GetIfDollarNum(WORD *ifp, WORD *ifstop)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Attempt to use a factor of an unfactored $-variable");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		num = GetIfDollarNum(ifp+3,ifstop);
 		if ( num > d->nfactors ) {
 			MLOCK(ErrorMessageLock);
 			MesPrint("Dollar factor number %s out of range",num);
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		if ( num == 0 ) {
 			return(d->nfactors);
@@ -137,13 +137,13 @@ getnumber:;
 			MLOCK(ErrorMessageLock);
 			MesPrint("Dollar factor number expected but found expression");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		else {
 			MLOCK(ErrorMessageLock);
 			MesPrint("Dollar factor number out of range");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		return(0);
 	}
@@ -160,7 +160,7 @@ getnumber:;
 		MLOCK(ErrorMessageLock);
 		MesPrint("Dollar factor number is wrong type");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 }
@@ -329,7 +329,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 					if ( dtype == DOLUNDEFINED ) {
 						if ( AC.UnsureDollarMode == 0 ) {
 							MesPrint("$%s is undefined",AC.dollarnames->namebuffer+d->name);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 					}
 				}
@@ -488,7 +488,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 							MLOCK(ErrorMessageLock);
 							MesPrint("Attempt to use a factor of an unfactored $-variable");
 							MUNLOCK(ErrorMessageLock);
-							TERMINATE(-1);
+							Terminate(-1);
 						} {
 						WORD num = GetIfDollarNum(ifp+3,ifstop);
 						WORD *w;
@@ -497,7 +497,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 							MLOCK(ErrorMessageLock);
 							MesPrint("Dollar factor number %s out of range",num);
 							MUNLOCK(ErrorMessageLock);
-							TERMINATE(-1);
+							Terminate(-1);
 						}
 						if ( num == 0 ) {
 							ncoef2 = 1; coef2[0] = d->nfactors; coef2[1] = 1;
@@ -537,7 +537,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 								MLOCK(ErrorMessageLock);
 								MesPrint("$%s is undefined",AC.dollarnames->namebuffer+d->name);
 								MUNLOCK(ErrorMessageLock);
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 							ncoef2 = 0; coef2[0] = 0; coef2[1] = 1;
 							break;
@@ -554,7 +554,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 									MLOCK(ErrorMessageLock);
 									MesPrint("$%s is of wrong type",AC.dollarnames->namebuffer+d->name);
 									MUNLOCK(ErrorMessageLock);
-									TERMINATE(-1);
+									Terminate(-1);
 								}
 								ncoef2 = 0; coef2[0] = 0; coef2[1] = 1;
 								break;
@@ -575,7 +575,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 								MLOCK(ErrorMessageLock);
 								MesPrint("$%s is of wrong type",AC.dollarnames->namebuffer+d->name);
 								MUNLOCK(ErrorMessageLock);
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 							ncoef2 = coef2[0] = 0; coef2[1] = 1;
 							break;
@@ -591,7 +591,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 									MLOCK(ErrorMessageLock);
 									MesPrint("$%s is of wrong type",AC.dollarnames->namebuffer+d->name);
 									MUNLOCK(ErrorMessageLock);
-									TERMINATE(-1);
+									Terminate(-1);
 								}
 								ncoef2 = coef2[0] = 0; coef2[1] = 1;
 								break;
@@ -640,7 +640,7 @@ WORD DoIfStatement(PHEAD WORD *ifcode, WORD *term)
 									MLOCK(ErrorMessageLock);
 									MesPrint("$%s is of wrong type",AC.dollarnames->namebuffer+d->name);
 									MUNLOCK(ErrorMessageLock);
-									TERMINATE(-1);
+									Terminate(-1);
 								}
 								ncoef2 = 0; coef2[0] = 0; coef2[1] = 1;
 							}
@@ -666,7 +666,7 @@ generic:;
 								MLOCK(ErrorMessageLock);
 								MesPrint("$%s is of wrong type",AC.dollarnames->namebuffer+d->name);
 								MUNLOCK(ErrorMessageLock);
-								TERMINATE(-1);
+								Terminate(-1);
 							}
 							ncoef2 = 0; coef2[0] = 0; coef2[1] = 1;
 							break;

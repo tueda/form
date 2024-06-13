@@ -2081,13 +2081,13 @@ int ArgFactorize(PHEAD WORD *argin, WORD *argout)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Factorization modulus a number, greater than a WORD not implemented.");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( Modulus(t) ) {
 					MLOCK(ErrorMessageLock);
 					MesCall("ArgFactorize");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( !*t) { t = tstop; continue; }
 			}
@@ -2218,7 +2218,7 @@ int ArgFactorize(PHEAD WORD *argin, WORD *argout)
 		}
 		if ( sumcommu > 1 ) {
 			MesPrint("ERROR: Cannot factorize an argument with more than one noncommuting object");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 	t = argfree + ARGHEAD;
@@ -2241,7 +2241,7 @@ getout:
 				TermFree(argcopy,"argcopy");
 				if ( argfree != argin ) TermFree(argfree,"argfree");
 				MesCall("ArgFactorize");
-				TERMINATE(-1);
+				Terminate(-1);
 				return(-1);
 			}
 			StoreTerm(BHEAD argextra);
@@ -3280,7 +3280,7 @@ Irreg:
 	MesPrint("Irregularity while sorting argument in TakeArgContent");
 	if ( argin3 != argin2 ) TermFree(argin3,"TakeArgContent3");
 	if ( argin2 != argin  ) TermFree(argin2,"TakeArgContent2");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -3454,7 +3454,7 @@ WORD *MakeInteger(PHEAD WORD *argin,WORD *argout,WORD *argfree)
 
 MakeIntegerErr:
 	MesCall("MakeInteger");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -3477,7 +3477,7 @@ WORD *MakeMod(PHEAD WORD *argin,WORD *argout,WORD *argfree)
 	x = r[*r-3];
 	if ( r[*r-1] < 0 ) x += AN.cmod[0];
 	if ( GetModInverses(x,(WORD)(AN.cmod[0]),&ix,&ip) ) {
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	argout[0] = -SNUMBER;
 	argout[1] = x;

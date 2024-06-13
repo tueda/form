@@ -233,7 +233,7 @@ int AssignDollar(PHEAD WORD *term, WORD level)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Illegal attempt to change $-variable in multi-threaded module %l",AC.CModule);
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		dtype = ModOptdollars[nummodopt].type;
 		if ( dtype == MODLOCAL ) {
@@ -918,7 +918,7 @@ void WildDollars(PHEAD WORD *term)
 			MLOCK(ErrorMessageLock);
 			MesPrint("&Serious bug in wildcard prototype. Found in WildDollars");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		numdollar = m[2];
 		d = Dollars + numdollar;
@@ -940,7 +940,7 @@ void WildDollars(PHEAD WORD *term)
 						MesPrint("&Illegal attempt to use $-variable %s in module %l",
 							DOLLARNAME(Dollars,numdollar),AC.CModule);
 						MUNLOCK(ErrorMessageLock);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 			}
@@ -1544,7 +1544,7 @@ ShortArgument:
 				MLOCK(ErrorMessageLock);
 				MesPrint("Trying to convert a $ with an argument field into an expression");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 /*
 			Now we have a single argument
@@ -1558,7 +1558,7 @@ ShortArgument:
 			MLOCK(ErrorMessageLock);
 			MesPrint("Trying to use an undefined $ in an expression");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 			/* fall through */
 		case DOLZERO:
 			if ( d->where ) { d->where[0] = 0; }
@@ -2428,7 +2428,7 @@ int IsMultipleOf(WORD *buf1, WORD *buf2)
 		MesPrint("@Called from MultipleOf in $( )");
 		MUNLOCK(ErrorMessageLock);
 		TermFree(IfScrat1,"IsMultipleOf"); TermFree(IfScrat2,"IsMultipleOf");
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	while ( *t1 ) {
 		t1 += *t1; t2 += *t2;
@@ -2439,7 +2439,7 @@ int IsMultipleOf(WORD *buf1, WORD *buf2)
 			MesPrint("@Called from MultipleOf in $( )");
 			MUNLOCK(ErrorMessageLock);
 			TermFree(IfScrat1,"IsMultipleOf"); TermFree(IfScrat2,"IsMultipleOf");
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		if ( ni1 != ni2 ) return(0);
 		i = 2*ABS(ni1);
@@ -2525,7 +2525,7 @@ int TwoExprCompare(WORD *buf1, WORD *buf2, int oprtr)
 	MLOCK(ErrorMessageLock);
 	MesPrint("@Internal problems with operator in $( )");
 	MUNLOCK(ErrorMessageLock);
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -2593,7 +2593,7 @@ int DollarRaiseLow(UBYTE *name, LONG value)
 				MLOCK(ErrorMessageLock);
 				MesCall("DollarRaiseLow");
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 		}
 		ndscrat = INCLENG(ndscrat);
 		i = ABS(ndscrat);
@@ -2678,7 +2678,7 @@ endofchain:
 						MesPrint("$-variable is not a short number in do loop");
 					}
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				return( td[3] > 0 ? td[1]: -td[1] );
 			}
@@ -2691,7 +2691,7 @@ endofchain:
 					MesPrint("$-variable is not a number in do loop");
 				}
 				MUNLOCK(ErrorMessageLock);
-				TERMINATE(-1);
+				Terminate(-1);
 			}
 			return(0);
 		}
@@ -2713,7 +2713,7 @@ endofchain:
 			MesPrint("Invalid $-variable in do loop");
 		}
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 	if ( num == 0 ) return(d->nfactors);
@@ -2726,7 +2726,7 @@ endofchain:
 			MesPrint("Not a valid factor number for $-variable in do loop");
 		}
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 	if ( d->factors[num].type == DOLNUMBER )
@@ -2740,7 +2740,7 @@ endofchain:
 			MesPrint("$-variable in do loop is not a number");
 		}
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(0);
 	}
 }
@@ -2883,7 +2883,7 @@ WORD TestEndDoLoop(PHEAD WORD *lhsbuf, WORD level)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Wrong type of object in do loop parameter");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(level);
 	}
 	value += incr;
@@ -3010,14 +3010,14 @@ int DollarFactorize(PHEAD WORD numdollar)
 					MLOCK(ErrorMessageLock);
 					MesPrint("Factorization modulus a number, greater than a WORD not implemented.");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( Modulus(term) ) {
 					AR.SortType = oldsorttype;
 					MLOCK(ErrorMessageLock);
 					MesCall("DollarFactorize");
 					MUNLOCK(ErrorMessageLock);
-					TERMINATE(-1);
+					Terminate(-1);
 				}
 				if ( !*term) { term = t; continue; }
 			}
@@ -3052,7 +3052,7 @@ int DollarFactorize(PHEAD WORD numdollar)
 		MLOCK(ErrorMessageLock);
 		MesCall("DollarFactorize");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 		return(1);
 	}
 	else if ( ( buf1content[0] == 4 ) && ( buf1content[1] == 1 ) &&
@@ -3142,7 +3142,7 @@ int DollarFactorize(PHEAD WORD numdollar)
 		M_free(buf1,"DollarFactorize-2");
 		if ( buf1content ) TermFree(buf1content,"DollarContent");
 		MesCall("DollarFactorize");
-		TERMINATE(-1);
+		Terminate(-1);
 		return(-1);
 	}
 	if ( action ) {
@@ -3157,7 +3157,7 @@ getout:
 				M_free(buf1,"DollarFactorize-2");
 				if ( buf1content ) TermFree(buf1content,"DollarContent");
 				MesCall("DollarFactorize");
-				TERMINATE(-1);
+				Terminate(-1);
 				return(-1);
 			}
 			StoreTerm(BHEAD termextra);
@@ -3181,7 +3181,7 @@ getout:
 		if ( buf2 != buf1 && buf2 ) M_free(buf2,"DollarFactorize-3");
 		M_free(buf1,"DollarFactorize-3");
 		if ( buf1content ) TermFree(buf1content,"DollarContent");
-		TERMINATE(-1);
+		Terminate(-1);
 		return(-1);
 	}
 	if ( buf2 != buf1 && buf2 ) {
@@ -3584,7 +3584,7 @@ WORD *TakeDollarContent(PHEAD WORD *dollarbuffer, WORD **factor)
 */
 	if ( AN.cmod != 0 ) {
 		if ( ( *factor = MakeDollarMod(BHEAD dollarbuffer,&remain) ) == 0 ) {
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		if ( pow == 0 ) {
 			(*factor)[**factor-1] = -(*factor)[**factor-1];
@@ -3593,7 +3593,7 @@ WORD *TakeDollarContent(PHEAD WORD *dollarbuffer, WORD **factor)
 	}
 	else {
 		if ( ( *factor = MakeDollarInteger(BHEAD dollarbuffer,&remain) ) == 0 ) {
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		if ( pow == 0 ) {
 			(*factor)[**factor-1] = -(*factor)[**factor-1];
@@ -3774,7 +3774,7 @@ MakeDollarIntegerErr:
 	NumberFree(GCDbuffer2,"MakeDollarInteger");
 	NumberFree(GCDbuffer,"MakeDollarInteger");
 	MesCall("MakeDollarInteger");
-	TERMINATE(-1);
+	Terminate(-1);
 	return(0);
 }
 
@@ -3800,7 +3800,7 @@ WORD *MakeDollarMod(PHEAD WORD *buffer, WORD **bufout)
 	x = r[*r-3];
 	if ( r[*r-1] < 0 ) x += AN.cmod[0];
 	if ( GetModInverses(x,(WORD)(AN.cmod[0]),&ix,&ip) ) {
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	factor = (WORD *)Malloc1(5*sizeof(WORD),"MakeDollarMod");
 	factor[0] = 4; factor[1] = x; factor[2] = 1; factor[3] = 3; factor[4] = 0;
@@ -3819,7 +3819,7 @@ WORD *MakeDollarMod(PHEAD WORD *buffer, WORD **bufout)
 		r1[-1] = (WORD)((((LONG)xx)*ix) % AN.cmod[0]);
 		*r1 = 0; AT.WorkPointer = r1;
 		if ( Generator(BHEAD oldworkpointer,C->numlhs) ) {
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 	AT.WorkPointer = oldworkpointer;
@@ -3858,7 +3858,7 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 						MesPrint("&Illegal attempt to use $-variable %s in module %l",
 							DOLLARNAME(Dollars,t[2]),AC.CModule);
 						MUNLOCK(ErrorMessageLock);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 			}
@@ -3868,7 +3868,7 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Attempt to use a factor of an unfactored $-variable");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		num = GetDolNum(BHEAD t+t[1],tstop);
 		if ( num == 0 ) return(d->nfactors);
@@ -3876,7 +3876,7 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Attempt to use an nonexisting factor %d of a $-variable",num);
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		w = d->factors[num-1].where;
 		if ( w == 0 ) return(d->factors[num-1].value);
@@ -3886,7 +3886,7 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Illegal type of factor number of a $-variable");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	}
 	else if ( t[2] < 0 ) {
@@ -3912,7 +3912,7 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 						MesPrint("&Illegal attempt to use $-variable %s in module %l",
 							DOLLARNAME(Dollars,t[2]),AC.CModule);
 						MUNLOCK(ErrorMessageLock);
-						TERMINATE(-1);
+						Terminate(-1);
 					}
 				}
 			}
@@ -3926,12 +3926,12 @@ int GetDolNum(PHEAD WORD *t, WORD *tstop)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Attempt to use an nonexisting factor of a $-variable");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		MLOCK(ErrorMessageLock);
 		MesPrint("Illegal type of factor number of a $-variable");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(0);
 }

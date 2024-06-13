@@ -235,7 +235,7 @@ int GetFloatArgument(PHEAD mpfr_t f_out,WORD *fun,int par)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Unnormalized argument in GetFloatArgument: %a",*term,term);
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 		else if ( t[1] == SYMBOL && t[2] == 4 && t[3] == AM.numpi && t[4] == 1 ) {
 			if ( first ) {

@@ -143,7 +143,7 @@ WORD GenerateTopologies(PHEAD WORD nloops, WORD nlegs, WORD setvert, WORD setmax
 		MLOCK(ErrorMessageLock);
 		MesPrint("GenerateTopologies: %d loops and %d legs considered excessive",nloops,nlegs);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 //	First the external nodes.
@@ -161,7 +161,7 @@ WORD GenerateTopologies(PHEAD WORD nloops, WORD nlegs, WORD setvert, WORD setmax
 		MLOCK(ErrorMessageLock);
 		MesPrint("Called from GenerateTopologies with %d loops and %d legs considered excessive",nloops,nlegs);
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 	return(0);
 }
@@ -271,7 +271,7 @@ void toForm(T_EGraph *egraph)
 		MLOCK(ErrorMessageLock);
 		MesPrint("Called from the topologies routine toForm");
 		MUNLOCK(ErrorMessageLock);
-		TERMINATE(-1);
+		Terminate(-1);
 	}
 
 	AT.WorkPointer = termout;

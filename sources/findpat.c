@@ -389,7 +389,7 @@ NextInDot:
 			MLOCK(ErrorMessageLock);
 			MesPrint("Error in pattern(1)");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 EndLoop:;
 	} while ( m < mstop ); }
@@ -932,7 +932,7 @@ OnceL8a:						mt -= 2*MAXPOWER;
 			MLOCK(ErrorMessageLock);
 			MesPrint("Error in pattern(2)");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 EndLoop:;
 	} while ( m < mstop ); }
@@ -1052,7 +1052,7 @@ WORD FindMulti(PHEAD WORD *term, WORD *pattern)
 			MLOCK(ErrorMessageLock);
 			MesPrint("Error in pattern(3)");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	} while ( m < mstop ); }
 	if ( power < 0 ) power = 0;
@@ -1402,7 +1402,7 @@ OneWild:
 			MLOCK(ErrorMessageLock);
 			MesPrint("Pattern not yet implemented");
 			MUNLOCK(ErrorMessageLock);
-			TERMINATE(-1);
+			Terminate(-1);
 		}
 	} while ( m < mstop );
 	return(1);
