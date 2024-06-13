@@ -806,7 +806,7 @@ AC_ARG_ENABLE([backtrace],
 	[enable_backtrace=check])
 AS_IF([test "x$enable_backtrace" != xno],
 	[flag=:
-	AS_IF([$flag], [AC_CHECK_LIB([c], [backtrace], [LIBS="-lc $LIBS"], [flag=false])])
+	AS_IF([$flag], [AC_CHECK_LIB([c], [backtrace], [], [flag=false])])
 	AS_IF([$flag],
 		[AC_DEFINE(ENABLE_BACKTRACE, [], [Define to print a stack trace on Terminate.])
 			enable_backtrace=yes],
@@ -901,12 +901,12 @@ if test "$my_test_LINKFLAGS" != set; then
 		# On OS X Mavericks, -s option has a funny effect: though the linker
 		# warns the option is obsolete and being ignored, it causes an internal
 		# error "atom not found in symbolIndex...".
-		LINKFLAGS=-rdynamic
+		LINKFLAGS=
 	elif test "x$enable_profile" != xno && test "x$enable_profile" != xunavailable; then
 		# Profilers needs symbol tables.
-		LINKFLAGS=-rdynamic
+		LINKFLAGS=
 	else
-		LINKFLAGS=-rdynamic
+		LINKFLAGS=
 	fi
 fi
 my_test_DEBUGCOMPILEFLAGS=${DEBUGCOMPILEFLAGS+set}
@@ -977,7 +977,7 @@ if test "$my_test_DEBUGCOMPILEFLAGS" != set && test "x$enable_debug" = xyes; the
 fi
 my_test_DEBUGLINKFLAGS=${DEBUGLINKFLAGS+set}
 if test "$my_test_DEBUGLINKFLAGS" != set && test "x$enable_debug" = xyes; then
-	DEBUGLINKFLAGS=-rdynamic
+	DEBUGLINKFLAGS=
 	if test "x$vendor" = xgnu; then
 		# Coverage option.
 		if test "x$enable_coverage" = xyes; then
