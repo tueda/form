@@ -56,8 +56,8 @@ jobs:
         include:
           # To maximize compatibility, we build executables on the oldest
           # platforms available.
-          - {os: ubuntu-20.04, shell: bash, bin: form}
-          - {os: ubuntu-20.04, shell: bash, bin: tform}
+          - {os: ubuntu-22.04, shell: bash, bin: form}
+          - {os: ubuntu-22.04, shell: bash, bin: tform}
           - {os: macos-11, shell: bash, bin: form}
           - {os: macos-11, shell: bash, bin: tform}
           # NOTE: Windows native executables have too many problems.
