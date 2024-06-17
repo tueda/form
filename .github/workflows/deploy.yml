@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # ensures a reachable tag
+          submodules: true  # zstd/zlibWrapper
 
       - name: Determine distname
         run: |
