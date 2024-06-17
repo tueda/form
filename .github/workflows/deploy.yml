@@ -101,7 +101,7 @@ jobs:
 
       - name: Configure
         run: |
-          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib'
+          opts='--disable-dependency-tracking --disable-scalar --disable-threaded --disable-native --enable-static-link --with-gmp --with-zlib --with-zstd'
           case ${{ matrix.bin }} in
             form)  opts="$opts --enable-scalar";;
             tform) opts="$opts --enable-threaded";;

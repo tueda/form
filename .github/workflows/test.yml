@@ -55,7 +55,7 @@ jobs:
           case ${{ matrix.bin }} in
             vorm|tvorm|parvorm) opts="$opts --enable-debug";;
           esac
-          opts="$opts --with-gmp --with-zlib"
+          opts="$opts --with-gmp --with-zlib --with-zstd"
           autoreconf -i
           ./configure $opts
 
@@ -163,7 +163,7 @@ jobs:
           case ${{ matrix.bin }} in
             vorm|tvorm|parvorm) opts="$opts --enable-debug";;
           esac
-          opts="$opts --with-gmp --with-zlib"
+          opts="$opts --with-gmp --with-zlib --with-zstd"
           autoreconf -i
           ./configure $opts
 
@@ -213,7 +213,7 @@ jobs:
             tvorm)   opts="$opts --disable-scalar --enable-threaded --disable-parform";;
             parvorm) opts="$opts --disable-scalar --disable-threaded --enable-parform";;
           esac
-          opts="$opts --enable-debug --enable-coverage --with-gmp --with-zlib"
+          opts="$opts --enable-debug --enable-coverage --with-gmp --with-zlib --with-zstd"
           autoreconf -i
           ./configure $opts
 
@@ -277,7 +277,7 @@ jobs:
             form)  opts="$opts --enable-scalar --disable-threaded --disable-parform";;
             tform) opts="$opts --disable-scalar --enable-threaded --disable-parform";;
           esac
-          opts="$opts --disable-debug --with-gmp --with-zlib"
+          opts="$opts --disable-debug --with-gmp --with-zlib --with-zstd"
           autoreconf -i
           ./configure $opts
 
