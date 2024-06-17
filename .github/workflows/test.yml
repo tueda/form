@@ -31,13 +31,13 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Install MPFR
+      - name: Install dependencies
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: libmpfr-dev
+          packages: libmpfr-dev libzstd-dev
           version: 1.0
 
-      - name: Install MPI if necessary
+      - name: Install MPI
         if: matrix.bin == 'parform' || matrix.bin == 'parvorm'
         run: |
           sudo apt update
@@ -138,19 +138,13 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Install Valgrind
+      - name: Install dependencies
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: valgrind
+          packages: libmpfr-dev libzstd-dev valgrind
           version: 1.0
 
-      - name: Install MPFR
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: libmpfr-dev
-          version: 1.0
-
-      - name: Install MPI if necessary
+      - name: Install MPI
         if: matrix.bin == 'parform' || matrix.bin == 'parvorm'
         run: |
           sudo apt update
@@ -196,19 +190,13 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Install LCOV
+      - name: Install dependencies
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: lcov
+          packages: lcov libmpfr-dev libzstd-dev
           version: 1.0
 
-      - name: Install MPFR
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: libmpfr-dev
-          version: 1.0
-
-      - name: Install MPI if necessary
+      - name: Install MPI
         if: matrix.bin == 'parform' || matrix.bin == 'parvorm'
         run: |
           sudo apt update
@@ -275,7 +263,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install automake build-essential git libgmp-dev libmpfr-dev ruby zlib1g-dev
+          apt-get -y install automake build-essential git libgmp-dev libmpfr-dev libzstd-dev ruby zlib1g-dev
 
       - name: Configure
         run: |
