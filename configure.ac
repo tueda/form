@@ -350,6 +350,31 @@ AS_IF([test "x$with_zlib" != xno],
 		AC_MSG_NOTICE([zlib is not available])
 		with_zlib=no])])
 
+# Check for zstd
+AC_ARG_WITH([zstd],
+	[AS_HELP_STRING([--with-zstd@<:@=DIR@:>@],
+		[use zstd for compression (installed in prefix DIR) @<:@default=check@:>@])],
+	[AS_IF([test "x$withval" != xyes && test "x$withval" != xno && test "x$withval" != xcheck],
+		[with_zstd=yes
+		CPPFLAGS="$CPPFLAGS -I$withval/include"
+		LDFLAGS="$LDFLAGS -L$withval/lib"])],
+	[with_zstd=check])
+AS_IF([test "x$with_zstd" != xno],
+	[flag=:
+	AS_IF([$flag], [AS_IF([test "x$with_zlib" = xno],
+		[AC_MSG_NOTICE([using zstd requires zlib])
+		flag=false])])
+	AS_IF([$flag], [AC_CHECK_HEADER([zstd.h], [], [flag=false])])
+	AS_IF([$flag], [AC_CHECK_LIB([zstd], [ZSTD_versionNumber], [LIBS="-lzstd $LIBS"], [flag=false])])
+	AS_IF([$flag],
+		[AC_DEFINE(WITHZSTD, [], [Define to use zstd for compression.])
+		with_zstd=yes],
+		[AS_IF([test "x$with_zstd" = xyes],
+			[AC_MSG_FAILURE([test for zstd failed. Give --without-zstd if you want to compile without zstd])])
+		AC_MSG_NOTICE([zstd is not available])
+		with_zstd=no])])
+AM_CONDITIONAL([WITHZSTD], [test "x$with_zstd" = xyes])
+
 # enable-scalar/threaded/parform/debug/float
 AC_ARG_ENABLE([scalar],
 	[AS_HELP_STRING([--enable-scalar],
@@ -1061,6 +1086,10 @@ if test "x$with_mpfr" = xyes; then
 fi
 if test "x$with_zlib" = xyes; then
 	echo "    zlib"
+	atleastone=yes
+fi
+if test "x$with_zstd" = xyes; then
+	echo "    zstd"
 	atleastone=yes
 fi
 if test $atleastone = no; then
