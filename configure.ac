@@ -66,10 +66,11 @@ m4_define([serial_tests], [m4_esyscmd_s([
 	${AUTOMAKE:-automake} --version | head -1 |
 	awk '{split ($NF,a,"."); if (a[1] >= 2 || (a[1] == 1 && a[2] >= 13)) { print "serial-tests" }}'
 ])])
-# Use the subdir-objects option of AM_INIT_AUTOMAKE if automake >= 1.13.
+# If automake >= 1.14, use the subdir-objects option of AM_INIT_AUTOMAKE (available in automake >= 1.13)
+# to suppress the "possible forward-incompatibility" warning.
 m4_define([subdir_objects], [m4_esyscmd_s([
 	${AUTOMAKE:-automake} --version | head -1 |
-	awk '{split ($NF,a,"."); if (a[1] >= 2 || (a[1] == 1 && a[2] >= 13)) { print "subdir-objects" }}'
+	awk '{split ($NF,a,"."); if (a[1] >= 2 || (a[1] == 1 && a[2] >= 14)) { print "subdir-objects" }}'
 ])])
 
 AC_PREREQ([2.59])
