@@ -459,7 +459,6 @@ template<typename T> struct calc {
 #endif
 #ifdef WITHZLIB
 #ifdef WITHZSTD
-#define ZWRAP_USE_ZSTD 1
 #include <zstd_zlibwrapper.h>
 #else
 #include <zlib.h>
