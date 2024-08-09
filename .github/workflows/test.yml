@@ -53,6 +53,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: libmpich-dev
+          execute_install_scripts: true
 
       - name: Construct configure options
         id: config-opts
