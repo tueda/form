@@ -83,7 +83,9 @@ jobs:
           echo "value=$opts" >>$GITHUB_OUTPUT
 
       - name: Configure
-        run: ./configure ${{ steps.config-opts.outputs.value }}
+        run: |
+          autoreconf -i
+          ./configure ${{ steps.config-opts.outputs.value }}
 
       - name: Build
         run: make -C sources -j 4 ${{ matrix.bin }}
