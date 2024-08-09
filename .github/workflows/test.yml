@@ -74,7 +74,7 @@ jobs:
               opts="$opts --enable-debug"
               ;;
           esac
-          case ${{ matrix.compiler }} in
+          case "${{ matrix.compiler }}" in
             gcc-14)
               opts="$opts CC=gcc-14 CXX=g++-14"
               ;;
