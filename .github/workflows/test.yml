@@ -72,11 +72,12 @@ jobs:
           esac
           case "${{ matrix.compiler }}" in
             gcc-14)
-              opts="$opts CC=gcc-14 CXX=g++-14 --with-gmp=/usr/local/opt/gmp"
-              ls -R /usr/local/opt/gmp || :
+              opts="$opts CC=gcc-14 CXX=g++-14 --with-gmp=/usr/local/opt/gmp --with-mpfr=/usr/local/opt/mpfr"
+              ;;
+            *)
+              opts="$opts --with-gmp --with-zlib"
               ;;
           esac
-          opts="$opts --with-gmp --with-zlib"
           autoreconf -i
           echo $opts
           ./configure $opts
