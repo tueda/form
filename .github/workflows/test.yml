@@ -73,10 +73,12 @@ jobs:
           case "${{ matrix.compiler }}" in
             gcc-14)
               opts="$opts CC=gcc-14 CXX=g++-14 --with-gmp=/usr/local/opt/gmp"
+              ls -R /usr/local/opt/gmp || :
               ;;
           esac
           opts="$opts --with-gmp --with-zlib"
           autoreconf -i
+          echo $opts
           ./configure $opts
 
       - name: Build
