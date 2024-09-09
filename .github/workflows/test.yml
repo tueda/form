@@ -39,6 +39,13 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
+      - name: Install Automake
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew list
+          brew install automake
+
       - name: Install MPFR
         if: runner.os == 'Linux'
         uses: awalsh128/cache-apt-pkgs-action@v1
