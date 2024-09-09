@@ -72,7 +72,7 @@ jobs:
           esac
           case "${{ matrix.compiler }}" in
             gcc-14)
-              opts="$opts CC=gcc-14 CXX=g++-14"
+              opts="$opts CC=gcc-14 CXX=g++-14 --with-gmp=/usr/local/opt/gmp"
               ;;
           esac
           opts="$opts --with-gmp --with-zlib"
