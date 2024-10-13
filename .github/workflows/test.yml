@@ -212,7 +212,7 @@ jobs:
         if: matrix.bin == 'parform' || matrix.bin == 'parvorm'
         run: |
           sudo apt update
-          sudo apt install -y -q libmpich-dev
+          sudo apt install -y -q libopenmpi-dev
 
       - name: Configure
         run: |
