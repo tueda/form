@@ -83,7 +83,7 @@ jobs:
           esac
 
       - name: Test
-        run: ./check/check.rb ./sources/${{ matrix.bin }} --stat ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.timeout && format('--timeout {0}', matrix.timeout) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
+        run: ./check/check.rb ./sources/${{ matrix.bin }} --mpirun-opts --oversubscribe --stat ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.timeout && format('--timeout {0}', matrix.timeout) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
         env:
           FORMPATH: ${{ github.workspace }}/formlib
 
@@ -175,7 +175,7 @@ jobs:
         run: make -C sources -j 4 ${{ matrix.bin }}
 
       - name: Test
-        run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }} --retries 5 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
+        run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --mpirun-opts --oversubscribe --stat -g ${{ matrix.group }} --retries 5 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
 
   # Generate LCOV coverage data to be posted to coveralls.io. Note that
   # we measure code coverage only for tests checked with Valgrind.
@@ -230,7 +230,7 @@ jobs:
         run: make -C sources -j 4 ${{ matrix.bin }}
 
       - name: Test
-        run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --timeout 30 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
+        run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --mpirun-opts --oversubscribe --timeout 30 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
 
       - name: Generate LCOV coverage data
         run: |
