@@ -92,7 +92,7 @@ jobs:
   # jobs, we divide the tests into smaller parts.
   valgrind-check:
     name: Valgrind check for ${{ matrix.bin }}${{ matrix.nthreads && format(' -w{0}', matrix.nthreads) || '' }} (${{ matrix.group }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
