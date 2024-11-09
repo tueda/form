@@ -699,31 +699,17 @@ void poly::sub (const poly &a, const poly &b, poly &c) {
   	#[ pop_heap :
 */
 
+struct MonomialCompare {
+	WORD n;
+	MonomialCompare(WORD n) : n(n) {}
+	bool operator()(const WORD *lhs, const WORD *rhs) const {
+		return std::lexicographical_compare(lhs + 4, lhs + 4 + n, rhs + 4, rhs + 4 + n);
+	}
+};
+
 // pops the largest monomial from the heap and stores it in heap[n]
 void poly::pop_heap (PHEAD WORD **heap, int n) {
-
-	WORD *old = heap[0];
-	
-	heap[0] = heap[--n];
-
-	int i=0;
-	while (2*i+2<n && (monomial_compare(BHEAD heap[2*i+1]+3, heap[i]+3)>0 ||
-										 monomial_compare(BHEAD heap[2*i+2]+3, heap[i]+3)>0)) {
-		
-		if (monomial_compare(BHEAD heap[2*i+1]+3, heap[2*i+2]+3)>0) {
-			swap(heap[i], heap[2*i+1]);
-			i=2*i+1;
-		}
-		else {
-			swap(heap[i], heap[2*i+2]);
-			i=2*i+2;
-		}
-	}
-
-	if (2*i+1<n && monomial_compare(BHEAD heap[2*i+1]+3, heap[i]+3)>0) 
-		swap(heap[i], heap[2*i+1]);
-
-	heap[n] = old;
+	std::pop_heap(heap, heap + n, MonomialCompare(AN.poly_num_vars));
 }
 
 /*
@@ -733,13 +719,7 @@ void poly::pop_heap (PHEAD WORD **heap, int n) {
 
 // pushes the monomial in heap[n] onto the heap
 void poly::push_heap (PHEAD WORD **heap, int n)  {
-
-	int i=n-1;
-
-	while (i>0 && monomial_compare(BHEAD heap[i]+3, heap[(i-1)/2]+3) > 0) {
-		swap(heap[(i-1)/2], heap[i]);
-		i=(i-1)/2;
-	}
+	std::push_heap(heap, heap + n, MonomialCompare(AN.poly_num_vars));
 }
 
 /*
