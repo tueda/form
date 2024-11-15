@@ -149,8 +149,8 @@ class TempDir
   at_exit { TempDir.cleanup }
 end
 
-# Register a finalization function before loading test/unit.
-at_exit { defined?(finalize) && finalize }
+# Register a function before loading test/unit.
+at_exit { defined?(output_detailed_statistics) && output_detailed_statistics }
 
 # We use test/unit, which is now not in the standard library.
 begin
@@ -158,6 +158,33 @@ begin
 rescue LoadError
   warn("test/unit required for the test suite")
   exit(1)
+end
+
+# Try a monkey patch to call output_detailed_statistics() before the test suite summary.
+begin
+  require "test/unit/ui/console/testrunner"
+
+  module Test
+    module Unit
+      module UI
+        module Console
+          class TestRunner
+            alias_method :original_output_statistics, :output_statistics
+            alias_method :_original_output, :output
+            alias_method :_original_output_summary_marker, :output_summary_marker
+
+            def output_statistics(*args, **kwargs, &block)
+              output_summary_marker
+              output_detailed_statistics(method(:output))
+              output_summary_marker
+              original_output_statistics(*args, **kwargs, &block)
+            end
+          end
+        end
+      end
+    end
+  end
+rescue NameError, LoadError
 end
 
 # Find the path to a program.
@@ -1523,11 +1550,21 @@ def main
   puts(FormTest.cfg.head)
 end
 
-def finalize
+def output_detailed_statistics(output = nil)
+  # method to output
+  output ||= method(:puts)
+
+  # Check if already done.
+  return if defined?($output_detailed_statistics_done) && $output_detailed_statistics_done
+
+  $output_detailed_statistics_done = true
+
+  # Check if --stat enabled.
   return if FormTest.cfg.nil? || !FormTest.cfg.stat
 
   infos = FormTest.tests.classes_info_list
 
+  # Check if enabled test cases exist.
   return if infos.empty?
 
   # Print detailed statistics.
@@ -1547,8 +1584,6 @@ def finalize
     bar_width = 40
   end
 
-  puts("default timeout: #{FormTest.cfg.timeout}s")
-
   infos.each do |info|
     (0..info.sources.length - 1).each do |i|
       t = 0
@@ -1560,22 +1595,24 @@ def finalize
         timeout *= info.time_dilation
       end
       if i == 0
-        puts(format("%s %s  %s %s%s",
-                    lpad(info.foldname, max_foldname_width),
-                    lpad("(#{info.where})", max_where_width),
-                    lpad(info.status.nil? ? "UNKNOWN" : info.status, status_width),
-                    bar_str(t, timeout, bar_width),
-                    format_time(t, timeout)))
+        output.call(format("%s %s  %s %s%s",
+                           lpad(info.foldname, max_foldname_width),
+                           lpad("(#{info.where})", max_where_width),
+                           lpad(info.status.nil? ? "UNKNOWN" : info.status, status_width),
+                           bar_str(t, timeout, bar_width),
+                           format_time(t, timeout)))
       else
-        puts(format("%s %s  %s %s%s",
-                    lpad("", max_foldname_width),
-                    lpad("", max_where_width),
-                    lpad("", status_width),
-                    bar_str(t, timeout, bar_width),
-                    format_time(t, timeout)))
+        output.call(format("%s %s  %s %s%s",
+                           lpad("", max_foldname_width),
+                           lpad("", max_where_width),
+                           lpad("", status_width),
+                           bar_str(t, timeout, bar_width),
+                           format_time(t, timeout)))
       end
     end
   end
+
+  output.call("Default timeout: #{FormTest.cfg.timeout}s")
 end
 
 # Return the string with padding to left.
