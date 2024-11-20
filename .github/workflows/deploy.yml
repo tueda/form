@@ -99,6 +99,9 @@ jobs:
       #     ls /opt/homebrew/opt/*/lib/*.a || :
       #     ls /opt/homebrew/opt/*/include || :
 
+      - run: |
+          gcc --version
+
       - name: Download tarball
         uses: actions/download-artifact@v4
         with:
@@ -131,6 +134,8 @@ jobs:
               ln -s /opt/homebrew/opt/zstd/lib/libzstd.a static-lib/libzstd.a
               # Include directories that are not located in the usual places
               # must be explicitly appended to the include paths.
+              export CPATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${CPATH:-}"
+              # export CPPFLAGS="-I/opt/homebrew/opt/gmp/include -I/opt/homebrew/opt/mpfr/include -I/opt/homebrew/opt/zstd/include $CPPFLAGS"
               export C_INCLUDE_PATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${C_INCLUDE_PATH:-}"
               export CPLUS_INCLUDE_PATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${CPLUS_INCLUDE_PATH:-}"
             else
