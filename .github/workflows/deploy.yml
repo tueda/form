@@ -121,9 +121,13 @@ jobs:
               ln -s /opt/homebrew/opt/gmp/lib/libgmp.a static-lib/libgmp.a
               ln -s /opt/homebrew/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
               ln -s /opt/homebrew/opt/mpfr/lib/libzstd.a static-lib/libzstd.a
-              # Include directories that are not located in the usual places
-              # must be explicitly appended to the include paths.
-              export CPATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${CPATH:-}"
+              # Include directories located outside the usual places
+              # must be explicitly added to the include paths.
+              # Use CPPFLAGS instead of CPATH/C_INCLUDE_PATH/CPLUS_INCLUDE_PATH,
+              # because these path variables are applied only to the default
+              # system include path list in Clang, and zstd_zlibwrapper.c uses
+              # the quote form, #include "zstd.h"
+              export CPPFLAGS="-I/opt/homebrew/opt/gmp/include -I/opt/homebrew/opt/mpfr/include -I/opt/homebrew/opt/zstd/include ${CPPFLAGS:-}"
             else
               ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
               ln -s /usr/local/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
