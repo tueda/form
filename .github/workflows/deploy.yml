@@ -131,7 +131,8 @@ jobs:
               ln -s /opt/homebrew/opt/zstd/lib/libzstd.a static-lib/libzstd.a
               # Include directories that are not located in the usual places
               # must be explicitly appended to the include paths.
-              export CPATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${CPATH:-}"
+              # export CPATH="/opt/homebrew/opt/gmp/include:/opt/homebrew/opt/mpfr/include:/opt/homebrew/opt/zstd/include:${CPATH:-}"
+              export CPPFLAGS="-I/opt/homebrew/opt/gmp/include -I/opt/homebrew/opt/mpfr/include -I/opt/homebrew/opt/zstd/include $CPPFLAGS"
             else
               ln -s /usr/local/opt/gmp/lib/libgmp.a static-lib/libgmp.a
               ln -s /usr/local/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
