@@ -1331,7 +1331,7 @@ class FormConfig
       end
       @form_cmd = cmdlist.join(" ")
       # Check the output header.
-      out, _err, status = Open3.capture3("#{@form_cmd} #{frmname}")
+      out, err, status = Open3.capture3("#{@form_cmd} #{frmname}")
       if status.success?
         @head = out.split("\n").first
       else
@@ -1339,8 +1339,10 @@ class FormConfig
       end
       if !@valgrind.nil?
         # Include valgrind version information.
-        out, _status = Open3.capture2e("#{@form_cmd} #{frmname}")
-        @head += "\n#{out.split("\n").select { |line| line.include?('Valgrind') }.first}"
+        valgrind_version_line = err.split("\n").select { |line| line.include?("Valgrind") }.first
+        valgrind_version_line.gsub!(/^==\d+==\s*/, "")
+        valgrind_version_line.gsub!(/; rerun with -h for copyright info$/, "")
+        @head += "\n#{valgrind_version_line}"
       end
     ensure
       FileUtils.rm_rf(tmpdir)
