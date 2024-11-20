@@ -91,6 +91,14 @@ jobs:
             mingw-w64-x86_64-zlib
             ruby
 
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew list
+          ls /usr/local/opt/gmp/lib/*.a || :
+          ls /opt/homebrew/opt/*/lib/*.a || :
+          ls /opt/homebrew/opt/*/include || :
+
       - name: Download tarball
         uses: actions/download-artifact@v4
         with:
