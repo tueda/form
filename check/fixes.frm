@@ -2859,7 +2859,7 @@ assert succeeded?
 assert result("F") =~ expr("0")
 *--#] Issue525 :
 *--#[ Issue563 :
-#: SubTermsInSmall 50
+#: SubTermsInSmall 64
 
 CFunction f,g;
 Symbol a;
