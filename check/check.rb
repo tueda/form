@@ -348,7 +348,11 @@ module FormTest
     cleanup_files
     @tmpdir = TempDir.mktmpdir("#{self.class.name}_")
     nfiles.times do |i|
-      File.write(File.join(@tmpdir, "#{i + 1}.frm"), info.sources[i])
+      # Evaluate #{...} in FORM files.
+      source = info.sources[i].gsub(/#\{([^}]+)\}/) do |_match|
+        eval $1 # rubocop:disable Security/Eval
+      end
+      File.write(File.join(@tmpdir, "#{i + 1}.frm"), source)
     end
   end
 
