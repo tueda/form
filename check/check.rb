@@ -266,7 +266,7 @@ module FormTest
   end
 
   def valgrind?
-    !FormTest.cfg.valgrind.nil?
+    !FormTest.cfg.valgrind.nil? || FormTest.cfg.fake_valgrind
   end
 
   def wordsize
@@ -1151,12 +1151,13 @@ end
 
 # FORM configuration.
 class FormConfig
-  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, wordsize, ncpu, timeout, retries, stat, full, verbose, show_newlines)
+  def initialize(form, mpirun, mpirun_opts, valgrind, valgrind_opts, fake_valgrind, wordsize, ncpu, timeout, retries, stat, full, verbose, show_newlines)
     @form     = form
     @mpirun   = mpirun
     @mpirun_opts = mpirun_opts
     @valgrind = valgrind
     @valgrind_opts = valgrind_opts
+    @fake_valgrind = fake_valgrind
     @ncpu     = ncpu
     @timeout  = timeout
     @retries  = retries
@@ -1178,7 +1179,7 @@ class FormConfig
     @form_cmd    = nil
   end
 
-  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :ncpu, :timeout, :retries, :stat, :full, :verbose, :show_newlines,
+  attr_reader :form, :mpirun, :mpirun_opts, :valgrind, :valgrind_opts, :fake_valgrind, :ncpu, :timeout, :retries, :stat, :full, :verbose, :show_newlines,
               :form_bin, :mpirun_bin, :valgrind_bin, :valgrind_supp, :head, :wordsize, :form_cmd
 
   def serial?
@@ -1450,6 +1451,7 @@ def main
   opts.enable_valgrind = false
   opts.valgrind = "valgrind"
   opts.valgrind_opts = nil
+  opts.fake_valgrind = false
   opts.wordsize = nil
   opts.dir = nil
   opts.name_patterns = []
@@ -1490,6 +1492,8 @@ def main
             "Use BIN as Valgrind executable")     { |bin| opts.enable_valgrind = true; opts.valgrind = bin }
   parser.on("--valgrind-opts OPTS",
             "Pass command line options OPTS to valgrind") { |s| opts.valgrind_opts = s }
+  parser.on("--fake-valgrind",
+            "Fake Valgrind flag")                 { opts.fake_valgrind = true }
   parser.on("--wordsize N",
             "Set the word size")                  { |n| opts.wordsize = n.to_i }
   parser.on("-C", "--directory DIR",
@@ -1628,6 +1632,7 @@ def main
                                 opts.mpirun_opts,
                                 opts.enable_valgrind ? opts.valgrind : nil,
                                 opts.valgrind_opts,
+                                opts.fake_valgrind,
                                 opts.wordsize,
                                 opts.ncpu,
                                 [opts.timeout, 1].max,
