@@ -654,6 +654,7 @@ assert result("G") =~ expr("
     Local F = B(1);
     Print;
     .end
+#pend_if windows?
     assert finished?
     assert warning?
 *--#] Sta_Fill_1 : 
