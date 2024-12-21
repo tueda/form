@@ -1177,13 +1177,13 @@ else
 end
 *--#] TempSortDir_unix :
 *--#[ TempSortDir_windows :
-#: TempSortDir bad\\path
+#: TempSortDir bad_path
 Local test = 1;
 .end
 #require windows?
 if mpi?
-  assert runtime_error?('Could not create sort file: bad\path\0formxxx.sor')
+  assert runtime_error?('Could not create sort file: bad_path\0formxxx.sor')
 else
-  assert runtime_error?('Could not create sort file: bad\path\xformxxx.sor')
+  assert runtime_error?('Could not create sort file: bad_path\xformxxx.sor')
 end
 *--#] TempSortDir_windows :
