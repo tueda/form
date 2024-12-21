@@ -804,6 +804,9 @@ classic:;
 /*
 	Try to create the sort file already, so we can Terminate earlier if this fails.
 */
+#ifdef WITHPTHREADS
+	if ( par == 1 )
+#endif
 	if ( ( AM.S0->file.handle = CreateFile((char *)AM.S0->file.name) ) < 0 ) {
 		MesPrint("Could not create sort file: %s", AM.S0->file.name);
 		Terminate(-1);
