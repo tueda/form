@@ -1177,7 +1177,7 @@ else
 end
 *--#] TempSortDir_unix :
 *--#[ TempSortDir_windows :
-#: TempSortDir bad\path
+#: TempSortDir bad\\path
 Local test = 1;
 .end
 #require windows?
