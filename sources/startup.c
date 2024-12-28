@@ -1867,7 +1867,7 @@ VOID Terminate(int errorcode)
 #ifdef WITHMPI
 	PF_Terminate(errorcode);
 #endif
-	//CleanUp(errorcode);
+	CleanUp(errorcode);
 	M_print();
 #ifdef VMS
 	P_term(errorcode? 0: 1);
