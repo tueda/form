@@ -137,7 +137,7 @@ jobs:
 
       - name: Build
         id: build
-        continue-on-error: ${{ runner.os == 'Windows' }}
+        #continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
             if [ "$RUNNER_ARCH" == "ARM64" ]; then
@@ -150,13 +150,13 @@ jobs:
       # NOTE: Currently, many tests on Windows miserably fail.
       - name: Test
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
-        continue-on-error: ${{ runner.os == 'Windows' }}
+        #continue-on-error: ${{ runner.os == 'Windows' }}
         run: make check
 
       - name: Print executable information
         id: check-portability
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
-        continue-on-error: ${{ runner.os == 'Windows' }}
+        #continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           binname=${{ matrix.bin }}
           if [ "$RUNNER_OS" == "Windows" ]; then
