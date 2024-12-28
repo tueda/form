@@ -4805,7 +4805,7 @@ void CleanUpSort(int num)
 	GETIDENTITY
 	SORTING *S;
 	int minnum = num, i;
-	if ( num == 0 ) return;
+	//if ( num == 0 ) return;
 	if ( AN.FunSorts ) {
 
 		if ( num == -1 ) {
