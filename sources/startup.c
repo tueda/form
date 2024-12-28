@@ -1727,7 +1727,6 @@ VOID CleanUp(WORD par)
 	int i;
 
 	if ( FG.fname ) {
-	return;
 	CleanUpSort(0);
 	return;
 	for ( i = 0; i < 3; i++ ) {

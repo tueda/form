@@ -4874,6 +4874,7 @@ void CleanUpSort(int num)
 			}
 		}
 	}
+	return;
 	for ( i = 0; i < 2; i++ ) {
 		if ( AR.FoStage4[i].handle >= 0 ) {
 			UpdateMaxSize();
