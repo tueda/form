@@ -1726,9 +1726,9 @@ VOID CleanUp(WORD par)
 	GETIDENTITY
 	int i;
 
-	return;
 	if ( FG.fname ) {
 	CleanUpSort(0);
+	return;
 	for ( i = 0; i < 3; i++ ) {
 		if ( AR.Fscr[i].handle >= 0 ) {
 			if ( AR.Fscr[i].name ) {
@@ -1743,6 +1743,7 @@ VOID CleanUp(WORD par)
 			AR.Fscr[i].POfill = 0;
 		}
 	}
+	return;
 	if ( par > 0 ) {
 /*
 	Close all input levels above the lowest?
