@@ -1727,7 +1727,7 @@ VOID CleanUp(WORD par)
 	int i;
 
 	if ( FG.fname ) {
-		return;
+		if ( par > 0 ) return;
 	CleanUpSort(0);
 	for ( i = 0; i < 3; i++ ) {
 		if ( AR.Fscr[i].handle >= 0 ) {
