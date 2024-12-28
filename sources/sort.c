@@ -4852,6 +4852,7 @@ void CleanUpSort(int num)
 			}
 			AN.FunSorts[i] = 0;
 		}
+		return;
 		AN.MaxFunSorts = minnum;
 		if ( num == 0 ) {
 			S = AN.FunSorts[0];
