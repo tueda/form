@@ -4813,6 +4813,9 @@ void CleanUpSort(int num)
 			else minnum = 4;
 		}
 		else if ( minnum == 0 ) minnum = 1;
+		MesPrint("minnum = %d", minnum);
+		MesPrint("AN.NumFunSorts = %d", AN.NumFunSorts);
+		return;
 		for ( i = minnum; i < AN.NumFunSorts; i++ ) {
 			S = AN.FunSorts[i];
 			if ( S ) {
