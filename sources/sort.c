@@ -4805,7 +4805,9 @@ void CleanUpSort(int num)
 	GETIDENTITY
 	SORTING *S;
 	int minnum = num, i;
+	if ( num == 0 ) return;
 	if ( AN.FunSorts ) {
+
 		if ( num == -1 ) {
 			if ( AN.MaxFunSorts > 3 ) {
 				minnum = (AN.MaxFunSorts+4)/2;
@@ -4813,9 +4815,6 @@ void CleanUpSort(int num)
 			else minnum = 4;
 		}
 		else if ( minnum == 0 ) minnum = 1;
-		MesPrint("minnum = %d", minnum);
-		MesPrint("AN.NumFunSorts = %d", AN.NumFunSorts);
-		return;
 		for ( i = minnum; i < AN.NumFunSorts; i++ ) {
 			S = AN.FunSorts[i];
 			if ( S ) {
@@ -4855,7 +4854,6 @@ void CleanUpSort(int num)
 			}
 			AN.FunSorts[i] = 0;
 		}
-		return;
 		AN.MaxFunSorts = minnum;
 		if ( num == 0 ) {
 			S = AN.FunSorts[0];
@@ -4878,7 +4876,6 @@ void CleanUpSort(int num)
 			}
 		}
 	}
-	return;
 	for ( i = 0; i < 2; i++ ) {
 		if ( AR.FoStage4[i].handle >= 0 ) {
 			UpdateMaxSize();
