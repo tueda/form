@@ -1726,10 +1726,11 @@ VOID CleanUp(WORD par)
 	GETIDENTITY
 	int i;
 
-	//MesPrint("CleanUp par=%d", par);
+	//MesPrint("CleanUp par=%d", par); // par=-1
 	if ( FG.fname ) {
-		if ( par < 0 ) return;
+		//if ( par < 0 ) return;
 	CleanUpSort(0);
+		if ( par < 0 ) return;
 	for ( i = 0; i < 3; i++ ) {
 		if ( AR.Fscr[i].handle >= 0 ) {
 			if ( AR.Fscr[i].name ) {
