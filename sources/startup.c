@@ -1726,8 +1726,9 @@ VOID CleanUp(WORD par)
 	GETIDENTITY
 	int i;
 
+	//MesPrint("CleanUp par=%d", par);
 	if ( FG.fname ) {
-		if ( par > 0 ) return;
+		if ( par < 0 ) return;
 	CleanUpSort(0);
 	for ( i = 0; i < 3; i++ ) {
 		if ( AR.Fscr[i].handle >= 0 ) {
