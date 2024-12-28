@@ -1742,6 +1742,7 @@ VOID CleanUp(WORD par)
 			AR.Fscr[i].POfill = 0;
 		}
 	}
+	return;
 	if ( par > 0 ) {
 /*
 	Close all input levels above the lowest?
