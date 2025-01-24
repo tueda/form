@@ -151,7 +151,7 @@ jobs:
       - name: Test
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
         continue-on-error: ${{ runner.os == 'Windows' }}
-        run: make check
+        run: make check TEST_OPTS='-v --show-newlines'
 
       - name: Print executable information
         id: check-portability
