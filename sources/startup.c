@@ -1631,7 +1631,7 @@ int main(int argc, char **argv)
 	setSignalHandlers();
 #endif
 #ifdef WINDOWS
-	_setmode(_fileno(stdout),O_BINARY);
+//	_setmode(_fileno(stdout),O_BINARY);
 #endif
 
 #ifdef WITHPTHREADS
