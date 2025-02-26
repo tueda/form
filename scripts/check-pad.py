@@ -8,7 +8,6 @@ import pcpp
 import pycparser
 
 FORM3_INCLUDES = """
-
 #if defined(ILP32)
 
 typedef short WORD;
@@ -64,10 +63,15 @@ typedef off_t INT64
 def preprocess(
     filename: str, content: str, defs: Optional[Dict[str, Union[str, int]]] = None
 ) -> str:
-    header = ""
+    header = '# 1 "<command-line>"\n'
     if defs:
         for name, value in defs.items():
             header += f"#define {name} {value}\n"
+    header = '# 1 "<built-in>"\n'
+    header += FORM3_INCLUDES
+
+    offset = len(re.findall(r"\r\n|\r|\n", header))
+
     content = header + content
 
     cpp = pcpp.preprocessor.Preprocessor()
@@ -75,7 +79,16 @@ def preprocess(
     buf = io.StringIO()
     cpp.parse(content, filename)
     cpp.write(buf)
-    return buf.getvalue()
+    content = buf.getvalue()
+
+    content = re.sub(
+        r"^\s*#\s*line\s+(\d+)\s+(.*)",
+        lambda m: f"# {int(m.group(1)) - offset} {m.group(2)}",
+        content,
+        flags=re.MULTILINE,
+    )
+
+    return content
 
 
 def process_file(filename: str) -> None:
