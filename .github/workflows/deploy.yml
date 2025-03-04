@@ -57,8 +57,8 @@ jobs:
         include:
           # To maximize compatibility, we build executables on the oldest
           # platforms available.
-          - {os: ubuntu-20.04, shell: bash, bin: form}
-          - {os: ubuntu-20.04, shell: bash, bin: tform}
+          - {os: ubuntu-22.04, shell: bash, bin: form}
+          - {os: ubuntu-22.04, shell: bash, bin: tform}
           - {os: ubuntu-22.04-arm, shell: bash, bin: form}
           - {os: ubuntu-22.04-arm, shell: bash, bin: tform}
           - {os: macos-13, shell: bash, bin: form}
@@ -277,7 +277,7 @@ jobs:
               rm -rf $pkgname
             fi
           }
-          make_tar_gz x86_64-linux '*-ubuntu-20.04/*form'
+          make_tar_gz x86_64-linux '*-ubuntu-22.04/*form'
           make_tar_gz arm64-linux '*-ubuntu-22.04-arm/*form'
           make_tar_gz x86_64-osx '*-macos-13/*form'
           make_tar_gz arm64-osx '*-macos-14/*form'
