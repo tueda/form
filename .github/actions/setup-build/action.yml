@@ -241,16 +241,50 @@ runs:
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
 
-    # awalsh128/cache-apt-pkgs-action does not work for MPICH.
-    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
     - name: Install MPI if necessary
-      if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
-      shell: bash
-      run: |
-        ### Install MPI ###
+      if: runner.os == 'Linux' && steps.setup.outputs.container == 'false' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: libopenmpi-dev
+        version: ${{ runner.arch }}-1.0
 
-        sudo apt-get update
-        sudo apt-get install -y -q libmpich-dev
+    # # awalsh128/cache-apt-pkgs-action does not work for MPICH.
+    # # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
+    # - name: Install MPI if necessary
+    #   if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
+    #   shell: bash
+    #   run: |
+    #     ### Install MPI ###
+
+    #     sudo apt-get update
+    #     sudo apt-get install -y -q libmpich-dev
+
+    # - name: Cache MPI
+    #   id: cache-mpi
+    #   if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: opt/openmpi
+    #     key: openmpi-5.0.7
+
+    # - name: Install MPI if necessary
+    #   if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true') && steps.cache-mpi.outputs.cache-hit != 'true'
+    #   shell: bash
+    #   run: |
+    #     ### Install MPI ###
+
+    #     wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.7.tar.bz2
+    #     tar xf openmpi-5.0.7.tar.bz2
+    #     cd openmpi-5.0.7
+    #     ./configure --prefix=${{ github.workspace }}/opt/openmpi
+    #     make -j 4 all
+    #     make install
+
+    # - name: Set up MPI
+    #   if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
+    #   shell: bash
+    #   run: echo "PATH=${{ github.workspace }}/opt/openmpi/bin:$PATH" >>"$GITHUB_ENV"
+    #   run: echo "LD_LIBRARY_PATH=${{ github.workspace }}/opt/openmpi/lib:$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
 
     # Currently, cache-apt-pkgs-action doesn't work for LaTeX.
     # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57
