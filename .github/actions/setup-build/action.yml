@@ -209,7 +209,7 @@ runs:
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'libmpfr-dev' || '' }}
           ${{ steps.setup.outputs.valgrind == 'true' && 'valgrind' || '' }}
-        version: 1.0
+        version: ${{ runner.arch }}-1.0
 
     # Because we use i386/debian containers, here we do not assume that
     # awalsh128/cache-apt-pkgs-action works properly.
