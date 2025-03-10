@@ -45,11 +45,27 @@ jobs:
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.timeout && format('--timeout {0}', matrix.timeout) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
 
+  build-mpi:
+    name: Build MPI
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+
+      - name: Set up build
+        uses: ./.github/actions/setup-build
+        with:
+          features: valgrind parvorm noconfigure
+
   # Check memory errors (e.g., uninitialized values and memory leaks)
   # thoroughly by using Valgrind on Linux. To maximize the use of concurrent
   # jobs, we divide the tests into smaller parts.
   valgrind-check:
     name: Valgrind check for ${{ matrix.bin }}${{ matrix.nthreads && format(' -w{0}', matrix.nthreads) || '' }} (${{ matrix.group }})
+    needs: ${{ matrix.bin == 'parvorm' && 'build-mpi' || '' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
