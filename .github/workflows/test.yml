@@ -104,8 +104,10 @@ jobs:
       - name: Build
         run: make -C sources -j 4 ${{ matrix.bin }}
 
+      - run: ls -l /usr/lib/x86_64-linux-gnu/valgrind/libmpiwrap-amd64-linux.so
+
       - name: Test
-        run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }} --retries 5 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
+        run: LD_PRELOAD=/usr/lib/x86_64-linux-gnu/valgrind/libmpiwrap-amd64-linux.so ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }} --retries 5 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
 
   # Generate LCOV coverage data to be posted to coveralls.io. Note that
   # we measure code coverage only for tests checked with Valgrind.
