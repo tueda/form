@@ -253,6 +253,15 @@ runs:
         sudo apt-get update
         sudo apt-get install -y -q libmpich-dev
 
+    - name: hwloc-gather-cpuid
+      if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true') && steps.setup.outputs.valgrind == 'true'
+      shell: bash
+      run: |
+        ### hwloc-gather-cpuid ###
+
+        hwloc-gather-cpuid
+        echo "HWLOC_CPUID_PATH=${{ github.workspace }}/cpuid" >>"$GITHUB_ENV"
+
     # Currently, cache-apt-pkgs-action doesn't work for LaTeX.
     # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57
     - name: Install LaTeX.
