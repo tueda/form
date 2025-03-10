@@ -247,6 +247,7 @@ runs:
       with:
         packages: libopenmpi-dev
         version: ${{ runner.arch }}-1.0
+        execute_install_scripts: true
 
     # # awalsh128/cache-apt-pkgs-action does not work for MPICH.
     # # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
