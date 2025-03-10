@@ -209,6 +209,7 @@ runs:
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'libmpfr-dev' || '' }}
           ${{ steps.setup.outputs.valgrind == 'true' && 'valgrind' || '' }}
+          ${{ (steps.setup.outputs.valgrind == 'true' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')) && 'valgrind-mpi' || '' }}
         version: ${{ runner.arch }}-1.0
 
     # Because we use i386/debian containers, here we do not assume that
