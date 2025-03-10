@@ -241,24 +241,16 @@ runs:
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
 
+    # awalsh128/cache-apt-pkgs-action does not work for MPI (OpenMPI/MPICH).
+    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
     - name: Install MPI if necessary
       if: runner.os == 'Linux' && steps.setup.outputs.container == 'false' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
-      uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: libopenmpi-dev
-        version: ${{ runner.arch }}-1.0
-        execute_install_scripts: true
+      shell: bash
+      run: |
+        ### Install MPI ###
 
-    # # awalsh128/cache-apt-pkgs-action does not work for MPICH.
-    # # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
-    # - name: Install MPI if necessary
-    #   if: runner.os == 'Linux' && (steps.setup.outputs.parform == 'true' || steps.setup.outputs.parvorm == 'true')
-    #   shell: bash
-    #   run: |
-    #     ### Install MPI ###
-
-    #     sudo apt-get update
-    #     sudo apt-get install -y -q libmpich-dev
+        sudo apt-get update
+        sudo apt-get install -y -q libmpich-dev
 
     # - name: Cache MPI
     #   id: cache-mpi
