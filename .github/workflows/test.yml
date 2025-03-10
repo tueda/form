@@ -65,7 +65,7 @@ jobs:
   # jobs, we divide the tests into smaller parts.
   valgrind-check:
     name: Valgrind check for ${{ matrix.bin }}${{ matrix.nthreads && format(' -w{0}', matrix.nthreads) || '' }} (${{ matrix.group }})
-    needs: ${{ matrix.bin == 'parvorm' && 'build-mpi' || '' }}
+    needs: build-mpi
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
