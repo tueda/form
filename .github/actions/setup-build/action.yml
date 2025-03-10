@@ -45,7 +45,7 @@ runs:
 
         input_features=$(echo "${{ inputs.features }}" | awk '{$1=$1; print}')
         feature_pattern='^('$(echo "$feature_names" | tr ' ' '|')')$'
-        no_feature_pattern='^('$(echo "no$feature_names" | tr ' ' '|no')')$'
+        no_feature_pattern='^('$(echo "no$feature_names" | sed 's/ /|no/g')')$'
 
         for feat in $input_features; do
           if [[ $feat =~ $feature_pattern ]]; then
