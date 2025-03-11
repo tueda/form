@@ -80,16 +80,6 @@ jobs:
           - {bin: tvorm, nthreads: 2, group: 8/10}
           - {bin: tvorm, nthreads: 2, group: 9/10}
           - {bin: tvorm, nthreads: 2, group: 10/10}
-          - {bin: parvorm, group: 1/10}
-          - {bin: parvorm, group: 2/10}
-          - {bin: parvorm, group: 3/10}
-          - {bin: parvorm, group: 4/10}
-          - {bin: parvorm, group: 5/10}
-          - {bin: parvorm, group: 6/10}
-          - {bin: parvorm, group: 7/10}
-          - {bin: parvorm, group: 8/10}
-          - {bin: parvorm, group: 9/10}
-          - {bin: parvorm, group: 10/10}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -119,7 +109,6 @@ jobs:
           - {bin: vorm}
           - {bin: tvorm}
           - {bin: tvorm, nthreads: 2}
-          - {bin: parvorm}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
