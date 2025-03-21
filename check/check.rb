@@ -393,6 +393,9 @@ module FormTest
       begin
         nfiles.times do |i|
           ENV["FORM"] = FormTest.cfg.form_cmd
+          ENV["TESTFILE"] = info.full_filename
+          ENV["TESTFILEDIR"] = File.dirname(info.full_filename)
+          ENV["TESTTMPDIR"] = @tmpdir
           @filename = "#{i + 1}.frm"
           execute("#{ulimits}#{FormTest.cfg.form_cmd} #{@filename}")
           if !finished?
@@ -796,6 +799,7 @@ end
 class TestInfo
   def initialize
     @classname = nil
+    @full_filename = nil
     @where = nil    # where the test is defined
     @foldname = nil # fold name of the test
     @enabled = nil  # enabled or not
@@ -806,7 +810,7 @@ class TestInfo
     @times = nil    # elapsed time (array)
   end
 
-  attr_accessor :classname, :where, :foldname, :enabled, :sources, :time_dilation,
+  attr_accessor :classname, :full_filename, :where, :foldname, :enabled, :sources, :time_dilation,
                 :status, :times
 
   # Return the description of the test.
@@ -845,6 +849,7 @@ class TestCases
   # Convert a .frm file to a .rb file and load it.
   def make_ruby_file(filename)
     # Check existing files.
+    full_filename = File.expand_path(filename)
     inname = File.basename(filename)
     outname = "#{File.basename(filename, '.frm')}.rb"
     if @files.include?(outname)
@@ -887,6 +892,7 @@ class TestCases
               @classes.push(classname)
               @classes_info["Test_#{classname}"] = info
               info.classname = classname
+              info.full_filename = full_filename
               info.where = "#{inname}:#{lineno}"
               info.foldname = fold
               info.enabled = test_enabled?(classname)
