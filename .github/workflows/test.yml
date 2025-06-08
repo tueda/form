@@ -83,6 +83,30 @@ jobs:
               mv forcer-1.0.0/forcer.h formlib
               mv forcer-1.0.0/forcer formlib
               rm -rf forcer-1.0.0
+
+              set -eu
+              URL="https://www.nikhef.nl/~form/maindir/packages/color/color.h"
+              IPV6="2001:610:120:1003::186:153"
+              IPV4="192.16.186.153"
+              # DNS resolution
+              echo '## DNS' >>"$GITHUB_STEP_SUMMARY"
+              { dig +short A www.nikhef.nl; dig +short AAAA www.nikhef.nl; } \
+                | sed 's/^/    /' >>"$GITHUB_STEP_SUMMARY"
+              # Verbose IPv6 request
+              echo -e '\n## curl -6 (verbose)' >>"$GITHUB_STEP_SUMMARY"
+              curl -6 -vI --connect-timeout 15 "$URL" 2>&1 \
+                | sed 's/^/    /' >>"$GITHUB_STEP_SUMMARY" || true
+              # Verbose IPv4 request
+              echo -e '\n## curl -4 (verbose)' >>"$GITHUB_STEP_SUMMARY"
+              curl -4 -vI --connect-timeout 15 "$URL" 2>&1 \
+                | sed 's/^/    /' >>"$GITHUB_STEP_SUMMARY" || true
+              # ICMP and traceroute
+              echo -e '\n## ping & traceroute' >>"$GITHUB_STEP_SUMMARY"
+              ping -c3 "$IPV4" | sed 's/^/    /' || true
+              ping -6 -c3 "$IPV6" | sed 's/^/    /' || true
+              (command -v traceroute >/dev/null && sudo traceroute -6 -n "$IPV6" -w2 -q1) \
+                | sed 's/^/    /' || true
+
               # color library for the color test in extra
               wget https://www.nikhef.nl/~form/maindir/packages/color/color.h -P formlib
               ;;
