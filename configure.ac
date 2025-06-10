@@ -301,6 +301,10 @@ AC_CHECK_SIZEOF([long long])
 AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([off_t])
 
+AC_CHECK_SIZEOF([mp_size_t], [], [#include <gmp.h>])
+AC_CHECK_SIZEOF([mp_limb_t], [], [#include <gmp.h>])
+AC_CHECK_SIZEOF([mp_limb_signed_t], [], [#include <gmp.h>])
+
 case $ac_cv_sizeof_char-$ac_cv_sizeof_short-$ac_cv_sizeof_int-$ac_cv_sizeof_long-$ac_cv_sizeof_long_long-$ac_cv_sizeof_void_p-$ac_cv_sizeof_off_t in
 	1-2-4-4-*-4-*)
 		# Most of today's 32 bit systems.
