@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 
+#define CHECK
 //==============================================================
 extern "C" {
 #include "grccparam.h"
@@ -18,23 +19,11 @@ namespace Grcc {
 #endif
 
 //==============================================================
-// For debugging
-//
-// #define MONITOR     // in graph elimination
-// #define CHECK       // check consistency
-#define DEBUGABORT
-// #define DEBUG
-// #define DEBUG0
-// #define DEBUG1
-// #define DEBUGM
-
-//==============================================================
 // Common types
 //
+#define True   1
+#define False  0
 typedef int Bool;
-const int True  = 1;
-const int False = 0;
-
 
 //==============================================================
 // Big integer (may be replaced by suitable one)
@@ -63,6 +52,7 @@ class ENode;
 class Interaction;
 class MGraph;
 class MNodeClass;
+class MCEdge;
 class MCOpi; 
 class MCBridge;
 class MCBlock;
@@ -100,9 +90,13 @@ class Options {
     void       *argag;       // additional argument to outag
 
     //switches for graph generation
-    int values[GRCC_OPT_Size];      // array of options
+    OptQGRef qgref[2*GRCC_QGRAF_OPT_Size]; // array of reference to QG-options
+    int      values[GRCC_OPT_Size];        // array of options
+    int      qgopt[GRCC_QGRAF_OPT_Size];   // array of QGRAF options
 
-    int         DUMMYPADDING;
+    int      nqgopt;                       // effective length of qgref
+
+    int          DUMMYPADDING;
 
     // measuring time
     double time0;
@@ -111,10 +105,13 @@ class Options {
     //------------------
     Options(void);
     ~Options(void);
-    void setDefaultValue(void);
+    void setDefaultValues(void);
+    void setOldDefaultValues(void);
 
     void setValue(int ind, int val);
     int  getValue(int ind);
+
+    void setQGrafOpt(int *qgopt);
 
     void print(void);
 
@@ -128,6 +125,8 @@ class Options {
     void setEndMG(OutEGB *omg, void *pt);
     void setErExit(ErExit  *ere, void *pt);
     const OptDef *getDef(void);
+    const OptDef *getOldDef(void);
+    const OptQGDef *getQGDef(void);
 
     void begin(Model *mdl);
     void end(void);
@@ -238,17 +237,17 @@ class Interaction {
     Model *mdl;           // the model
     char  *name;          // the name of the interaction
     int   *plist;        // the list of particle codes
-    int   *clist;        // the orders of coupling constants
+    int   *clist;        // the oders of coupling constants
     int   *slist;        // the sorted list of particle codes
 
     int    id;            // id of this interaction
-    int    csum;          // the total orders of coupling constants
+    int    csum;          // the total oders of coupling constants
     int    nlegs;         // the number of legs
     int    loop;          // the number of loops
     int    icode;         // user defined interaction code 
 
     int    nplist;        // the list of particle codes
-    int    nclist;        // the orders of coupling constants
+    int    nclist;        // the oders of coupling constants
     int    nslist;        // the sorted list of particle codes
 
     //-----------------------------
@@ -293,9 +292,6 @@ class Model {
     int           ncplgcp;     // the number of classes
 
     int           defpart;     // GRCC_DEFBYNAME or GRCC_DEFBYCODE
-    int           skipFLine;   // skip analysis fermion line
-
-    int          DUMMYPADDING;
 
     // methods
     Model(MInput *minp);
@@ -317,6 +313,10 @@ class Model {
     int  *allParticles(int *len);
     int   findMClass(const int cpl, const int dgr);
     void  prParticleArray(int n, int *a, const char *msg);
+
+    static void printMInput(MInput *min);
+    static void printPInput(PInput *pin);
+    static void printIInput(IInput *iin);
 };
 
 //**************************************************************
@@ -351,7 +351,7 @@ class SProcess {
   //  In sprocess the number of nodes and edges are fixed.
   //  A node is considered as 
   //    (degree, total order of coupling constants),
-  //  which pair of data defines a class of nodes.
+  //  which pair of deta defines a class of nodes.
  
   public:
     Model       *model;       // model
@@ -439,7 +439,6 @@ class Process {
     int          maxnlegs;         // the maximum possible degree of node
     int          clist[GRCC_MAXNCPLG];  // coupling constans of the process
 
-
     // table of sprocesses 
     int        nSubproc;           // the number of sprocesses
     SProcess  *sptbl[GRCC_MAXSUBPROCS]; // the table of sprocesses
@@ -472,6 +471,8 @@ class Process {
     ~Process(void);
 
     void prProcess(void);
+    void outProcP(FILE *fp);
+    void prProcessP(const char *fname);
     void mkSProcess(void);
 
 };
@@ -510,7 +511,7 @@ class ENode {
     int     id;              // id of the enode
     int     maxdeg;          // maximum degree
     int     deg;             // degree
-    int     extloop;         // loop inside this node
+    int     extloop;         // loop inside this node or AT_Initial etc.
     int     ndtype;          // type of the node
     int     intrct;          // assigned interaction/particle (ext.)
 
@@ -552,6 +553,10 @@ class EEdge {
     int *lmom;             // loop momenta
     int *extMom;           // set of external momenta.
 
+    // momentum obtain in searchME
+    ULong  momset;         // set of momenta in bit string (leaf --> root)
+    int    momdir;         // direction (leg=0 --> leg=1)
+
     Bool cut;
     int  visited;
     int  conid;            // connected component
@@ -559,6 +564,7 @@ class EEdge {
     int  opicomp;          // id of 1PI component
     int  dir;              // direction of momentum
 
+    int      DUMMYPADDING;
 
     //--------------------------------
     // functions
@@ -606,7 +612,7 @@ class EGraph {
 
     BigInt mId;             // id of mgraph
     BigInt aId;             // id of agraph in the same mgraph
-    BigInt sId;             // sequential no. of agraph
+    BigInt sId;             // sequenctial no. of agraph
     BigInt gSubId;          // ???
     Bool   assigned;        // mgraph (False) or agraph (True)
 
@@ -648,7 +654,7 @@ class EGraph {
 
     // Fermion lines
     EFLine *flines[GRCC_MAXFLINES];
-    int     nflines;
+    int     nFlines;
 
     int    DUMMYPADDING1;
 
@@ -659,8 +665,12 @@ class EGraph {
 
     void copy(EGraph *eg);
     void print(void);
+    void printPy(FILE *fp, long mId);
     void fromDGraph(DGraph *dg);
     void fromMGraph(MGraph *mgraph);
+
+    Bool   optQGrafM(Options *opt);
+    Bool   optQGrafA(Options *opt);
     Bool isOptE(void);
 
     ENode *setExtern(int n0, int pt, int ndtp);
@@ -691,7 +701,6 @@ class EGraph {
     void addFLine(const FLType ft, int fk, int nfl, int *fl);
 
     int  legParticle(int ed, int lg);
-
 };
 
 //**************************************************************
@@ -765,7 +774,7 @@ class MGraph {
     // initial conditions
     Options  *opt;         // options
 
-    // symmetry group
+    // symmbery group
     SGroup   *group;       // symmetry group
     MOrbits  *orbits;      // Orbits of nodes with respect to symmetry group
 
@@ -811,9 +820,11 @@ class MGraph {
     Bool opiloop;
     Bool extself;
     Bool selfloop;
+    Bool multiedge;
     Bool tadpole;
     Bool tadblock;
     Bool block;
+    Bool bipart;
 
     int    DUMMYPADDING1;
 
@@ -826,6 +837,7 @@ class MGraph {
     // work space for biconnected component
     int *bidef;
     int *bilow;
+    int *bicol;
     int  bicount;
 
     int    DUMMYPADDING2;
@@ -841,6 +853,7 @@ class MGraph {
     Bool   isExternal(int nd)  { return (nodes[nd]->extloop < 0); };
     void   printAdjMat(MNodeClass *cl);
     void   print(void);
+    void   printPy(FILE *fp, long mId);
 
     Bool   isConnected(void);
     Bool   visit(int nd);
@@ -848,15 +861,14 @@ class MGraph {
     void   permMat(int size, int *perm, int **mat0, int **mat1);
     int    compMat(int size, int **mat0, int **mat1);
     MNodeClass *refineClass(MNodeClass *cl);
-    void   bisearchME(int nd, int pd, int ned, MCOpi *mopi, MCBlock *mblk, int *next, int *nart);
+    void   bisearchME(int nd, int pd, int ned, int col, MCOpi *mopi, MCBlock *mblk, ULong *momset, int *next, int *nart);
     void   biconnME(void);
-    Bool   isOptM(void);
 
+    Bool   isOptM(void);
     void   connectClass(MNodeClass *cl);
     void   connectNode(int sc, int ss, MNodeClass *cl);
     void   connectLeg(int sc, int sn, int tc, int ts, MNodeClass *cl);
     void   newGraph(MNodeClass *cl);
-
 };
 
 //===============================================================
@@ -895,6 +907,20 @@ class MNodeClass {
     void  reorder(MGraph *mg);
 };
 
+//===============================================================
+//  class of an edge
+//--------------------------------------------------------------
+class MCEdge {
+  public:
+    Edge2n nodes;  // nodes at the both size of the edge (leaf --> root)
+    ULong  momset; // set of momenta in bit string
+    int    momdir; // set of momenta in bit string
+
+    int      DUMMYPADDING;
+
+    MCEdge(void);
+    ~MCEdge(void);
+};
 
 //===============================================================
 //  class of 1PI component
@@ -903,11 +929,14 @@ class MCOpi {
   public:
     int *nodes;    // array of nodes in 
     int  nnodes;   // # nodes in the 1PI component
-    int  nlegs;    // # leg of the 1PI component
+    int  nlegs;    // # leg (bridges) of the 1PI component
     int  next;     // # external particles of the 1PI comp.
     int  nedges;   // # edges in the 1PI comp.
     int  loop;     // # loops in the 1PI comp.
-    int  ctloop;   // # loops in the counter terms in the OP comp.
+    int  ctloop;   // # loops in the couter terms in the OP comp.
+    int  mom0lg;   // # leg (bridges) with 0 momentum
+
+    int      DUMMYPADDING;
 
     MCOpi(void);
     ~MCOpi(void);
@@ -950,13 +979,14 @@ class MCBlock {
 class MConn {
   public:
     // 2-edge connected components
+    MCEdge    *cedges;      // table of edges
     MCOpi     *opics;       // table of n-edge-connected components
     MCBridge  *bridges;     // table of bridges
     MCBlock   *blocks;      // table of blocks
     int       *articuls;    // buffer for nodes for articulation points
 
     int       *opisp;       // buffer for nodes in 1PI components
-    int       *opistk;      // stack of nodes for 1PI components.
+    int       *opistk;      // stack of nodes for 1PI compoinents.
     Edge2n    *blksp;       // buffer for edges in blocks
     Edge2n    *blkstk;      // stack of edges for blocks
     int        snodes;      // # nodes
@@ -965,11 +995,17 @@ class MConn {
     // opi components (edge-connected)
     int        nopic;       // # 1PI components (n1PIComps)
     int        nlpopic;     // # looped 1PI components (n1PIComps)
-    int        nctopic;     // # 1PI components of one counter term.
+    int        nctopic;     // # 1PI components of one couter term.
+
+    // edges
+    int        nbacked;     // # back edges
+
+    // bridges
     int        nbridges;    // # bridges
     int        ne0bridges;  // # bridges whose next=0
     int        ne1bridges;  // # bridges whose next=1
     int        nselfloops;  
+    int        nmultiedges;
 
     // blocks (node-connected)
     int        nblocks;     // # blocks
@@ -989,14 +1025,17 @@ class MConn {
     ~MConn(void);
 
     void init(void);
+    void initCEdges(MGraph *);
     void pushNode(int nd);
     void pushEdge(int n0, int n1);
+    void addCEdge(int n0, int n1, ULong momset);
     void addOPIc(MCOpi *mopi, int stp);
     void addBridge(int n0, int n1, int nex, int nextot);
     void addArtic(int nd, int mul);
     void addBlock(MCBlock *eblk, int stp);
     void addBlockSelf(int nd, int mul);
     void print(void);
+    void prEdges(void);
 };
 
 //===============================================================
@@ -1167,17 +1206,17 @@ class Assign {
     // entry point of assignment
     Bool    assignAllVertices(void);
 
-    // select a source node for assignment
+    // select a source node for assignmnet
     Bool    selectVertex(void);
     Bool    selectVertexSimp(int lastv);
 
-    // select a source leg of the node for assignment
+    // select a source leg of the node for assignmnet
     Bool    selectLeg(int v, int lastlg);
 
     // assign a vertex a interaction
     Bool    assignVertex(int v);
 
-    // assignment procedure is finished.  Needs check.
+    // assignment procedure is finishited.  Needs check.
     Bool    allAssigned(void);
 
     //===========================================
@@ -1192,7 +1231,7 @@ class Assign {
     // connect nodes and edges.
     void    connect(int n0, int l0, int eg, int el, int n1, int l1);
 
-    // Output to egraph
+    // Ouput to egraph
     Bool    fillEGraph(int aid, BigInt nsym, BigInt esym, BigInt nsym1);
 
     // reorder legs in accordance with the interaction definition
