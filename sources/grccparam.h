@@ -12,7 +12,7 @@
 #define GRCC_MAXNCPLG         4
 #define GRCC_MAXLEGS         10
 #define GRCC_MAXMPARTICLES   50
-#define GRCC_MAXMINTERACT   200
+#define GRCC_MAXMINTERACT   500
 #define GRCC_MAXSUBPROCS    500
 #define GRCC_MAXNODES        20
 #define GRCC_MAXEDGES       100
@@ -60,9 +60,6 @@
 #define GRCC_PTS_Vector     "vector"
 #define GRCC_PTS_Ghost      "ghost"
 
-#define GRCC_PTO_General   0
-#define GRCC_PTO_ExtOnly   1
-
 #define GRCC_PT_Table  { GRCC_PTS_Undef, GRCC_PTS_Scalar, GRCC_PTS_Dirac, GRCC_PTS_Majorana, GRCC_PTS_Vector, GRCC_PTS_Ghost}
 
 #define GRCC_PT_GTable { "Undef", "Scalar", "Fermion", "Majorana", "Vector", "Ghost"}
@@ -94,9 +91,12 @@
 #define GRCC_OPT_NoExtSelf       8
 #define GRCC_OPT_NoAdj2PtV       9
 #define GRCC_OPT_Block          10
-#define GRCC_OPT_SymmInitial    11
-#define GRCC_OPT_SymmFinal      12
-#define GRCC_OPT_Size           13
+#define GRCC_OPT_NoMultiEdge    11
+#define GRCC_OPT_SymmInitial    12
+#define GRCC_OPT_SymmFinal      13
+#define GRCC_OPT_Size           14
+
+typedef unsigned long ULong;
 
 typedef struct {
     const char *name;
@@ -104,6 +104,38 @@ typedef struct {
     int         defaultv;
     int         DUMMYPADDING;
 } OptDef;
+
+typedef struct {
+    const char *name;
+    const char *cname;
+    const char *mean;
+} OptQGDef;
+
+typedef struct {
+    const char *name;
+    int         index;
+    int         sign; 
+} OptQGRef;
+
+/*---------------------------------------------------------------
+ * QGRAF options
+ */
+#define GRCC_QGRAF_OPT_ONEPI       0
+#define GRCC_QGRAF_OPT_ONSHELL     1
+#define GRCC_QGRAF_OPT_NOSIGMA     2
+#define GRCC_QGRAF_OPT_NOSNAIL     3
+#define GRCC_QGRAF_OPT_NOTADPOLE   4
+#define GRCC_QGRAF_OPT_SIMPLE      5
+#define GRCC_QGRAF_OPT_BIPART      6
+#define GRCC_QGRAF_OPT_CYCLI       7
+#define GRCC_QGRAF_OPT_FLOOP       8
+#define GRCC_QGRAF_OPT_TOPOL       9
+
+#ifdef GRCC_QGRAF_OPT_TOPOL
+#define GRCC_QGRAF_OPT_Size       10
+#else
+#define GRCC_QGRAF_OPT_Size        9
+#endif
 
 /*---------------------------------------------------------------
  * Conversion of 
@@ -129,8 +161,8 @@ typedef struct {
     const char *aname;              /* name of anti-particle */
           int   pcode;              /* code of particle */
           int   acode;              /* code of anti-particle */
-    const char *ptypen;             /* type : 'GRCC_PTS_Scalar' etc */
-          int   ptypec;             /* type : 'GRCC_PT_Scalar' etc */
+    const char *ptypen;             /* type in name */
+          int   ptypec;             /* type in code */
           int   extonly;            /* only as external particle */
 } PInput;
 
@@ -163,13 +195,13 @@ typedef struct {
  * data types for process definition
  */
 typedef struct {
-    long          ninitl;              /* the number of initial particles */
-    const char   *initln[GRCC_MAXNODES];    /* list of initial particles (name) */
-    int           initlc[GRCC_MAXNODES];    /* list of final particles (code) */
-    long          nfinal;              /* the number of final particles */
-    const char   *finaln[GRCC_MAXNODES];    /* list of final particles (name) */
-    int           finalc[GRCC_MAXNODES];    /* list of final particles (code) */
-    int           coupl[GRCC_MAXNCPLG];     /* list of orders of c. consts */
+    long          ninitl;              /* the number of initial prtcls */
+    const char   *initln[GRCC_MAXNODES];  /* list of initial prtcls(name) */
+    int           initlc[GRCC_MAXNODES];  /* list of final   prtcls(code) */
+    long          nfinal;              /* the number of   final prtcls */
+    const char   *finaln[GRCC_MAXNODES];  /* list of final prtcles(name) */
+    int           finalc[GRCC_MAXNODES];  /* list of final prtcles(code) */
+    int           coupl[GRCC_MAXNCPLG];   /* list of orders of c. consts */
 } FGInput;
 
 /* class of node : input for SProcess */
