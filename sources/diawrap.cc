@@ -124,6 +124,7 @@ int LoadModel(MODEL *m)
 			  break;
 			}
 		}
+		pinp.extonly = 0;
 		mdl->addParticle(&pinp);
 	}
 	mdl->addParticleEnd();
@@ -471,6 +472,7 @@ int GenDiagrams(PHEAD WORD *term, WORD level)
 	info.diaoffset = AR.funoffset;
 	info.externalset = term[info.diaoffset+FUNHEAD+7];
 	info.internalset = term[info.diaoffset+FUNHEAD+9]; 
+	info.flags = 0;
 	inset = term[info.diaoffset+FUNHEAD+3];
 	outset = term[info.diaoffset+FUNHEAD+5];
 	coupl = term + info.diaoffset + FUNHEAD + 10;
