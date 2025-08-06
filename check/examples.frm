@@ -1835,8 +1835,6 @@ Print;
     Local F = topologies_(`LOOPS',2,{3,},QQ,PP);
     Print +f +s;
     .end
-# TODO: enable it
-#pend_if true
     assert succeeded?
     assert result("F") =~ expr("
        + node_(0,-Q1)*node_(1,-Q2)*node_(2,Q1,-p1,-p2)*node_(3,Q2,p1,-p3)*
@@ -1853,8 +1851,6 @@ Print;
     Local F = topologies_(`LOOPS',2,{3,4},QQ,PP);
     Print +f +s;
     .end
-# TODO: enable it
-#pend_if true
     assert succeeded?
     assert result("F") =~ expr("
        + node_(0,-Q1)*node_(1,-Q2)*node_(2,Q1,Q2,-p1,-p2)*node_(3,p1,p2,-p3,p3
@@ -1885,8 +1881,6 @@ Print;
     Local F = topologies_(`LOOPS',-2,{3,4},QQ,PP);
     Print +f +s;
     .end
-# TODO: enable it
-#pend_if true
     assert succeeded?
     assert result("F") =~ expr("
        + node_(0,-Q1)*node_(1,-Q2)*node_(2,Q1,Q2,-p1,-p2)*node_(3,p1,p2,-p3,p3
@@ -1914,8 +1908,6 @@ Print;
     #define LOOPS "6"
     Local F = topologies_(`LOOPS',-2,{3,},QQ,PP);
     .end
-# TODO: enable it
-#pend_if true
     #time_dilation 2.0
     assert succeeded?
     assert nterms("F") == 2793
@@ -1937,19 +1929,19 @@ Print;
     assert nterms("F") == 2793
 *--#] Diagrams_5 : 
 *--#[ Diagrams_6 :
-*    #define LOOPS "6"
-*    Model PHI3;
-*        Particle phi,+1;
-*        Vertex phi,phi,phi:g;
-*    EndModel;
-*    Vector Q1,Q2,p1,...,p{3*`LOOPS'};
-*    Set QQ:Q1,Q2;
-*    Set pp:p1,...,p{3*`LOOPS'};
-*    Set empty:;
-*    Local F = diagrams_(PHI3,{phi,phi},empty,QQ,pp,`LOOPS',
-*            `OnePI_'+`NoTadpoles_'+`TopologiesOnly_');
-*    .end
-*    assert succeeded?
-*    assert nterms("F") == 4999
+   #define LOOPS "6"
+   Model PHI3;
+       Particle phi,+1;
+       Vertex phi,phi,phi:g;
+   EndModel;
+   Vector Q1,Q2,p1,...,p{3*`LOOPS'};
+   Set QQ:Q1,Q2;
+   Set pp:p1,...,p{3*`LOOPS'};
+   Set empty:;
+   Local F = diagrams_(PHI3,{phi,phi},empty,QQ,pp,`LOOPS',
+           `OnePI_'+`NoTadpoles_'+`TopologiesOnly_');
+   .end
+   assert succeeded?
+   assert nterms("F") == 4999
 *--#] Diagrams_6 : 
 
