@@ -402,6 +402,19 @@ AS_IF([test "x$with_flint" != xno],
 	[flag=:
 	AS_IF([$flag], [AC_CHECK_HEADER([flint/flint.h], [], [flag=false])])
 	AS_IF([$flag],
+		[AC_MSG_CHECKING([for FLINT version])
+		my_flint_version=$(
+			AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <flint/flint.h>
+"CHECK_FLINT_VERSION" FLINT_VERSION]])],
+				[sed -n 's/.*"CHECK_FLINT_VERSION"@<:@@<:@:space:@:>@@:>@*"\(@<:@^"@:>@*\)".*/\1/p' conftest.i]))
+		AS_IF([test "x$my_flint_version" != x],
+			[AC_MSG_RESULT([$my_flint_version])
+			AX_COMPARE_VERSION([$my_flint_version], [ge], [3.2.0], [],
+				[AC_MSG_NOTICE([FLINT version 3.2.0 or higher is required])
+				flag=false])],
+			[AC_MSG_RESULT([not found])
+			flag=false])])
+	AS_IF([$flag],
 		[# Check how to link against the math library.
 		AC_SEARCH_LIBS([pow], [m])
 		AS_IF([test "x$ac_cv_search_pow" = "xno"],
