@@ -139,7 +139,7 @@ jobs:
           path: lib/flint
           # Here, we set a conservative cache key so that the cache is not reused
           # when the version or environment changes even slightly.
-          key: flint-${{ env.FLINT_VERSION }}-${{ runner.os }}-${{ runner.arch }}-${{ env.ImageOS }}-${{ env.ImageVersion }}
+          key: xflint-${{ env.FLINT_VERSION }}-${{ runner.os }}-${{ runner.arch }}-${{ env.ImageOS }}-${{ env.ImageVersion }}
 
       # Unfortunately, the flint packages lack the static library,
       # so we need to build it from source.
