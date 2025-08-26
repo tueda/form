@@ -228,7 +228,7 @@ jobs:
           features: ${{ matrix.bin }}
 
       - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+        run: make -C sources -j 4 ${{ matrix.bin }} noflint  # actions/cache@v4 doesn't work
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --wordsize 2 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
