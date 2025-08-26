@@ -1,8 +1,9 @@
 name: setup-build
 description: >-
   Set up the build environment by installing necessary tools and dependencies.
-  When necessary, it sets CPATH, LIBRARY_PATH, FORMPATH and DISTNAME, and runs
-  autoreconf or extracts a tar.gz archive, followed by executing ./configure.
+  When necessary, it sets CPATH, LIBRARY_PATH, LD_LIBRARY_PATH, FORMPATH and
+  DISTNAME, and runs autoreconf or extracts a tar.gz archive, followed by
+  executing ./configure.
 inputs:
   features:
     description: A list of features to enable, separated by spaces. To disable a feature, prefix it with "no".
@@ -413,6 +414,8 @@ runs:
         echo "CPATH=$CPATH" >>"$GITHUB_ENV"
         export LIBRARY_PATH="$(pwd)/lib/flint/lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
+        export LD_LIBRARY_PATH="$(pwd)/lib/flint/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
+        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
 
     - name: Cache FORM library
       id: cache-formlib
