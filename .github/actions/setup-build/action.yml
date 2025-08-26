@@ -23,11 +23,11 @@ runs:
           form=false tform=false parform=false vorm=false tvorm=false parvorm=false
           flint=true ginac=false gmp=true mpfr=true zlib=true zstd=true
           mpich=false openmpi=false
-          msys2=false debian=false container=false
+          bash=false msys2=false debian=false container=false
           untar=false autoreconf=false configure=true deploy=false
           coverage=false hyperfine=false valgrind=false wget=false
           latex=false latex2html=false
-          formlib=false formliball=false color=false forcer=false series=false
+          formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
       shell: bash
       run: |
@@ -118,7 +118,7 @@ runs:
           feat_autoreconf=true
         fi
 
-        if $feat_formliball; then
+        if $feat_formlib; then
           feat_color=true
           feat_forcer=true
           feat_series=true
@@ -481,7 +481,7 @@ runs:
 
     - name: Configure
       if: steps.setup.outputs.configure == 'true'
-      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2' || 'bash' }} {0}
       run: |
         ### Configure ###
 
