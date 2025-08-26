@@ -143,7 +143,7 @@ runs:
 
         for feat in $feature_names; do
           value=$(eval "echo \$feat_${feat}")
-          echo "$feat=$value"
+          echo "  $feat=$value"
           echo "$feat=$value" >>"$GITHUB_OUTPUT"
         done
 
@@ -234,7 +234,7 @@ runs:
 
     - name: Install dependencies (Ubuntu)
       if: runner.os == 'Linux' && steps.setup.outputs.container == 'false'
-      uses: awalsh128/cache-apt-pkgs-action@v1
+      uses: awalsh128/cache-apt-pkgs-action@a605dbd  # for empty_packages_behavior
       with:
         # We assume libgmp-dev, wget and zlib1g-dev are always installed.
         packages: >-
