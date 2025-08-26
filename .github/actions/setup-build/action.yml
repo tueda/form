@@ -1,9 +1,9 @@
 name: setup-build
 description: >-
   Set up the build environment by installing necessary tools and dependencies.
-  When necessary, it sets CPATH, LIBRARY_PATH, LD_LIBRARY_PATH, FORMPATH and
-  DISTNAME, and runs autoreconf or extracts a tar.gz archive, followed by
-  executing ./configure.
+  When necessary, it sets CPATH, LIBRARY_PATH, LD_LIBRARY_PATH, FORMPATH,
+  DISTNAME and CONFIG_ARGS, and runs autoreconf or extracts a tar.gz archive,
+  followed by executing ./configure.
 inputs:
   features:
     description: A list of features to enable, separated by spaces. To disable a feature, prefix it with "no".
@@ -232,6 +232,10 @@ runs:
         fi
 
         echo "config_args=$args" >>"$GITHUB_OUTPUT"
+
+        if ! $feat_configure; then
+          echo "CONFIG_ARGS=$args" >>"$GITHUB_ENV"
+        fi
 
         # Determine DISTNAME if possible.
 
