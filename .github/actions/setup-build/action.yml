@@ -26,7 +26,7 @@ runs:
           mpich=false openmpi=false
           bash=false msys2=false debian=false container=false
           untar=false autoreconf=false configure=true deploy=false
-          coverage=false hyperfine=false valgrind=false wget=false
+          coverage=false hyperfine=false valgrind=false diffutils=false wget=false
           latex=false latex2html=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
@@ -96,6 +96,8 @@ runs:
 
         if $feat_flint; then
           feat_mpfr=true
+          feat_diffutils=true
+          feat_wget=true
         fi
 
         if $has_mpi && ! $feat_mpich && ! $feat_openmpi; then
@@ -288,9 +290,9 @@ runs:
         msystem: mingw64
         install: >-
           make
-          mingw-w64-x86_64-diffutils
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-ruby
+          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
@@ -305,9 +307,9 @@ runs:
         install: >-
           m4
           make
-          mingw-w64-clang-aarch64-diffutils
           mingw-w64-clang-aarch64-gcc-compat
           mingw-w64-clang-aarch64-ruby
+          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-clang-aarch64-zlib' || '' }}
