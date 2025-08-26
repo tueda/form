@@ -361,7 +361,7 @@ runs:
 
     - name: Get cache key for the image
       if: steps.setup.outputs.flint == 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Get cache key for the image ###
 
@@ -385,7 +385,7 @@ runs:
     # builds can share the same cache.
     - name: Build FLINT unless cached
       if: steps.setup.outputs.flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Build FLINT ###
 
@@ -406,7 +406,7 @@ runs:
 
     - name: Set FLINT paths
       if: steps.setup.outputs.flint == 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Set FLINT paths ###
 
@@ -428,7 +428,7 @@ runs:
 
     - name: Install FORM libraries if necessary
       if: steps.setup.outputs.formlib == 'true' && steps.cache-formlib.outputs.cache-hit != 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Install FORM libraries ###
 
@@ -466,7 +466,7 @@ runs:
 
     - name: Uncompress tarball
       if: steps.setup.outputs.untar == 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Uncompress tarball ###
 
@@ -477,7 +477,7 @@ runs:
 
     - name: Run Autoreconf
       if: steps.setup.outputs.autoreconf == 'true'
-      shell: bash
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Run Autoreconf ###
 
@@ -485,7 +485,7 @@ runs:
 
     - name: Configure
       if: steps.setup.outputs.configure == 'true'
-      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2' || 'bash' }} {0}
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Configure ###
 
