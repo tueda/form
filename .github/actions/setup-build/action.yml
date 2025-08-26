@@ -25,7 +25,7 @@ runs:
           mpich=false openmpi=false
           bash=false msys2=false debian=false container=false
           untar=false autoreconf=false configure=true deploy=false
-          coverage=false hyperfine=false valgrind=false wget=false
+          coverage=false hyperfine=false valgrind=false curl=false
           latex=false latex2html=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
@@ -136,7 +136,7 @@ runs:
         fi
 
         if $feat_flint || $feat_formlib; then
-          feat_wget=true
+          feat_curl=true
         fi
 
         # Output the feature variables.
@@ -236,7 +236,7 @@ runs:
       if: runner.os == 'Linux' && steps.setup.outputs.container == 'false'
       uses: awalsh128/cache-apt-pkgs-action@a605dbde2ac49a823c9c87ad58491b51848bf355  # for empty_packages_behavior
       with:
-        # We assume libgmp-dev, wget and zlib1g-dev are always installed.
+        # We assume libgmp-dev and zlib1g-dev are always installed.
         packages: >-
           ${{ steps.setup.outputs.hyperfine == 'true' && 'hyperfine' || '' }}
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }}
@@ -258,6 +258,7 @@ runs:
 
         apt-get update
         apt-get install -y -q automake g++ git make ruby \
+          ${{ steps.setup.outputs.curl == 'true' && 'curl' || '' }} \
           ${{ steps.setup.outputs.hyperfine == 'true' && 'hyperfine' || '' }} \
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }} \
           ${{ steps.setup.outputs.ginac == 'true' && 'libginac-dev' || '' }} \
@@ -265,7 +266,6 @@ runs:
           ${{ steps.setup.outputs.mpfr == 'true' && 'libmpfr-dev' || '' }} \
           ${{ steps.setup.outputs.zstd == 'true' && 'libzstd-dev' || '' }} \
           ${{ steps.setup.outputs.valgrind == 'true' && 'valgrind' || '' }} \
-          ${{ steps.setup.outputs.wget == 'true' && 'wget' || '' }} \
           ${{ steps.setup.outputs.zlib == 'true' && 'zlib1g-dev' || '' }}
 
     - name: Install dependencies (Windows/mingw64)
@@ -315,7 +315,7 @@ runs:
           ${{ steps.setup.outputs.mpich == 'true' && 'libmpich-dev' || '' }} \
           ${{ steps.setup.outputs.openmpi == 'true' && 'libopenmpi-dev' || '' }}
 
-    # Currently, cache-apt-pkgs-action doesn't work for LaTeX.
+    # Currently, cache-apt-pkgs-action does not work for LaTeX.
     # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57
     - name: Install LaTeX
       if: runner.os == 'Linux' && (steps.setup.outputs.latex == 'true' || steps.setup.outputs.latex2html == 'true')
@@ -390,8 +390,9 @@ runs:
 
         mkdir -p build/flint
         cd build/flint
+        # We use the tarball from GitHub Releases.
         # See: https://github.com/flintlib/flint/issues/2311
-        wget https://github.com/flintlib/flint/releases/download/v${{ inputs.flint_version }}/flint-${{ inputs.flint_version }}.tar.gz
+        curl -L -O https://github.com/flintlib/flint/releases/download/v${{ inputs.flint_version }}/flint-${{ inputs.flint_version }}.tar.gz
         tar -xf *.tar.gz
         rm *.tar.gz
         cd flint-*
@@ -431,14 +432,14 @@ runs:
         mkdir -p formlib
         if ${{ steps.setup.outputs.color }} && [ ! -f formlib/color-1.0.0 ]; then
           rm -rf formlib/color*
-          wget https://github.com/form-dev/form-packages/archive/refs/tags/v1.0.0.tar.gz -O - | tar -x --gzip
+          curl -L https://github.com/form-dev/form-packages/archive/refs/tags/v1.0.0.tar.gz | tar -x --gzip
           mv form-packages-1.0.0/color/color.h formlib
           rm -rf form-packages-1.0.0
           touch formlib/color-1.0.0
         fi
         if ${{ steps.setup.outputs.forcer }} && [ ! -f formlib/forcer-1.0.0 ]; then
           rm -rf formlib/forcer*
-          wget https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz -O - | tar -x --gzip
+          curl -L https://github.com/benruijl/forcer/archive/v1.0.0.tar.gz | tar -x --gzip
           mv forcer-1.0.0/forcer.h formlib
           mv forcer-1.0.0/forcer formlib
           rm -rf forcer-1.0.0
@@ -446,7 +447,7 @@ runs:
         fi
         if ${{ steps.setup.outputs.series }} && [ ! -f formlib/series-1.0.0 ]; then
           rm -rf formlib/series*
-          wget https://github.com/a-maier/series/releases/download/1.0.0/series.h -P formlib
+          curl -L -o formlib/series.h https://github.com/a-maier/series/releases/download/1.0.0/series.h
           touch formlib/series-1.0.0
         fi
 
