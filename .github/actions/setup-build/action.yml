@@ -225,6 +225,12 @@ runs:
           args="$args --without-flint"
         fi
 
+        if $feat_ginac; then
+          args="$args --with-ginac"
+        # else
+        #   args="$args --without-ginac"
+        fi
+
         echo "config_args=$args" >>"$GITHUB_OUTPUT"
 
         # Determine DISTNAME if possible.
