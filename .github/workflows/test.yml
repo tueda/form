@@ -225,10 +225,10 @@ jobs:
       - name: Set up build
         uses: ./.github/actions/setup-build
         with:
-          features: ${{ matrix.bin }}
+          features: ${{ matrix.bin }} noflint  # actions/cache@v4 doesn't work
 
       - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }} noflint  # actions/cache@v4 doesn't work
+        run: make -C sources -j 4 ${{ matrix.bin }}
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --wordsize 2 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}
