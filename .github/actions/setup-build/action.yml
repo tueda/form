@@ -1,9 +1,10 @@
 name: setup-build
 description: >-
   Set up the build environment by installing necessary tools and dependencies.
-  When necessary, it sets CPATH, LIBRARY_PATH, LD_LIBRARY_PATH, FORMPATH,
-  and runs autoreconf or extracts a tar.gz archive,
-  followed by executing ./configure.
+  When necessary, it sets environment variables CPATH, LIBRARY_PATH,
+  LD_LIBRARY_PATH and FORMPATH. It then runs autoreconf or extracts a tar.gz
+  archive, and executes the configure script, as needed. It also runs the build
+  when enabled through input.
 inputs:
   features:
     description: List of features to enable, separated by spaces. To disable a feature, prefix it with "no".
@@ -34,7 +35,7 @@ runs:
           flint=true ginac=false gmp=true mpfr=true zlib=true zstd=true
           mpich=false openmpi=false
           bash=false msys2=false debian=false container=false
-          untar=false autoreconf=false configure=true deploy=false
+          untar=false autoreconf=false configure=true build=false deploy=false
           coverage=false hyperfine=false valgrind=false
           diffutils=false wget=false
           latex=false latex2html=false
@@ -519,3 +520,15 @@ runs:
           cat config.log
           exit 1
         fi
+
+    - name: Build
+      if: steps.setup.outputs.build == 'true'
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
+      run: >-
+        make -C sources -j ${{ steps.setup.outputs.nproc }}
+          ${{ steps.setup.outputs.form == 'true' && 'form' || '' }}
+          ${{ steps.setup.outputs.tform == 'true' && 'tform' || '' }}
+          ${{ steps.setup.outputs.parform == 'true' && 'parform' || '' }}
+          ${{ steps.setup.outputs.vorm == 'true' && 'vorm' || '' }}
+          ${{ steps.setup.outputs.tvorm == 'true' && 'tvorm' || '' }}
+          ${{ steps.setup.outputs.parvorm == 'true' && 'parvorm' || '' }}

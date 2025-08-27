@@ -37,16 +37,14 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Set up build
+      - name: Build
         uses: ./.github/actions/setup-build
         with:
           features: >-
             ${{ matrix.bin }}
             ${{ matrix.flint == 'no' && 'noflint' || '' }}
             ${{ matrix.test == 'extra' && 'formlib' || '' }}
-
-      - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+            build
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.timeout && format('--timeout {0}', matrix.timeout) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
@@ -65,16 +63,14 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Set up build
+      - name: Build
         uses: ./.github/actions/setup-build
         with:
           features: >-
             ${{ matrix.bin }}
             ${{ matrix.flint == 'no' && 'noflint' || '' }}
             ${{ matrix.test == 'extra' && 'formlib' || '' }}
-
-      - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+            build
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.timeout && format('--timeout {0}', matrix.timeout) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
@@ -124,17 +120,14 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Set up build
+      - name: Build
         uses: ./.github/actions/setup-build
         with:
           features: >-
             ${{ matrix.bin }}
             ${{ matrix.flint == 'no' && 'noflint' || '' }}
             ${{ matrix.test == 'extra' && 'formlib' || '' }}
-            valgrind
-
-      - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+            valgrind build
 
       - name: Test
         run: ./check/check.rb valgrind ./sources/${{ matrix.bin }} --stat -g ${{ matrix.group }} --retries 5 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }}
@@ -167,17 +160,14 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
-      - name: Set up build
+      - name: Build
         uses: ./.github/actions/setup-build
         with:
           features: >-
             ${{ matrix.bin }}
             ${{ matrix.flint == 'no' && 'noflint' || '' }}
             ${{ matrix.test == 'extra' && 'formlib' || '' }}
-            coverage
-
-      - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+            coverage build
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --timeout ${{ matrix.timeout && format('{0}', matrix.timeout) || '30' }} ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }} ${{ matrix.test != 'default' && format('-C {0}', matrix.test) || '' }} --fake-valgrind
@@ -222,13 +212,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
-      - name: Set up build
+      - name: Build
         uses: ./.github/actions/setup-build
         with:
-          features: ${{ matrix.bin }} noflint  # actions/cache@v4 doesn't work
-
-      - name: Build
-        run: make -C sources -j 4 ${{ matrix.bin }}
+          features: ${{ matrix.bin }} build noflint  # actions/cache@v4 doesn't work
 
       - name: Test
         run: ./check/check.rb ./sources/${{ matrix.bin }} --stat --wordsize 2 ${{ matrix.nthreads && format('-w{0}', matrix.nthreads) || '' }}

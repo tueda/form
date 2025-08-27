@@ -84,6 +84,7 @@ jobs:
           name: src
 
       - name: Set up build
+        id: setup
         uses: ./.github/actions/setup-build
         with:
           features: ${{ matrix.bin }} ${{ matrix.shell }} deploy
@@ -91,7 +92,7 @@ jobs:
       - name: Build
         id: build
         continue-on-error: ${{ runner.os == 'Windows' }}
-        run: make -j 4
+        run: make -j ${{ steps.setup.outputs.nproc }}
 
       - name: Test
         if: steps.build.outcome == 'success' && steps.build.conclusion == 'success'
