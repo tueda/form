@@ -21,16 +21,17 @@ jobs:
           fetch-depth: 0  # ensures a reachable tag
 
       - name: Set up build
+        id: setup
         uses: ./.github/actions/setup-build
 
       - name: Build tarball distribution
-        run: make distdir=${{ env.DISTNAME }} dist-gzip
+        run: make distdir=${{ steps.setup.outputs.distname }} dist-gzip
 
       - name: Print tarball information
         run: |
-          ls -l ${{ env.DISTNAME }}.tar.gz
-          file ${{ env.DISTNAME }}.tar.gz
-          tar -tf ${{ env.DISTNAME }}.tar.gz
+          ls -l ${{ steps.setup.outcome.distname }}.tar.gz
+          file ${{ steps.setup.outcome.distname }}.tar.gz
+          tar -tf ${{ steps.setup.outcome.distname }}.tar.gz
 
       - name: Upload tarball as artifact
         uses: actions/upload-artifact@v4
@@ -153,6 +154,7 @@ jobs:
           name: src
 
       - name: Set up build
+        id: setup
         uses: ./.github/actions/setup-build
         with:
           features: latex
@@ -160,12 +162,12 @@ jobs:
       - name: Build PDF file
         run: |
           make pdf
-          cp doc/manual/manual.pdf ${{ env.DISTNAME }}.pdf
+          mv doc/manual/manual.pdf ${{ steps.setup.outputs.distname }}-manual.pdf
 
       - name: Print document information
         run: |
-          ls -l ${{ env.DISTNAME }}.pdf
-          file ${{ env.DISTNAME }}.pdf
+          ls -l ${{ steps.setup.outputs.distname }}-manual.pdf
+          file ${{ steps.setup.outputs.distname }}-manual.pdf
 
       - name: Upload document as artifact
         uses: actions/upload-artifact@v4
@@ -193,6 +195,7 @@ jobs:
           name: src
 
       - name: Set up build
+        id: setup
         uses: ./.github/actions/setup-build
         with:
           features: latex2html
@@ -217,14 +220,14 @@ jobs:
               esac
             done
           )
-          cp -r doc/manual/manual ${{ env.DISTNAME }}
-          tar -c ${{ env.DISTNAME }}/* | gzip -c -9 > ${{ env.DISTNAME }}.tar.gz
+          mv doc/manual/manual ${{ steps.setup.outputs.distname }}-manual-html
+          tar -c ${{ steps.setup.outputs.distname }}-manual-html/* | gzip -c -9 > ${{ steps.setup.outputs.distname }}-manual-html.tar.gz
 
       - name: Print file information
         run: |
-          ls -l ${{ env.DISTNAME }}.tar.gz
-          file ${{ env.DISTNAME }}.tar.gz
-          tar -tf ${{ env.DISTNAME }}.tar.gz
+          ls -l ${{ steps.setup.outputs.distname }}-manual-html.tar.gz
+          file ${{ steps.setup.outputs.distname }}-manual-html.tar.gz
+          tar -tf ${{ steps.setup.outputs.distname }}-manual-html.tar.gz
 
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4

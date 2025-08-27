@@ -2,18 +2,27 @@ name: setup-build
 description: >-
   Set up the build environment by installing necessary tools and dependencies.
   When necessary, it sets CPATH, LIBRARY_PATH, LD_LIBRARY_PATH, FORMPATH,
-  DISTNAME and CONFIG_ARGS, and runs autoreconf or extracts a tar.gz archive,
+  and runs autoreconf or extracts a tar.gz archive,
   followed by executing ./configure.
 inputs:
   features:
-    description: A list of features to enable, separated by spaces. To disable a feature, prefix it with "no".
+    description: List of features to enable, separated by spaces. To disable a feature, prefix it with "no".
     required: false
     default: ''
   flint_version:
     description: FLINT version to build.
     required: false
     default: '3.3.1'
-
+outputs:
+  config-args:
+    description: Configure script arguments.
+    value: ${{ steps.setup.outputs.config-args }}
+  distname:
+    description: Distribution name.
+    value: ${{ steps.setup.outputs.distname != '' && steps.setup.outputs.distname || steps.untar.outputs.distname }}
+  nproc:
+    description: Number of processors available on the system.
+    value: ${{ steps.cpu-cores.outputs.nproc }}
 runs:
   using: composite
   steps:
@@ -235,17 +244,17 @@ runs:
         #   args="$args --without-ginac"
         fi
 
-        echo "config_args=$args" >>"$GITHUB_OUTPUT"
-
-        if ! $feat_configure; then
-          echo "CONFIG_ARGS=$args" >>"$GITHUB_ENV"
-        fi
+        echo "config-args=$args" >>"$GITHUB_OUTPUT"
 
         # Determine DISTNAME if possible.
 
         if [ -f ./scripts/git-version-gen.sh ] && command -v git >/dev/null 2>&1; then
-          echo "DISTNAME=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')" >>"$GITHUB_ENV"
+          echo "distname=form-$(./scripts/git-version-gen.sh -r | sed '2q;d' | sed 's/^v//')" >>"$GITHUB_OUTPUT"
         fi
+
+    - name: Get number of CPU cores
+      uses: SimenB/github-actions-cpu-cores@v2
+      id: cpu-cores
 
     - name: Install dependencies (Ubuntu)
       if: runner.os == 'Linux' && steps.setup.outputs.container == 'false'
@@ -481,12 +490,13 @@ runs:
         chown -R $(id -u):$(id -g) $PWD
 
     - name: Uncompress tarball
+      id: untar
       if: steps.setup.outputs.untar == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Uncompress tarball ###
 
-        echo "DISTNAME=$(basename form-*.tar.gz .tar.gz)" >>"$GITHUB_ENV"
+        echo "distname=$(basename form-*.tar.gz .tar.gz)" >>"$GITHUB_OUTPUT"
 
         tar -xf form-*.tar.gz --strip-components 1
         rm *.tar.gz
@@ -505,7 +515,7 @@ runs:
       run: |
         ### Configure ###
 
-        if ! ./configure ${{ steps.setup.outputs.config_args }}; then
+        if ! ./configure ${{ steps.setup.outputs.config-args }}; then
           cat config.log
           exit 1
         fi
