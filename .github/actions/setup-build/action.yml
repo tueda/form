@@ -106,7 +106,7 @@ runs:
           if [[ "${{ runner.os }}" == "macOS" ]] && ! $feat_deploy; then
             :
           else
-            $feat_build_flint=true
+            feat_build_flint=true
           fi
         fi
 
