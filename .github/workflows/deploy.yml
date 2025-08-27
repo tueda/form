@@ -109,20 +109,20 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             binname=$binname.exe
           fi
-          ls -l sources/$binname
-          file sources/$binname
+          ls -l "sources/$binname"
+          file "sources/$binname"
           if [ "$RUNNER_OS" == "macOS" ]; then
-            otool -L sources/$binname
+            otool -L "sources/$binname"
             # Check if brewed libraries are statically linked.
-            if otool -L sources/$binname | grep -q '/usr/local/opt'; then
+            if otool -L "sources/$binname" | grep -q '/usr/local/opt'; then
               echo 'Error: failed to statically link brewed libraries' >&2
               exit 1
             fi
           fi
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ldd sources/$binname
+            ldd "sources/$binname"
             # Check if MSYS2 DLLs are not linked.
-            if ldd sources/$binname | grep -q 'msys'; then
+            if ldd "sources/$binname" | grep -q 'msys'; then
               echo 'Error: failed to avoid to link with MSYS2 DLLs' >&2
               exit 1
             fi
@@ -269,7 +269,7 @@ jobs:
           mv artifacts/doc-html/*.tar.gz dist
           mv artifacts/doc-pdf/*.pdf dist
           make_tar_gz() {
-            if ls "artifacts/$2" >/dev/null 2>&1; then
+            if [ -f "artifacts/$2" ]; then
               pkgname=$distname-$1
               mkdir "$pkgname"
               mv "artifacts/$2" "$pkgname"
@@ -279,7 +279,7 @@ jobs:
             fi
           }
           make_zip() {
-            if ls "artifacts/$2" >/dev/null 2>&1; then
+            if [ -f "artifacts/$2" ]; then
               pkgname=$distname-$1
               mkdir "$pkgname"
               mv "artifacts/$2" "$pkgname"
