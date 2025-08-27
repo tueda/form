@@ -24,13 +24,16 @@ jobs:
         uses: ./.github/actions/setup-build
 
       - name: Build tarball distribution
-        run: make distdir=${{ env.DISTNAME }} dist-gzip
+        run: |
+          distname="${{ env.DISTNAME }}"
+          echo "distname=$distname" >>"$GITHUB_ENV"
+          make distdir="$distname" dist-gzip
 
       - name: Print tarball information
         run: |
-          ls -l ${{ env.DISTNAME }}.tar.gz
-          file ${{ env.DISTNAME }}.tar.gz
-          tar -tf ${{ env.DISTNAME }}.tar.gz
+          ls -l "$distname.tar.gz"
+          file "$distname.tar.gz"
+          tar -tf "$distname.tar.gz"
 
       - name: Upload tarball as artifact
         uses: actions/upload-artifact@v4
@@ -159,13 +162,15 @@ jobs:
 
       - name: Build PDF file
         run: |
+          distname="${{ env.DISTNAME }}-manual"
+          echo "distname=$distname" >>"$GITHUB_ENV"
           make pdf
-          cp doc/manual/manual.pdf ${{ env.DISTNAME }}.pdf
+          mv doc/manual/manual.pdf "$distname.pdf"
 
       - name: Print document information
         run: |
-          ls -l ${{ env.DISTNAME }}.pdf
-          file ${{ env.DISTNAME }}.pdf
+          ls -l "$distname.pdf"
+          file "$distname.pdf"
 
       - name: Upload document as artifact
         uses: actions/upload-artifact@v4
@@ -199,6 +204,8 @@ jobs:
 
       - name: Build HTML files
         run: |
+          distname="${{ env.DISTNAME }}-manual-html"
+          echo "distname=$distname" >>"$GITHUB_ENV"
           make -C doc/manual latex2html
           (
             cd doc/manual/manual
@@ -206,7 +213,8 @@ jobs:
             # Print generated files.
             ls -A -C
             # Check if there are no unexpected files.
-            for f in $(ls -A); do
+            shopt -s nullglob
+            for f in * .*; do
               case "$f" in
                 index.html|manual.html|manual.css|img*.svg)
                   ;;
@@ -217,14 +225,14 @@ jobs:
               esac
             done
           )
-          cp -r doc/manual/manual ${{ env.DISTNAME }}
-          tar -c ${{ env.DISTNAME }}/* | gzip -c -9 > ${{ env.DISTNAME }}.tar.gz
+          mv doc/manual/manual "$distname"
+          tar -c "$distname"/* | gzip -c -9 > "$distname.tar.gz"
 
       - name: Print file information
         run: |
-          ls -l ${{ env.DISTNAME }}.tar.gz
-          file ${{ env.DISTNAME }}.tar.gz
-          tar -tf ${{ env.DISTNAME }}.tar.gz
+          ls -l "$distname.tar.gz"
+          file "$distname.tar.gz"
+          tar -tf "$distname.tar.gz"
 
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
@@ -261,23 +269,23 @@ jobs:
           mv artifacts/doc-html/*.tar.gz dist
           mv artifacts/doc-pdf/*.pdf dist
           make_tar_gz() {
-            if ls artifacts/$2 >/dev/null 2>&1; then
+            if ls "artifacts/$2" >/dev/null 2>&1; then
               pkgname=$distname-$1
-              mkdir $pkgname
-              mv artifacts/$2 $pkgname
-              chmod +x $pkgname/*form*
-              tar -c $pkgname/* | gzip -c -9 >dist/$pkgname.tar.gz
-              rm -rf $pkgname
+              mkdir "$pkgname"
+              mv "artifacts/$2" "$pkgname"
+              chmod +x "$pkgname"/*form*
+              tar -c "$pkgname"/* | gzip -c -9 >"dist/$pkgname.tar.gz"
+              rm -rf "$pkgname"
             fi
           }
           make_zip() {
-            if ls artifacts/$2 >/dev/null 2>&1; then
+            if ls "artifacts/$2" >/dev/null 2>&1; then
               pkgname=$distname-$1
-              mkdir $pkgname
-              mv artifacts/$2 $pkgname
-              chmod +x $pkgname/*form*
-              zip -9 dist/$pkgname.zip $pkgname/*
-              rm -rf $pkgname
+              mkdir "$pkgname"
+              mv "artifacts/$2" "$pkgname"
+              chmod +x "$pkgname"/*form*
+              zip -9 "dist/$pkgname.zip" "$pkgname"/*
+              rm -rf "$pkgname"
             fi
           }
           make_tar_gz x86_64-linux '*-ubuntu-24.04/*form'
@@ -288,11 +296,13 @@ jobs:
 
       - name: Summarize files for distribution
         run: |
-          echo "Number of files: $(ls -1 dist | wc -l)" >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo '| File Name | Size (bytes) |' >> $GITHUB_STEP_SUMMARY
-          echo '| --- | ---: |' >> $GITHUB_STEP_SUMMARY
-          ls -l dist | tail -n +2 | awk '{ printf "| %s | %s |\n", $9, $5 }' >> $GITHUB_STEP_SUMMARY
+          {
+            echo "Number of files: $(find dist -type f | wc -l)"
+            echo
+            echo '| File Name | Size (bytes) |'
+            echo '| --- | ---: |'
+            find dist -type f -printf "| %f | %s |\n"
+          } >>"$GITHUB_STEP_SUMMARY"
 
       # Upload the distributions as an artifact, regardless of whether
       # the commit has a versioning tag. This makes checking and debugging easy.
