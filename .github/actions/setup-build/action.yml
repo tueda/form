@@ -6,13 +6,17 @@ description: >-
   followed by executing ./configure.
 inputs:
   features:
-    description: A list of features to enable, separated by spaces. To disable a feature, prefix it with "no".
+    description: List of features to enable, separated by spaces. To disable a feature, prefix it with "no".
     required: false
     default: ''
   flint_version:
     description: FLINT version to build.
     required: false
     default: '3.3.1'
+  cache:
+    description: Enables caching.
+    required: false
+    default: 'true'
 
 runs:
   using: composite
@@ -387,7 +391,7 @@ runs:
 
     - name: Cache FLINT
       id: cache-flint
-      if: steps.setup.outputs.flint == 'true'
+      if: inputs.features == 'true' && steps.setup.outputs.flint == 'true'
       uses: actions/cache@v4
       with:
         path: lib/flint
@@ -400,7 +404,7 @@ runs:
     # Note that we always set --enable-static so that release and non-release
     # builds can share the same cache.
     - name: Build FLINT unless cached
-      if: steps.setup.outputs.flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
+      if: steps.setup.outputs.flint == 'true' && (inputs.features == 'true' && steps.cache-flint.outputs.cache-hit != 'true')
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Build FLINT ###
