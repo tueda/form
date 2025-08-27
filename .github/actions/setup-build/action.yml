@@ -27,8 +27,9 @@ runs:
           bash=false msys2=false debian=false container=false
           untar=false autoreconf=false configure=true deploy=false
           coverage=false hyperfine=false valgrind=false
-          diffutils=false wget=false
           latex=false latex2html=false
+          build_flint=false
+          automake=false diffutils=false libtool=false wget=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
       shell: bash
@@ -95,32 +96,18 @@ runs:
           feat_zstd=false
         fi
 
-        if $feat_flint; then
-          feat_mpfr=true
-          feat_diffutils=true
-          feat_wget=true
-        fi
-
         if $has_mpi && ! $feat_mpich && ! $feat_openmpi; then
           # Use OpenMPI by default because MPICH is broken on Ubuntu 24.04.
           # See: https://bugs.launchpad.net/ubuntu/+source/mpich/+bug/2072338
           feat_openmpi=true
         fi
 
-        if [ -f /etc/os-release ] && grep -qi '^ID=debian' /etc/os-release; then
-          feat_debian=true
-        fi
-
-        if [ -f /.dockerenv ]; then
-          feat_container=true
-        fi
-
-        if [ ! -f configure.ac ] && ls form-*.tar.gz 1>/dev/null 2>&1; then
-          feat_untar=true
-        fi
-
-        if [ ! -f configure ] && [ -f configure.ac ]; then
-          feat_autoreconf=true
+        if $feat_flint; then
+          if [[ "${{ runner.os }}" == "macOS" ]] && ! $feat_deploy; then
+            :
+          else
+            $feat_build_flint=true
+          fi
         fi
 
         if $feat_formlib; then
@@ -140,11 +127,39 @@ runs:
           echo "FORMPATH=${{ github.workspace }}/formlib" >>"$GITHUB_ENV"
         fi
 
-        if $feat_flint || $feat_formlib; then
+        if [ -f /etc/os-release ] && grep -qi '^ID=debian' /etc/os-release; then
+          feat_debian=true
+        fi
+
+        if [ -f /.dockerenv ]; then
+          feat_container=true
+        fi
+
+        if [ ! -f configure.ac ] && ls form-*.tar.gz 1>/dev/null 2>&1; then
+          feat_untar=true
+        fi
+
+        if [ ! -f configure ] && [ -f configure.ac ]; then
+          feat_autoreconf=true
+        fi
+
+        # Dependencies.
+
+        if $feat_build_flint; then
+          feat_mpfr=true
+          feat_diffutils=true
           feat_wget=true
         fi
 
-        # Output the feature variables.
+        if $feat_formlib; then
+          feat_wget=true
+        fi
+
+        if $feat_autoreconf; then
+          feat_automake=true
+        fi
+
+        # Output features (without "feat_" prefix).
 
         for feat in $feature_names; do
           value=$(eval "echo \$feat_${feat}")
@@ -283,6 +298,20 @@ runs:
           ${{ steps.setup.outputs.wget == 'true' && 'wget' || '' }} \
           ${{ steps.setup.outputs.zlib == 'true' && 'zlib1g-dev' || '' }}
 
+    - name: Install dependencies (macOS)
+      if: >-
+        runner.os == 'macOS' && (
+          steps.setup.outputs.automake == 'true'
+          || (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false')
+        )
+      shell: bash
+      run: |
+        ### Install dependencies ###
+
+        brew install \
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }} \
+          ${{ (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false') && 'flint' || '' }}
+
     - name: Install dependencies (Windows/mingw64)
       if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
       uses: msys2/setup-msys2@v2
@@ -376,7 +405,7 @@ runs:
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
 
     - name: Get cache key for the image
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Get cache key for the image ###
@@ -387,7 +416,7 @@ runs:
 
     - name: Cache FLINT
       id: cache-flint
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       uses: actions/cache@v4
       with:
         path: lib/flint
@@ -400,7 +429,7 @@ runs:
     # Note that we always set --enable-static so that release and non-release
     # builds can share the same cache.
     - name: Build FLINT unless cached
-      if: steps.setup.outputs.flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
+      if: steps.setup.outputs.build_flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Build FLINT ###
@@ -421,7 +450,7 @@ runs:
         make install
 
     - name: Set FLINT paths
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Set FLINT paths ###
