@@ -409,11 +409,11 @@ runs:
         cd build/flint
         # We use the tarball from GitHub Releases.
         # See: https://github.com/flintlib/flint/issues/2311
-        wget https://github.com/flintlib/flint/releases/download/v${{ inputs.flint_version }}/flint-${{ inputs.flint_version }}.tar.gz
-        tar -xf *.tar.gz
-        rm *.tar.gz
-        cd flint-*
-        ./configure --prefix=$GITHUB_WORKSPACE/lib/flint --enable-static
+        wget "https://github.com/flintlib/flint/releases/download/v${{ inputs.flint_version }}/flint-${{ inputs.flint_version }}.tar.gz"
+        tar -xf "flint-${{ inputs.flint_version }}.tar.gz"
+        rm "flint-${{ inputs.flint_version }}.tar.gz"
+        cd "flint-${{ inputs.flint_version }}"
+        ./configure --prefix="$GITHUB_WORKSPACE/lib/flint" --host="$(gcc -dumpmachine)" --enable-static
         make -j 4
         # Test temporarily disabled.
         # See: https://github.com/flintlib/flint/issues/2058
