@@ -405,6 +405,7 @@ runs:
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-ruby
           ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
+          ${{ steps.setup.outputs.git == 'true' && 'git' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
@@ -422,7 +423,8 @@ runs:
           make
           mingw-w64-clang-aarch64-gcc-compat
           mingw-w64-clang-aarch64-ruby
-          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
+          ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
+          ${{ steps.setup.outputs.git == 'true' && 'git' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
