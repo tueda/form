@@ -341,6 +341,7 @@ runs:
         runner.os == 'macOS' && (
           steps.setup.outputs.automake == 'true'
           || (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false')
+          || steps.setup.outputs.hyperfine == 'true'
         )
       shell: bash
       run: |
@@ -348,7 +349,8 @@ runs:
 
         brew install \
           ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }} \
-          ${{ (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false') && 'flint' || '' }}
+          ${{ (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false') && 'flint' || '' }} \
+          ${{ steps.setup.outputs.hyperfine == 'true' && 'hyperfine' || '' }}
 
     # --static fails on macOS but we want to statically link
     # the brewed gmp. The linker supports neither -Wl,-static nor
@@ -410,6 +412,7 @@ runs:
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-x86_64-gcc' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
+          ${{ steps.setup.outputs.hyperfine == 'true' && 'mingw-w64-x86_64-hyperfine' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
           ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-x86_64-ruby' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
@@ -429,6 +432,7 @@ runs:
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
           ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-clang-aarch64-gcc-compat' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
+          ${{ steps.setup.outputs.hyperfine == 'true' && 'mingw-w64-clang-aarch64-hyperfine' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
           ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-clang-aarch64-ruby' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-clang-aarch64-zlib' || '' }}
