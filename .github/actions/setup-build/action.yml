@@ -308,8 +308,8 @@ runs:
         update: true
         msystem: mingw64
         install: >-
-          make
           mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-make
           mingw-w64-x86_64-ruby
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
@@ -325,8 +325,8 @@ runs:
         msystem: clangarm64
         install: >-
           m4
-          make
           mingw-w64-clang-aarch64-gcc-compat
+          mingw-w64-clang-aarch64-make
           mingw-w64-clang-aarch64-ruby
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
@@ -413,8 +413,6 @@ runs:
         # when the version or environment changes even slightly.
         key: flint-${{ inputs.flint_version }}-${{ runner.os }}-${{ runner.arch }}-${{ env.ImageOS }}-${{ env.ImageVersion }}
 
-    # Unfortunately, the FLINT package lacks a static library (because building
-    # it is disabled by default) and is outdated. We build FLINT from source.
     # Note that we always set --enable-static so that release and non-release
     # builds can share the same cache.
     - name: Build FLINT unless cached
