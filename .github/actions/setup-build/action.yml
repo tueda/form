@@ -413,8 +413,6 @@ runs:
         # when the version or environment changes even slightly.
         key: flint-${{ inputs.flint_version }}-${{ runner.os }}-${{ runner.arch }}-${{ env.ImageOS }}-${{ env.ImageVersion }}
 
-    # Unfortunately, the FLINT package lacks a static library (because building
-    # it is disabled by default) and is outdated. We build FLINT from source.
     # Note that we always set --enable-static so that release and non-release
     # builds can share the same cache.
     - name: Build FLINT unless cached
@@ -433,9 +431,6 @@ runs:
         cd "flint-${{ inputs.flint_version }}"
         ./configure --prefix="$GITHUB_WORKSPACE/lib/flint" --host="$(gcc -dumpmachine)" --enable-static
         make -j 4
-        # Test temporarily disabled.
-        # See: https://github.com/flintlib/flint/issues/2058
-        # make -j 4 check
         make install
 
     - name: Set FLINT paths
