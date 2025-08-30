@@ -281,6 +281,35 @@ runs:
         version: 1.0
         empty_packages_behavior: ignore
 
+    # awalsh128/cache-apt-pkgs-action does not work for MPI.
+    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
+    - name: Install MPI if necessary
+      if: >-
+        runner.os == 'Linux'
+        && steps.setup.outputs.container == 'false'
+        && (steps.setup.outputs.mpich == 'true' || steps.setup.outputs.openmpi == 'true')
+      shell: bash
+      run: |
+        ### Install MPI ###
+
+        sudo apt-get update
+        sudo apt-get install -y -q \
+          ${{ steps.setup.outputs.mpich == 'true' && 'libmpich-dev' || '' }} \
+          ${{ steps.setup.outputs.openmpi == 'true' && 'libopenmpi-dev' || '' }}
+
+    # Currently, cache-apt-pkgs-action does not work for LaTeX.
+    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57
+    - name: Install LaTeX
+      if: runner.os == 'Linux' && (steps.setup.outputs.latex == 'true' || steps.setup.outputs.latex2html == 'true')
+      shell: bash
+      run: |
+        ### Install LaTeX ###
+
+        sudo apt-get update
+        sudo apt-get install -y -q \
+          ${{ steps.setup.outputs.latex == 'true' && 'texlive-latex-extra' || '' }} \
+          ${{ steps.setup.outputs.latex2html == 'true' && 'latex2html' || '' }}
+
     # Because we use i386/debian containers, here we do not assume that
     # awalsh128/cache-apt-pkgs-action works properly.
     # See: https://github.com/actions/cache/issues/675
@@ -315,73 +344,6 @@ runs:
 
         brew install \
           ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
-
-    # NOTE: On MSYS2, autoconf (= autoconf-wrapper) is not listed as
-    # a dependency of automake (= automake-wrapper).
-    # Both need to be installed explicitly.
-    - name: Install dependencies (Windows/x86_64)
-      if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
-      uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        msystem: mingw64
-        install: >-
-          make
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-ruby
-          ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
-          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
-          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
-          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
-          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
-          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-x86_64-zstd' || '' }}
-
-    - name: Install dependencies (Windows/arm64)
-      if: runner.os == 'Windows' && runner.arch == 'ARM64' && steps.setup.outputs.msys2 == 'true'
-      uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        msystem: clangarm64
-        install: >-
-          m4
-          make
-          mingw-w64-clang-aarch64-gcc-compat
-          mingw-w64-clang-aarch64-ruby
-          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
-          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
-          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
-          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
-          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-clang-aarch64-zlib' || '' }}
-          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-clang-aarch64-zstd' || '' }}
-
-    # awalsh128/cache-apt-pkgs-action does not work for MPI.
-    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57#issuecomment-1304062077
-    - name: Install MPI if necessary
-      if: >-
-        runner.os == 'Linux'
-        && steps.setup.outputs.container == 'false'
-        && (steps.setup.outputs.mpich == 'true' || steps.setup.outputs.openmpi == 'true')
-      shell: bash
-      run: |
-        ### Install MPI ###
-
-        sudo apt-get update
-        sudo apt-get install -y -q \
-          ${{ steps.setup.outputs.mpich == 'true' && 'libmpich-dev' || '' }} \
-          ${{ steps.setup.outputs.openmpi == 'true' && 'libopenmpi-dev' || '' }}
-
-    # Currently, cache-apt-pkgs-action does not work for LaTeX.
-    # See: https://github.com/awalsh128/cache-apt-pkgs-action/issues/57
-    - name: Install LaTeX
-      if: runner.os == 'Linux' && (steps.setup.outputs.latex == 'true' || steps.setup.outputs.latex2html == 'true')
-      shell: bash
-      run: |
-        ### Install LaTeX ###
-
-        sudo apt-get update
-        sudo apt-get install -y -q \
-          ${{ steps.setup.outputs.latex == 'true' && 'texlive-latex-extra' || '' }} \
-          ${{ steps.setup.outputs.latex2html == 'true' && 'latex2html' || '' }}
 
     # --static fails on macOS but we want to statically link
     # the brewed gmp. The linker supports neither -Wl,-static nor
@@ -426,6 +388,44 @@ runs:
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
         LD_LIBRARY_PATH="$brew_dir/flint/lib:$brew_dir/gmp/lib:$brew_dir/mpfr/lib:$brew_dir/zstd/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
         echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
+
+    # NOTE: On MSYS2, autoconf (= autoconf-wrapper) is not listed as
+    # a dependency of automake (= automake-wrapper).
+    # Both need to be installed explicitly.
+    - name: Install dependencies (Windows/x86_64)
+      if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        msystem: mingw64
+        install: >-
+          make
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-ruby
+          ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
+          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
+          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
+          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
+          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
+          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-x86_64-zstd' || '' }}
+
+    - name: Install dependencies (Windows/arm64)
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && steps.setup.outputs.msys2 == 'true'
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        msystem: clangarm64
+        install: >-
+          m4
+          make
+          mingw-w64-clang-aarch64-gcc-compat
+          mingw-w64-clang-aarch64-ruby
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
+          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
+          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
+          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
+          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-clang-aarch64-zlib' || '' }}
+          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-clang-aarch64-zstd' || '' }}
 
     - name: Get cache key for the image
       if: steps.setup.outputs.build_flint == 'true'
