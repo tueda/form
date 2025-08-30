@@ -301,6 +301,18 @@ runs:
           ${{ steps.setup.outputs.wget == 'true' && 'wget' || '' }} \
           ${{ steps.setup.outputs.zlib == 'true' && 'zlib1g-dev' || '' }}
 
+    - name: Install dependencies (macOS)
+      if: >-
+        runner.os == 'macOS' && (
+          steps.setup.outputs.automake == 'true'
+        )
+      shell: bash
+      run: |
+        ### Install dependencies ###
+
+        brew install \
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
+
     - name: Install dependencies (Windows/mingw64)
       if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
       uses: msys2/setup-msys2@v2
