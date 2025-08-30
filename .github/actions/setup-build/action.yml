@@ -316,6 +316,9 @@ runs:
         brew install \
           ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
 
+    # NOTE: On MSYS2, autoconf (= autoconf-wrapper) is not listed as
+    # a dependency of automake (= automake-wrapper).
+    # Both need to be installed explicitly.
     - name: Install dependencies (Windows/x86_64)
       if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
       uses: msys2/setup-msys2@v2
@@ -326,7 +329,7 @@ runs:
           make
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-ruby
-          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
+          ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
