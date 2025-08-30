@@ -337,13 +337,15 @@ runs:
       if: >-
         runner.os == 'macOS' && (
           steps.setup.outputs.automake == 'true'
+          || (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false')
         )
       shell: bash
       run: |
         ### Install dependencies ###
 
         brew install \
-          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }} \
+          ${{ (steps.setup.outputs.flint == 'true' && steps.setup.outputs.build_flint == 'false') && 'flint' || '' }}
 
     # --static fails on macOS but we want to statically link
     # the brewed gmp. The linker supports neither -Wl,-static nor
