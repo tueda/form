@@ -484,8 +484,15 @@ runs:
         echo "CPATH=$CPATH" >>"$GITHUB_ENV"
         LIBRARY_PATH="$(pwd)/lib/flint/lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
-        LD_LIBRARY_PATH="$(pwd)/lib/flint/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
-        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
+        if ! ${{ steps.setup.outputs.deploy }}; then
+          if [[ "${{ runner.os }}" != "Windows" ]]; then
+            LD_LIBRARY_PATH="$(pwd)/lib/flint/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
+            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
+          else
+            PATH="$(pwd)/lib/flint/lib${PATH:+":$PATH"}"
+            echo "PATH=$PATH" >>"$GITHUB_ENV"
+          fi
+        fi
 
     - name: Cache FORM library
       id: cache-formlib
