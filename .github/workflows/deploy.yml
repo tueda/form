@@ -106,12 +106,12 @@ jobs:
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: |
           binname=${{ matrix.bin }}
-          if [ "$RUNNER_OS" == "Windows" ]; then
+          if [ "${{ runner.os }}" == "Windows" ]; then
             binname=$binname.exe
           fi
           ls -l "sources/$binname"
           file "sources/$binname"
-          if [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "${{ runner.os }}" == "macOS" ]; then
             otool -L "sources/$binname"
             # Check if brewed libraries are statically linked.
             if otool -L "sources/$binname" | grep -q '/usr/local/opt'; then
@@ -119,7 +119,7 @@ jobs:
               exit 1
             fi
           fi
-          if [ "$RUNNER_OS" == "Windows" ]; then
+          if [ "${{ runner.os }}" == "Windows" ]; then
             ldd "sources/$binname"
             # Check if MSYS2 DLLs are not linked.
             if ldd "sources/$binname" | grep -q 'msys'; then
