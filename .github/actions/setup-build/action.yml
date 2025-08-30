@@ -316,7 +316,7 @@ runs:
         brew install \
           ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
 
-    - name: Install dependencies (Windows/mingw64)
+    - name: Install dependencies (Windows/x86_64)
       if: runner.os == 'Windows' && runner.arch == 'X64' && steps.setup.outputs.msys2 == 'true'
       uses: msys2/setup-msys2@v2
       with:
@@ -333,7 +333,7 @@ runs:
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
           ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-x86_64-zstd' || '' }}
 
-    - name: Install dependencies (Windows/clangarm64)
+    - name: Install dependencies (Windows/arm64)
       if: runner.os == 'Windows' && runner.arch == 'ARM64' && steps.setup.outputs.msys2 == 'true'
       uses: msys2/setup-msys2@v2
       with:
@@ -399,7 +399,7 @@ runs:
           brew_dir=/opt/homebrew
           # Include directories, not located in the usual places,
           # must be explicitly appended to the include paths.
-          export CPATH="$brew_dir/opt/gmp/include:$brew_dir/opt/mpfr/include:/opt/homebrew/opt/zstd/include${CPATH:+":$CPATH"}"
+          CPATH="$brew_dir/opt/gmp/include:$brew_dir/opt/mpfr/include:/opt/homebrew/opt/zstd/include${CPATH:+":$CPATH"}"
           echo "CPATH=$CPATH" >>"$GITHUB_ENV"
         else
           brew_dir=/usr/local
@@ -407,8 +407,18 @@ runs:
         ln -s $brew_dir/opt/gmp/lib/libgmp.a static-lib/libgmp.a
         ln -s $brew_dir/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
         ln -s $brew_dir/opt/zstd/lib/libzstd.a static-lib/libzstd.a
-        export LIBRARY_PATH="$(pwd)/static-lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
+        LIBRARY_PATH="$(pwd)/static-lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
+
+    - name: Set up Homebrew paths (macOS/arm64)
+      if: runner.os == 'macOS' && runner.arch == 'ARM64' && steps.setup.outputs.deploy == 'false'
+      shell: bash
+      run: |
+        ### Set up Homebrew paths ###
+
+        brew_dir=/opt/homebrew
+        CPATH="$brew_dir/opt/gmp/include:$brew_dir/opt/mpfr/include:/opt/homebrew/opt/zstd/include${CPATH:+":$CPATH"}"
+        echo "CPATH=$CPATH" >>"$GITHUB_ENV"
 
     - name: Get cache key for the image
       if: steps.setup.outputs.build_flint == 'true'
@@ -456,11 +466,11 @@ runs:
       run: |
         ### Set FLINT paths ###
 
-        export CPATH="$(pwd)/lib/flint/include${CPATH:+":$CPATH"}"
+        CPATH="$(pwd)/lib/flint/include${CPATH:+":$CPATH"}"
         echo "CPATH=$CPATH" >>"$GITHUB_ENV"
-        export LIBRARY_PATH="$(pwd)/lib/flint/lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
+        LIBRARY_PATH="$(pwd)/lib/flint/lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
-        export LD_LIBRARY_PATH="$(pwd)/lib/flint/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
+        LD_LIBRARY_PATH="$(pwd)/lib/flint/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
         echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
 
     - name: Cache FORM library
