@@ -399,17 +399,17 @@ runs:
 
         mkdir static-lib
         if [ "${{ runner.arch }}" == "ARM64" ]; then
-          brew_dir=/opt/homebrew
+          brew_dir=/opt/homebrew/opt
           # Include directories, not located in the usual places,
           # must be explicitly appended to the include paths.
-          CPATH="$brew_dir/opt/gmp/include:$brew_dir/opt/mpfr/include:/opt/homebrew/opt/zstd/include${CPATH:+":$CPATH"}"
+          CPATH="$brew_dir/gmp/include:$brew_dir/mpfr/include:$brew_dir/zstd/include${CPATH:+":$CPATH"}"
           echo "CPATH=$CPATH" >>"$GITHUB_ENV"
         else
-          brew_dir=/usr/local
+          brew_dir=/usr/local/opt
         fi
-        ln -s $brew_dir/opt/gmp/lib/libgmp.a static-lib/libgmp.a
-        ln -s $brew_dir/opt/mpfr/lib/libmpfr.a static-lib/libmpfr.a
-        ln -s $brew_dir/opt/zstd/lib/libzstd.a static-lib/libzstd.a
+        ln -s $brew_dir/gmp/lib/libgmp.a static-lib/libgmp.a
+        ln -s $brew_dir/mpfr/lib/libmpfr.a static-lib/libmpfr.a
+        ln -s $brew_dir/zstd/lib/libzstd.a static-lib/libzstd.a
         LIBRARY_PATH="$(pwd)/static-lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
 
@@ -419,9 +419,13 @@ runs:
       run: |
         ### Set up Homebrew paths ###
 
-        brew_dir=/opt/homebrew
-        CPATH="$brew_dir/opt/gmp/include:$brew_dir/opt/mpfr/include:/opt/homebrew/opt/zstd/include${CPATH:+":$CPATH"}"
+        brew_dir=/opt/homebrew/opt
+        CPATH="$brew_dir/flint/include:$brew_dir/gmp/include:$brew_dir/mpfr/include:$brew_dir/zstd/include${CPATH:+":$CPATH"}"
         echo "CPATH=$CPATH" >>"$GITHUB_ENV"
+        LIBRARY_PATH="$brew_dir/flint/lib:$brew_dir/gmp/lib:$brew_dir/mpfr/lib:$brew_dir/zstd/lib${LIBRARY_PATH:+":$LIBRARY_PATH"}"
+        echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
+        LD_LIBRARY_PATH="$brew_dir/flint/lib:$brew_dir/gmp/lib:$brew_dir/mpfr/lib:$brew_dir/zstd/lib${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}"
+        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >>"$GITHUB_ENV"
 
     - name: Get cache key for the image
       if: steps.setup.outputs.build_flint == 'true'
