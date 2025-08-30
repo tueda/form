@@ -28,7 +28,7 @@ runs:
           untar=false autoreconf=false configure=true deploy=false
           coverage=false hyperfine=false valgrind=false
           build_flint=false
-          automake=false diffutils=false wget=false
+          automake=false diffutils=false git=false wget=false
           latex=false latex2html=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
@@ -160,6 +160,7 @@ runs:
 
         if $feat_autoreconf; then
           feat_automake=true
+          feat_git=true
         fi
 
         # Output the features (without "feat_" prefix).
@@ -290,7 +291,9 @@ runs:
         ### Install dependencies ###
 
         apt-get update
-        apt-get install -y -q automake g++ git make ruby \
+        apt-get install -y -q g++ make ruby \
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }} \
+          ${{ steps.setup.outputs.git == 'true' && 'git' || '' }} \
           ${{ steps.setup.outputs.hyperfine == 'true' && 'hyperfine' || '' }} \
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }} \
           ${{ steps.setup.outputs.ginac == 'true' && 'libginac-dev' || '' }} \
@@ -323,6 +326,7 @@ runs:
           make
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-ruby
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
@@ -340,6 +344,7 @@ runs:
           make
           mingw-w64-clang-aarch64-gcc-compat
           mingw-w64-clang-aarch64-ruby
+          ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
