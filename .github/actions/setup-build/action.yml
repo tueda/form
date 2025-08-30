@@ -27,7 +27,8 @@ runs:
           bash=false msys2=false debian=false container=false
           untar=false autoreconf=false configure=true deploy=false
           coverage=false hyperfine=false valgrind=false
-          diffutils=false wget=false
+          build_flint=false
+          automake=false diffutils=false wget=false
           latex=false latex2html=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
@@ -101,6 +102,17 @@ runs:
           feat_openmpi=true
         fi
 
+        # Unfortunately, FLINT packages in many distributions lack a static
+        # library, as it is not built by default. These packages are also often
+        # outdated (version < 3.2.0). In such cases, we build FLINT from source.
+        if $feat_flint; then
+          if [[ "${{ runner.os }}" == "macOS" ]] && ! $feat_deploy; then
+            :
+          else
+            feat_build_flint=true
+          fi
+        fi
+
         if [ -f /etc/os-release ] && grep -qi '^ID=debian' /etc/os-release; then
           feat_debian=true
         fi
@@ -136,7 +148,7 @@ runs:
 
         # Dependencies.
 
-        if $feat_flint; then
+        if $build_feat_flint; then
           feat_mpfr=true
           feat_diffutils=true
           feat_wget=true
@@ -144,6 +156,10 @@ runs:
 
         if $feat_formlib; then
           feat_wget=true
+        fi
+
+        if $feat_autoreconf; then
+          feat_automake=true
         fi
 
         # Output the features (without "feat_" prefix).
@@ -378,7 +394,7 @@ runs:
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
 
     - name: Get cache key for the image
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Get cache key for the image ###
@@ -389,7 +405,7 @@ runs:
 
     - name: Cache FLINT
       id: cache-flint
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       uses: actions/cache@v4
       with:
         path: lib/flint
@@ -402,7 +418,7 @@ runs:
     # Note that we always set --enable-static so that release and non-release
     # builds can share the same cache.
     - name: Build FLINT unless cached
-      if: steps.setup.outputs.flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
+      if: steps.setup.outputs.build_flint == 'true' && steps.cache-flint.outputs.cache-hit != 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Build FLINT ###
@@ -423,7 +439,7 @@ runs:
         make install
 
     - name: Set FLINT paths
-      if: steps.setup.outputs.flint == 'true'
+      if: steps.setup.outputs.build_flint == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
       run: |
         ### Set FLINT paths ###
