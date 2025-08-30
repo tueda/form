@@ -28,7 +28,7 @@ runs:
           untar=false autoreconf=false configure=true deploy=false
           coverage=false hyperfine=false valgrind=false
           build_flint=false
-          automake=false diffutils=false git=false wget=false
+          automake=false diffutils=false gcc=true git=false ruby=true wget=false
           latex=false latex2html=false
           formlib=false color=false forcer=false series=false
         # NOTE: Some features and OS image combinations are not implemented.
@@ -149,6 +149,7 @@ runs:
         # Dependencies.
 
         if $build_feat_flint; then
+          feat_gcc=true
           feat_mpfr=true
           feat_diffutils=true
           feat_wget=true
@@ -320,8 +321,9 @@ runs:
         ### Install dependencies ###
 
         apt-get update
-        apt-get install -y -q g++ make ruby \
+        apt-get install -y -q make \
           ${{ steps.setup.outputs.automake == 'true' && 'automake' || '' }} \
+          ${{ steps.setup.outputs.gcc == 'true' && 'g++' || '' }} \
           ${{ steps.setup.outputs.git == 'true' && 'git' || '' }} \
           ${{ steps.setup.outputs.hyperfine == 'true' && 'hyperfine' || '' }} \
           ${{ steps.setup.outputs.coverage == 'true' && 'lcov' || '' }} \
@@ -329,6 +331,7 @@ runs:
           ${{ steps.setup.outputs.gmp == 'true' && 'libgmp-dev' || '' }} \
           ${{ steps.setup.outputs.mpfr == 'true' && 'libmpfr-dev' || '' }} \
           ${{ steps.setup.outputs.zstd == 'true' && 'libzstd-dev' || '' }} \
+          ${{ steps.setup.outputs.ruby == 'true' && 'ruby' || '' }} \
           ${{ steps.setup.outputs.valgrind == 'true' && 'valgrind' || '' }} \
           ${{ steps.setup.outputs.wget == 'true' && 'wget' || '' }} \
           ${{ steps.setup.outputs.zlib == 'true' && 'zlib1g-dev' || '' }}
@@ -402,13 +405,13 @@ runs:
         msystem: mingw64
         install: >-
           make
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-ruby
           ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
           ${{ steps.setup.outputs.git == 'true' && 'git' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
+          ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-x86_64-gcc' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
+          ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-x86_64-ruby' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
           ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-x86_64-zstd' || '' }}
 
@@ -421,13 +424,13 @@ runs:
         install: >-
           m4
           make
-          mingw-w64-clang-aarch64-gcc-compat
-          mingw-w64-clang-aarch64-ruby
           ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
           ${{ steps.setup.outputs.git == 'true' && 'git' || '' }}
           ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-clang-aarch64-diffutils' || '' }}
+          ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-clang-aarch64-gcc-compat' || '' }}
           ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-clang-aarch64-gmp' || '' }}
           ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-clang-aarch64-mpfr' || '' }}
+          ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-clang-aarch64-ruby' || '' }}
           ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-clang-aarch64-zlib' || '' }}
           ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-clang-aarch64-zstd' || '' }}
 
