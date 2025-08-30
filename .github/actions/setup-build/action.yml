@@ -433,9 +433,6 @@ runs:
         cd "flint-${{ inputs.flint_version }}"
         ./configure --prefix="$GITHUB_WORKSPACE/lib/flint" --host="$(gcc -dumpmachine)" --enable-static
         make -j 4
-        # Test temporarily disabled.
-        # See: https://github.com/flintlib/flint/issues/2058
-        # make -j 4 check
         make install
 
     - name: Set FLINT paths
