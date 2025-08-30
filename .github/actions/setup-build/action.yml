@@ -419,7 +419,7 @@ runs:
         make -j 4
         # Test temporarily disabled.
         # See: https://github.com/flintlib/flint/issues/2058
-        # make -j 4 check
+        make -j 4 check
         make install
 
     - name: Set FLINT paths
