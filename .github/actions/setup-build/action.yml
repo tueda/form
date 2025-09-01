@@ -490,8 +490,10 @@ runs:
         echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
         if ${{ steps.setup.outputs.deploy }}; then
           if [[ "${{ runner.os }}" == "macOS" ]]; then
-            # To ensure static linking, remove dynamic libraries.
-            rm "${{ github.workspace }}"/lib/flint/lib/libflint*.dylib
+            # For static linking.
+            LIBRARY_PATH="${{ github.workspace }}/static-lib:$LIBRARY_PATH"
+            echo "LIBRARY_PATH=$LIBRARY_PATH" >>"$GITHUB_ENV"
+            ln -s "${{ github.workspace }}/lib/flint/lib/libflint.a" static-lib/libflint.a
           fi
         else
           if [[ "${{ runner.os }}" != "Windows" ]]; then
@@ -500,8 +502,8 @@ runs:
           else
             # MSYS2 ignores modifications to $PATH via standard methods.
             # See: https://github.com/msys2/setup-msys2/issues/98
-            # As a simple workaround, move the DLLs to a directory in the PATH.
-            mv lib/flint/bin/libflint*.dll /mingw64/bin/
+            # As a simple workaround, copy the DLLs to a directory in the PATH.
+            cp lib/flint/bin/libflint*.dll /mingw64/bin/
           fi
         fi
 
