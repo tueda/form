@@ -992,16 +992,21 @@ if test "$my_test_DEBUGCOMPILEFLAGS" != set && test "x$enable_debug" = xyes; the
 			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS"
 		fi
 		AX_HANDLE_EXTRA_WARNING([DEBUGCOMPILEFLAGS])
-		# Check for -Og. If it doesn't work then use -O0.
-		AX_CHECK_COMPILE_FLAG([-Og],
-			[DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -Og"],
-			[DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -O0"],
-			[-Werror])
+		# Optimization flag.
+		if test "x$enable_coverage" = xyes; then
+			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -O0"
+		else
+			# Check for -Og. If it doesn't work then use -O0.
+			AX_CHECK_COMPILE_FLAG([-Og],
+				[DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -Og"],
+				[DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -O0"],
+				[-Werror])
+		fi
 		# Debugging information.
 		DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -g3 -fno-omit-frame-pointer"
 		# Coverage option.
 		if test "x$enable_coverage" = xyes; then
-			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS -coverage"
+			DEBUGCOMPILEFLAGS="$DEBUGCOMPILEFLAGS --coverage"
 		fi
 		# Sanitizer option.
 		if test "x$enable_sanitize" = xyes; then
@@ -1050,7 +1055,7 @@ if test "$my_test_DEBUGLINKFLAGS" != set && test "x$enable_debug" = xyes; then
 	if test "x$vendor" = xgnu; then
 		# Coverage option.
 		if test "x$enable_coverage" = xyes; then
-			DEBUGLINKFLAGS="$DEBUGLINKFLAGS -coverage"
+			DEBUGLINKFLAGS="$DEBUGLINKFLAGS --coverage"
 		fi
 		# Sanitizer option.
 		if test "x$enable_sanitize" != xno; then
