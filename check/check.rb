@@ -666,7 +666,7 @@ module FormTest
   # The number of terms in the given expression.
   # Must be in the default statistics format.
   def nterms(exprname, index = -1)
-    matches = @stdout.scan(/^[ \t]+#{exprname}\s*Terms in output\s*=\s*(\d+)\s*Bytes used\s*=\s*\d+/m)
+    matches = @stdout.scan(/^[ \t]+#{exprname}\s*Terms in output\s*=\s*(\d+).*?Bytes used\s*=\s*\d+/m)
     return matches[index].first.to_i if !matches.empty? && !matches[index].nil?
 
     -1
@@ -675,7 +675,7 @@ module FormTest
   # The size in byte.
   # Must be in the default statistics format.
   def bytesize(exprname, index = -1)
-    matches = @stdout.scan(/^[ \t]+#{exprname}\s*Terms in output\s*=\s*\d+\s*Bytes used\s*=\s*(\d+)/m)
+    matches = @stdout.scan(/^[ \t]+#{exprname}\s*Terms in output\s*=\s*\d+.*?Bytes used\s*=\s*(\d+)/m)
     return matches[index].first.to_i if !matches.empty? && !matches[index].nil?
 
     -1
