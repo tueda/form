@@ -897,7 +897,22 @@ class TestCases
   end
 
   # Convert a .frm file to a .rb file and load it.
-  def make_ruby_file(filename)
+  def make_ruby_file(filename, fold_markers = nil)
+    # Handle fold markers.
+    if fold_markers.nil?
+      fold_open_pattern = /^\*..#\[/
+      fold_open_with_name_pattern = /^\*..#\[\s*([^:]*)/
+      fold_close_pattern = /^\*..#\]/
+      fold_close_with_name_pattern = /^\*..#\]\s*([^:]*)/
+    else
+      fold_open_marker = Regexp.escape(fold_markers[:open])
+      fold_close_marker = Regexp.escape(fold_markers[:close])
+      fold_open_pattern = /^#{fold_open_marker}/
+      fold_open_with_name_pattern = /^#{fold_open_marker}\s*([^:]*)/
+      fold_close_pattern = /^#{fold_close_marker}/
+      fold_close_with_name_pattern = /^#{fold_close_marker}\s*([^:]*)/
+    end
+
     # Check existing files.
     full_filename = File.expand_path(filename)
     inname = File.basename(filename)
@@ -931,7 +946,7 @@ class TestCases
           lineno += 1
           if level == 0
             case line
-            when /^\*..#\[\s*([^:]*)/
+            when fold_open_with_name_pattern
               # fold open: start a class
               fold = $1.strip
               if fold.empty?
@@ -963,14 +978,14 @@ class TestCases
               else
                 line = "class Test_#{classname} < Test::Unit::TestCase; include FormTest"
               end
-            when /^\*..#\]/
+            when fold_close_pattern
               # unexpected fold close
               fatal("unexpected fold close", inname, lineno)
             else
               # as commentary
               line = ""
             end
-          elsif heredoc.nil? && line =~ /^\*..#\]\s*([^:]*)/ && level == 1
+          elsif heredoc.nil? && line =~ fold_close_with_name_pattern && level == 1
             # fold close: end of the class
             fold = $1.strip
             foldname = info.foldname
@@ -1087,10 +1102,10 @@ class TestCases
             line = ""
           else
             if heredoc.nil?
-              if line =~ /^\*..#\[/
+              if line =~ fold_open_pattern
                 # fold open
                 level += 1
-              elsif line =~ /^\*..#\]\s*([^:]*)/
+              elsif line =~ fold_close_with_name_pattern
                 # fold close
                 level -= 1
               elsif line =~ /<</ && (line =~ /<<-?(\w+)/ ||
@@ -1558,6 +1573,8 @@ def main
             "Do not run tests matching NAME")     { |pat| opts.exclude_patterns << pat }
   parser.on("-g", "--group GROUPID/GROUPCOUNT",
             "Split tests and run only one group") { |group| opts.group_id, opts.group_count = parse_group(group) }
+  parser.on("--fold-markers OPEN,CLOSE",
+            "Set fold markers")                   { |open_close| a = open_close.split(",", 2); opts.fold_markers = { open: a[0], close: a[1] } }
   parser.on("-v", "--verbose",
             "Enable verbose output")              { opts.verbose = true }
   parser.on("--show-newlines",
@@ -1606,7 +1623,7 @@ def main
   end
 
   opts.files.uniq.sort.each do |file|
-    FormTest.tests.make_ruby_file(file)
+    FormTest.tests.make_ruby_file(file, opts.fold_markers)
   end
 
   # Split tests into groups and run only one group.
