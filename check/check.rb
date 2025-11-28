@@ -435,9 +435,15 @@ module FormTest
       prepare
       @stdout = ""
       @stderr = ""
+      old_formpath = ENV.fetch("FORMPATH", nil)
       begin
+        ENV["FORM"] = FormTest.cfg.form_cmd
+        ENV["FORMPATH"] = add_path(old_formpath, File.dirname(info.full_filename))
+        ENV["TESTFILE"] = info.full_filename
+        ENV["TESTFILEDIR"] = File.dirname(info.full_filename)
+        ENV["TESTCASE"] = info.classname
+        ENV["TESTTMPDIR"] = @tmpdir
         nfiles.times do |i|
-          ENV["FORM"] = FormTest.cfg.form_cmd
           @filename = "#{i + 1}.frm"
           execute("#{ulimits}#{FormTest.cfg.form_cmd} #{@filename}")
           if !finished?
@@ -502,6 +508,8 @@ module FormTest
           $stderr.puts
         end
         info.status = "OK"
+      ensure
+        ENV["FORMPATH"] = old_formpath
       end
       break
     end
@@ -841,6 +849,7 @@ end
 class TestInfo
   def initialize
     @classname = nil
+    @full_filename = nil
     @where = nil    # where the test is defined
     @foldname = nil # fold name of the test
     @enabled = nil  # enabled or not
@@ -851,7 +860,7 @@ class TestInfo
     @times = nil    # elapsed time (array)
   end
 
-  attr_accessor :classname, :where, :foldname, :enabled, :sources, :time_dilation,
+  attr_accessor :classname, :full_filename, :where, :foldname, :enabled, :sources, :time_dilation,
                 :status, :times
 
   # Return the description of the test.
@@ -890,6 +899,7 @@ class TestCases
   # Convert a .frm file to a .rb file and load it.
   def make_ruby_file(filename)
     # Check existing files.
+    full_filename = File.expand_path(filename)
     inname = File.basename(filename)
     outname = "#{File.basename(filename, '.frm')}.rb"
     if @files.include?(outname)
@@ -932,6 +942,7 @@ class TestCases
               @classes.push(classname)
               @classes_info["Test_#{classname}"] = info
               info.classname = classname
+              info.full_filename = full_filename
               info.where = "#{inname}:#{lineno}"
               info.foldname = fold
               info.enabled = test_enabled?(classname)
@@ -1414,7 +1425,7 @@ def add_path(oldpath, newpath)
     return newpath
   end
 
-  "#{newpath}:#{oldpath}"
+  "#{newpath}#{File::PATH_SEPARATOR}#{oldpath}"
 end
 
 # Parse `TEST=...`.
@@ -1643,12 +1654,8 @@ def main
 
   # --path option.
   if !opts.path.nil?
-    ENV["PATH"] = "#{opts.path}#{File::PATH_SEPARATOR}#{ENV.fetch('PATH', '')}"
+    ENV["PATH"] = add_path(ENV.fetch("PATH", nil), opts.path)
   end
-
-  # Set FORMPATH
-  ENV["FORMPATH"] = File.expand_path(opts.dir.nil? ? TESTDIR : opts.dir) +
-                    (ENV["FORMPATH"].nil? ? "" : ":#{ENV['FORMPATH']}")
 
   # Default mpirun_opts.
   if opts.mpirun_opts.nil?
@@ -1730,7 +1737,7 @@ def output_detailed_statistics(output = nil)
   end
 
   infos.each do |info|
-    (0..info.sources.length - 1).each do |i|
+    (0..(info.sources.length - 1)).each do |i|
       t = 0
       if !info.times.nil? && i < info.times.length
         t = info.times[i]
@@ -1779,7 +1786,7 @@ end
 # Return the string with padding to left.
 def lpad(str, len)
   if str.length > len
-    str[0..len - 1]
+    str[0..(len - 1)]
   elsif str.length < len
     str + " " * (len - str.length)
   else
