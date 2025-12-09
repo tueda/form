@@ -1,4 +1,9 @@
 * Compares the diagram generator with others.
+*
+* When run outside the testsuite, this file must be on the include path.
+* For example, run:
+*   form -D TEST=XXX -I check check/diagram.frm
+*
 #ifndef `TEST'
   #message Use -D TEST=XXX
   #terminate
@@ -117,6 +122,31 @@ EndModel;
 #endprocedure
 
 *--#] SetupPhi4Model : 
+*--#[ SetupPhi34Model :
+
+**
+* Prepares the PHI34 model.
+*
+#procedure SetupPhi34Model()
+  #define filename "`QgrafModelFile'"
+  #create <`filename'>
+  #write <`filename'> "[phi,phi,+]"
+  #write <`filename'> "[phi,phi,phi]"
+  #write <`filename'> "[phi,phi,phi,phi]"
+  #close <`filename'>
+
+  Model PHI34;
+    Particle phi,1;
+    Vertex phi,phi,phi:g;
+    Vertex phi,phi,phi,phi:g^2;
+  EndModel;
+
+  #redefine CurrentModel "PHI34"
+  #redefine Bosons "phi"
+  #redefine AntiParticles ""
+#endprocedure
+
+*--#] SetupPhi4Model : 
 *--#[ SetupQcdModel :
 
 **
@@ -150,6 +180,51 @@ EndModel;
 #endprocedure
 
 *--#] SetupQcdModel : 
+*--#[ SetupQcdbModel :
+
+**
+* Prepares the QCD model with the background field.
+*
+#procedure SetupQcdbModel()
+  #define filename "`QgrafModelFile'"
+  #create <`filename'>
+  #write <`filename'> "[qua,QUA,-]"
+  #write <`filename'> "[glu,glu,+]"
+  #write <`filename'> "[gho,GHO,-]"
+  #write <`filename'> "[back,back,+,external]"
+  #write <`filename'> "[QUA,qua,glu]"
+  #write <`filename'> "[GHO,gho,glu]"
+  #write <`filename'> "[glu,glu,glu]"
+  #write <`filename'> "[glu,glu,glu,glu]"
+  #write <`filename'> "[QUA,qua,back]"
+  #write <`filename'> "[GHO,gho,back]"
+  #write <`filename'> "[GHO,gho,back,glu]"
+  #write <`filename'> "[back,glu,glu]"
+  #write <`filename'> "[back,glu,glu,glu]"
+  #close <`filename'>
+
+  Model QCDB;
+    Particle qua,QUA,-2;
+    Particle gho,GHO,-1;
+    Particle glu,+3;
+    Particle back,+3,external;
+    Vertex QUA,qua,glu:g;
+    Vertex GHO,gho,glu:g;
+    Vertex glu,glu,glu:g;
+    Vertex glu,glu,glu,glu:g^2;
+    Vertex QUA,qua,back:g;
+    Vertex GHO,gho,back:g;
+    Vertex GHO,gho,back,glu:g^2;
+    Vertex back,glu,glu:g;
+    Vertex back,glu,glu,glu:g^2;
+  EndModel;
+
+  #redefine CurrentModel "QCDB"
+  #redefine Bosons "glu,back"
+  #redefine AntiParticles "QUA,GHO"
+#endprocedure
+
+*--#] SetupQcdbModel : 
 *--#[ MakeDiagrams :
 
 **
@@ -703,7 +778,7 @@ label notreplaced;
 *--#] diagram_compare_include : 
 *--#[ qgraf_compare_include :
 #-
-#include compare.frm # diagram_compare_include
+#include diagram.frm # diagram_compare_include
 
 *--#[ RunQgraf :
 
@@ -824,7 +899,7 @@ label notreplaced;
 *--#] qgraf_compare_include : 
 *--#[ feyngraph_compare_include :
 #-
-#include compare.frm # diagram_compare_include
+#include diagram.frm # diagram_compare_include
 
 *--#[ RunFeynGraph :
 
@@ -987,7 +1062,7 @@ label notreplaced;
 
 *--#] feyngraph_compare_include : 
 *--#[ qgraf_phi4_phiphi_phiphi_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(phi4,in=phi,phi,out=phi,phi,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -996,7 +1071,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_phi4_phiphi_phiphi_1 : 
 *--#[ qgraf_phi4_phiphi_phiphi_2 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(phi4,in=phi,phi,out=phi,phi,loops=2,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1005,7 +1080,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_phi4_phiphi_phiphi_2 : 
 *--#[ qgraf_qcd_qua_qua_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=qua,out=qua,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1014,7 +1089,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_qua_qua_1 : 
 *--#[ qgraf_qcd_glu_glu_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=glu,out=glu,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1023,7 +1098,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_glu_glu_1 : 
 *--#[ qgraf_qcd_gho_gho_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=gho,out=gho,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1032,7 +1107,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_gho_gho_1 : 
 *--#[ qgraf_qcd_qua_quaglu_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=qua,out=qua,glu,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1041,7 +1116,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_qua_quaglu_1 : 
 *--#[ qgraf_qcd_glu_gluglu_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=glu,out=glu,glu,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
@@ -1050,7 +1125,7 @@ assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_glu_gluglu_1 : 
 *--#[ qgraf_qcd_gluglu_gluglu_1 :
-#include- compare.frm # qgraf_compare_include
+#include- diagram.frm # qgraf_compare_include
 #call DoComparison(qcd,in=glu,glu,out=glu,glu,loops=1,form_options=,qgraf_options=)
 .end
 assert succeeded?
