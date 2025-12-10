@@ -222,10 +222,18 @@ jobs:
           # - {bin: tform}
           - {bin: tform, nthreads: 2}
     steps:
-      # We have to use v1.
-      # See https://github.com/actions/checkout/issues/334
+      # See: https://github.com/actions/checkout/issues/334
+      #      https://github.com/EliahKagan/gitoxide/pull/5
+      - name: Workaround for checkout in a container
+        run: |
+          dpkg --add-architecture amd64
+          apt-get update
+          apt-get install --no-install-recommends -y libstdc++6:amd64
+
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # ensures a reachable tag
 
       - name: Set up build
         uses: ./.github/actions/setup-build
