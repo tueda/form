@@ -230,6 +230,15 @@ jobs:
         with:
           fetch-depth: 0  # ensures a reachable tag
 
+      - run: |
+          pwd
+          echo
+          ls
+          echo
+          ls -a
+          echo
+          git status
+
       - name: Set up build
         uses: ./.github/actions/setup-build
         with:
