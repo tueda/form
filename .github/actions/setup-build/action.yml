@@ -263,6 +263,13 @@ runs:
           echo "CONFIG_ARGS=$args" >>"$GITHUB_ENV"
         fi
 
+        # Fix dubious ownership in containers for Git operations.
+        # See: https://github.com/actions/runner/issues/2033#issuecomment-1204205989
+
+        if $feat_container; then
+          chown -R $(id -u):$(id -g) $(pwd)
+        fi
+
         # Determine DISTNAME if possible.
 
         if [ -f ./scripts/git-version-gen.sh ] && command -v git >/dev/null 2>&1; then
@@ -555,16 +562,6 @@ runs:
           wget https://github.com/a-maier/series/releases/download/1.0.0/series.h -P formlib
           touch formlib/series-1.0.0
         fi
-
-    # Fix dubious ownership in containers for Git operations.
-    # See: https://github.com/actions/runner/issues/2033#issuecomment-1204205989
-    - name: Fix dubious ownership
-      if: steps.setup.outputs.container == 'true'
-      shell: bash
-      run: |
-        ### Fix dubious ownership
-
-        chown -R $(id -u):$(id -g) $PWD
 
     - name: Uncompress tarball
       if: steps.setup.outputs.untar == 'true'
