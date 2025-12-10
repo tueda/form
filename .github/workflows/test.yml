@@ -238,7 +238,7 @@ jobs:
       - name: Set up build
         uses: ./.github/actions/setup-build
         with:
-          features: ${{ matrix.bin }} noflint  # actions/cache@v4 doesn't work
+          features: ${{ matrix.bin }}
 
       - name: Build
         run: make -C sources -j 4 ${{ matrix.bin }}
