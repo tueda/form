@@ -577,6 +577,15 @@ runs:
         tar -xf form-*.tar.gz --strip-components 1
         rm *.tar.gz
 
+    - name: Debug
+      shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
+      run: |
+        ### Debug ###
+        echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
+        echo "github.workspace=${{ github.workspace }}"
+        pwd
+        ls -la
+
     - name: Run Autoreconf
       if: steps.setup.outputs.autoreconf == 'true'
       shell: ${{ steps.setup.outputs.msys2 == 'true' && 'msys2 {0}' || 'bash' }}
