@@ -228,7 +228,7 @@ jobs:
         run: |
           dpkg --add-architecture amd64
           apt-get update
-          apt-get install --no-install-recommends -y libstdc++6:amd64
+          apt-get install --no-install-recommends -y git libstdc++6:amd64
 
       - name: Checkout repository
         uses: actions/checkout@v6
