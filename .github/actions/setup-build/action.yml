@@ -596,6 +596,12 @@ runs:
         echo "github.workspace=${{ github.workspace }}"
         pwd
         ls -la
+        echo
+        ls /
+        echo
+        echo "CPATH=$CPATH"
+        ls /home/runner/work/form/form/lib/flint/include || :
+        ls /home/runner/work/form/form/lib/flint/include/flint/flint.h || :
 
     - name: Run Autoreconf
       if: steps.setup.outputs.autoreconf == 'true'
