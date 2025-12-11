@@ -454,8 +454,22 @@ runs:
       run: |
         ### Get cache key for the image ###
 
+        # We can't use ${{ env.ImageOS }} directly in the next step.
         # See: https://github.com/actions/upload-artifact/issues/231
-        echo "image_key=$ImageOS-$ImageVersion" >>"$GITHUB_OUTPUT"
+        # Instead, detect the image information in the shell and expose it
+        # as the image_key output.
+        # When running in a container, use the OS name and version.
+        if [ "{{ steps.setup.outputs.container }}" == "true" ]; then
+          if [ -f "/etc/os-release" ]; then
+            . /etc/os-release
+            image_key="$NAME-$VERSION_ID"
+          else
+            image_key="unknown"
+          fi
+        else
+          image_key="$ImageOS-$ImageVersion"
+        fi
+        echo "image_key=$image_key" >>"$GITHUB_OUTPUT"
 
     - name: Cache FLINT
       id: cache-flint
