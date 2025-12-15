@@ -36,7 +36,7 @@ jobs:
           tar -tf "$distname.tar.gz"
 
       - name: Upload tarball as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: src
           path: '*.tar.gz'
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload binary as artifact
         if: steps.check-portability.outcome == 'success' && steps.check-portability.conclusion == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.bin }}-${{ matrix.os }}
           path: |
@@ -173,7 +173,7 @@ jobs:
           file "$distname.pdf"
 
       - name: Upload document as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: doc-pdf
           path: '*.pdf'
@@ -235,7 +235,7 @@ jobs:
           tar -tf "$distname.tar.gz"
 
       - name: Upload file as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: doc-html
           path: '*.tar.gz'
@@ -315,7 +315,7 @@ jobs:
       # Upload the distributions as an artifact, regardless of whether
       # the commit has a versioning tag. This makes checking and debugging easy.
       - name: Upload distributions as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: |
