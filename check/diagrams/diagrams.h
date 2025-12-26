@@ -18,9 +18,6 @@
 #define Bosons ""
 #define AntiParticles ""
 
-#define QgrafVersion ""
-#define FeynGraphVersion ""
-
 #define QgrafStyleFile "qgraf.sty"
 #define QgrafModelFile "qgraf.mdl"
 #define QgrafInputFile "qgraf.dat"
@@ -28,6 +25,9 @@
 #define FeynGraphTemplateFile "feyngraph.jinja"
 #define FeynGraphInputFile "feyngraph.toml"
 #define FeynGraphOutputFile "diagrams.out"
+
+#define QgrafVersion ""
+#define FeynGraphVersion ""
 
 Format nospaces;
 Format 255;
@@ -58,7 +58,7 @@ Model TEMP;
   Particle f2;
 EndModel;
 
-*--#[ SetupPhi3Model :
+*--#[ SetupPhi3Model : SetupPhi3Model()
 
 **
 * Prepares the PHI3 model.
@@ -81,7 +81,7 @@ EndModel;
 #endprocedure
 
 *--#] SetupPhi3Model : 
-*--#[ SetupPhi4Model :
+*--#[ SetupPhi4Model : SetupPhi4Model()
 
 **
 * Prepares the PHI4 model.
@@ -104,7 +104,7 @@ EndModel;
 #endprocedure
 
 *--#] SetupPhi4Model : 
-*--#[ SetupPhi34Model :
+*--#[ SetupPhi34Model : SetupPhi34Model()
 
 **
 * Prepares the PHI34 model.
@@ -129,7 +129,7 @@ EndModel;
 #endprocedure
 
 *--#] SetupPhi4Model : 
-*--#[ SetupQcdModel :
+*--#[ SetupQcdModel : SetupQcdModel()
 
 **
 * Prepares the QCD model.
@@ -162,7 +162,7 @@ EndModel;
 #endprocedure
 
 *--#] SetupQcdModel : 
-*--#[ SetupQcdbModel :
+*--#[ SetupQcdbModel : SetupQcdbModel()
 
 **
 * Prepares the QCD model with the background field.
@@ -207,7 +207,7 @@ EndModel;
 #endprocedure
 
 *--#] SetupQcdbModel : 
-*--#[ MakeDiagrams :
+*--#[ MakeDiagrams : MakeDiagrams(numIn,numOut)
 
 **
 * Manipulates diagrams for further manipulation.
@@ -269,7 +269,7 @@ EndModel;
 #endprocedure
 
 *--#] MakeDiagrams : 
-*--#[ CanonicalizeDiagrams :
+*--#[ CanonicalizeDiagrams : CanonicalizeDiagrams()
 
 **
 * Canonicalizes diagrams.
@@ -502,7 +502,7 @@ label notreplaced;
 #endprocedure
 
 *--#] CanonicalizeDiagrams : 
-*--#[ CompareDiagrams :
+*--#[ CompareDiagrams : CompareDiagrams(F1,F2,F0)
 
 **
 * Compares diagrams in two expressions.
@@ -548,7 +548,7 @@ label notreplaced;
 #endprocedure
 
 *--#] CompareDiagrams : 
-*--#[ DoComparison :
+*--#[ DoComparison : DoComparison(other,model,options...)
 
 **
 * Performs comparison.
@@ -795,7 +795,7 @@ label notreplaced;
 #endprocedure
 
 *--#] DoComparison : 
-*--#[ RunQgraf :
+*--#[ RunQgraf : RunQgraf(options...)
 
 **
 * Runs QGRAF and reads its output.
@@ -876,7 +876,7 @@ label notreplaced;
 #endprocedure
 
 *--#] RunQgraf : 
-*--#[ SetupQgrafFormStyle :
+*--#[ SetupQgrafFormStyle : SetupQgrafFormStyle()
 
 **
 * Prepares the QGRAF style file for FORM.
@@ -907,7 +907,7 @@ label notreplaced;
 #endprocedure
 
 *--#] SetupQgrafFormStyle : 
-*--#[ RunFeynGraph :
+*--#[ RunFeynGraph : RunFeynGraph(options...)
 
 **
 * Runs FeynGraph and reads its output.
@@ -1028,7 +1028,7 @@ label notreplaced;
 #endprocedure
 
 *--#] RunFeynGraph : 
-*--#[ SetupFeynGraphTemplate :
+*--#[ SetupFeynGraphTemplate : SetupFeynGraphTemplate()
 
 **
 * Prepares the FeynGraph template file for FORM.
@@ -1062,3 +1062,4 @@ label notreplaced;
 #endprocedure
 
 *--#] SetupFeynGraphTemplate : 
+* vim: ft=form et ts=8 sts=2 sw=2 fdm=marker fmr=#[,#] fdc=4
