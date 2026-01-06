@@ -751,9 +751,6 @@ label notreplaced;
     #redefine val2 ""
   #endif
 
-  #message `val1'
-  #message `val2'
-
   #define cachekey "`DiagramGenerator'_`model'"
   #do b = {in,out,loops,val1,val2}
     #redefine cachekey "`cachekey'_"
@@ -766,8 +763,6 @@ label notreplaced;
       #redefine cachekey "`takeright_(`cachekey',1)'"
     #endif
   #enddo
-
-  #message `cachekey'
 
 * Cache file names.
 
@@ -782,11 +777,6 @@ label notreplaced;
 * Generate diagrams.
 
   #ifdef `formoptions'
-  #else
-    #redefine formoptions "0"
-  #endif
-
-  #if "`formoptions'" != "0"
     #define optionvalue "0"
     #do a = {`formoptions',}
       #ifdef `a'
@@ -794,6 +784,8 @@ label notreplaced;
       #endif
     #enddo
     #redefine formoptions "`optionvalue'"
+  #else
+    #redefine formoptions "0"
   #endif
 
   L F1 = diagrams_(`CurrentModel',{`in'},{`out'},{`momenta'},kk,`loops',`formoptions');
