@@ -585,7 +585,7 @@ label notreplaced;
 *
 * Example
 * -------
-* #call DoComparison(qgraf,qcd,in=qua,out=qua,loops=1,form_options=`NOSNAIL_',qgraf_options=nosnail)
+* #call DoComparison(qgraf,qcd,in=qua,out=qua,loops=1,form_options=ONEPI_,FLOOP_,qgraf_options=onepi,floop)
 *
 #procedure DoComparison(other,model,?a)
   #define DiagramGenerator "`tolower_(`other')'"
@@ -649,7 +649,6 @@ label notreplaced;
   #enddo
 
   #ifdef `formoptions'
-    #redefine formoptions "{`formoptions'}"
   #else
     #redefine formoptions "0"
   #endif
@@ -752,6 +751,16 @@ label notreplaced;
   #call Setup`toupper_(`keepleft_(`model',1)')'`takeleft_(`model',1)'Model()
 
 * Generate diagrams.
+
+  #if "`formoptions'" != "0"
+    #define optionvalue "0"
+    #do a = {`formoptions',}
+      #ifdef `a'
+        #redefine optionvalue "`optionvalue'+`a'"
+      #endif
+    #enddo
+    #redefine formoptions "`optionvalue'"
+  #endif
 
   L F1 = diagrams_(`CurrentModel',{`in'},{`out'},{`momenta'},kk,`loops',`formoptions');
 #ifdef `FormDiagramsVerbose'
