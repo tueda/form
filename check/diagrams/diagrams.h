@@ -756,7 +756,7 @@ label notreplaced;
     #define optionvalue "0"
     #do a = {`formoptions',}
       #ifdef `a'
-        #redefine optionvalue "`optionvalue'+`a'"
+        #redefine optionvalue "`optionvalue'+``a''"
       #endif
     #enddo
     #redefine formoptions "`optionvalue'"
