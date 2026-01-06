@@ -648,11 +648,6 @@ label notreplaced;
     #endif
   #enddo
 
-  #ifdef `formoptions'
-  #else
-    #redefine formoptions "0"
-  #endif
-
   #ifdef `FormDiagramsOptionOverrides'
     #define options "`options',`FormDiagramsOptionOverrides'"
   #endif
@@ -728,19 +723,53 @@ label notreplaced;
     #redefine momenta "`momenta',q`i'"
   #enddo
 
-  #define cachekey "`DiagramGenerator'_`model'"
-  #do b = {in,out,loops,formoptions,`DiagramGenerator'options}
-    #redefine cachekey "`cachekey'_"
-    #ifdef ``b''
-      #do a = {``b'',}
-        #ifdef `a'
-          #redefine cachekey "`cachekey'`a'"
+* Construct the cache key.
+
+  #define opt1 "`formoptions'"
+  #define opt2 "``DiagramGenerator'options'"
+  #define val1 ""
+  #define val2 ""
+  #do i = 1, 2
+    #do a = {`opt`i'',}
+      #ifdef `a'
+        #if `i' == 1
+          #redefine a "`tolower_(`a')'"
+          #if "`keepright_(`a',1)'" == "_"
+            #redefine a "`takeright_(`a',1)'"
+          #endif
         #endif
-      #enddo
+        #redefine val`i' "`val`i''`a'"
+      #endif
+    #enddo
+    #ifdef `val`i''
     #else
-      #redefine cachekey "`cachekey'none"
+      #redefine val`i' "none"
     #endif
   #enddo
+
+  #if "`val1'" == "`val2'"
+    #redefine val2 ""
+  #endif
+
+  #message `val1'
+  #message `val2'
+
+  #define cachekey "`DiagramGenerator'_`model'"
+  #do b = {in,out,loops,val1,val2}
+    #redefine cachekey "`cachekey'_"
+    #do a = {``b'',}
+      #ifdef `a'
+        #redefine cachekey "`cachekey'`a'"
+      #endif
+    #enddo
+    #if "`keepright_(`cachekey',1)'" == "_"
+      #redefine cachekey "`takeright_(`cachekey',1)'"
+    #endif
+  #enddo
+
+  #message `cachekey'
+
+* Cache file names.
 
   #define cachefile "`FormDiagramsCacheDir'/`cachekey'.dat"
   #define cachetmpfile "`cachekey'.dat.`PID_'.tmp"
@@ -751,6 +780,11 @@ label notreplaced;
   #call Setup`toupper_(`keepleft_(`model',1)')'`takeleft_(`model',1)'Model()
 
 * Generate diagrams.
+
+  #ifdef `formoptions'
+  #else
+    #redefine formoptions "0"
+  #endif
 
   #if "`formoptions'" != "0"
     #define optionvalue "0"
