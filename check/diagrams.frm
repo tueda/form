@@ -16,6 +16,8 @@
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=qua,out=qua,loops=3,form_options=,qgraf_options=,options=forcecacheread)
 .end
+# Too many subexpressions for the 32-bit version.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 1001;
 assert nterms("F1") == 0;
@@ -25,6 +27,8 @@ assert nterms("F2") == 0;
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=glu,out=glu,loops=3,form_options=,qgraf_options=,options=forcecacheread)
 .end
+# Too many subexpressions for the 32-bit version.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 2829;
 assert nterms("F1") == 0;
@@ -34,6 +38,8 @@ assert nterms("F2") == 0;
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=gho,out=gho,loops=3,form_options=,qgraf_options=,options=forcecacheread)
 .end
+# Too many subexpressions for the 32-bit version.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 1001;
 assert nterms("F1") == 0;
@@ -43,6 +49,8 @@ assert nterms("F2") == 0;
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=qua,out=qua,loops=3,form_options=`ONEPI_'+`FLOOP_',qgraf_options=onepi,floop,options=forcecacheread)
 .end
+# The option does not fit into a 16-bit WORD.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 89;
 assert nterms("F1") == 0;
@@ -52,6 +60,8 @@ assert nterms("F2") == 0;
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=glu,out=glu,loops=3,form_options=`ONEPI_'+`FLOOP_',qgraf_options=onepi,floop,options=forcecacheread)
 .end
+# The option does not fit into a 16-bit WORD.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 222;
 assert nterms("F1") == 0;
@@ -61,6 +71,8 @@ assert nterms("F2") == 0;
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=gho,out=gho,loops=3,form_options=`ONEPI_'+`FLOOP_',qgraf_options=onepi,floop,options=forcecacheread)
 .end
+# The option does not fit into a 16-bit WORD.
+#require wordsize >= 4
 assert succeeded?
 assert nterms("F1", 0) == 89;
 assert nterms("F1") == 0;
