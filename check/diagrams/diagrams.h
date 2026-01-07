@@ -750,6 +750,12 @@ label notreplaced;
           #if "`keepright_(`a',1)'" == "_"
             #redefine a "`takeright_(`a',1)'"
           #endif
+        #elseif (`i' == 2) && "`DiagramGenerator'" == "feyngraph"
+          #if "`keepright_(`a',12)'" == "self_loops=0"
+            #redefine a "`takeright_(`a',12)'selfloops0"
+          #elseif "`keepright_(`a',16)'" == "opi_components=1"
+            #redefine a "`takeright_(`a',16)'opicomponents1"
+          #endif
         #endif
         #redefine val`i' "`val`i''`a'"
       #endif
