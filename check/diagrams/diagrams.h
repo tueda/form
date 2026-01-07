@@ -68,7 +68,7 @@ Format 255;
 * - Internal particles are assigned momenta k1, k2, ...
 
 S n1,n2,x1,x2;
-CF topo,node,counter,vx,vxs(symmetric),acc,replace;
+CF topo,node,counter,coeff,vx,vxs(symmetric),acc,replace;
 V p1,...,p`MaxLegs',q1,...,q`MaxLegs',k1,...,k`MaxPropagators',l1,...,l`MaxPropagators';
 Set kk:k1,...,k`MaxPropagators';
 Set ll:l1,...,l`MaxPropagators';
@@ -339,6 +339,8 @@ EndModel;
   #enddo
   #undefine i
 label end;
+* Save the current numerical coefficient.
+  putinside coeff,xarg_;
   B node;
   ModuleOption maximum, $counter;
   #do i = 1, `numactiveexprs'
@@ -507,6 +509,10 @@ label notreplaced;
       RemoveSpectator [`e'.spec];
     #endif
   #enddo
+
+* Restore the coefficient.
+  dropcoefficient;
+  id coeff(x1?) = x1;
 
 * Reorder identical boson fields at each vertex to align the momenta.
   #do b = {`Bosons',}
