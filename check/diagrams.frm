@@ -12,6 +12,24 @@
 #endif
 .end
 
+*--#[ feyngraph_qcd_3_none :
+#include- diagrams/diagrams.h
+#call DoComparison(feyngraph,qcd,in=,out=,loops=3,form_options=,feyngraph_options=,options=forcecacheread)
+.end
+assert succeeded?
+assert nterms("F1", 0) == 74;
+assert nterms("F1") == 0;
+assert nterms("F2") == 0;
+*--#] feyngraph_qcd_3_none : 
+*--#[ feyngraph_qcd_3_onepi_opicomponents1 :
+#include- diagrams/diagrams.h
+#call DoComparison(feyngraph,qcd,in=,out=,loops=3,form_options=ONEPI_,feyngraph_options=opi_components=1,options=forcecacheread)
+.end
+assert succeeded?
+assert nterms("F1", 0) == 19;
+assert nterms("F1") == 0;
+assert nterms("F2") == 0;
+*--#] feyngraph_qcd_3_onepi_opicomponents1 : 
 *--#[ qgraf_qcd_qua_qua_3_none :
 #include- diagrams/diagrams.h
 #call DoComparison(qgraf,qcd,in=qua,out=qua,loops=3,form_options=,qgraf_options=,options=forcecacheread)
@@ -78,3 +96,25 @@ assert nterms("F1", 0) == 89;
 assert nterms("F1") == 0;
 assert nterms("F2") == 0;
 *--#] qgraf_qcd_gho_gho_3_onepifloop : 
+*--#[ qgraf_qcd_gho_ghoglu_3_onepifloop :
+#include- diagrams/diagrams.h
+#call DoComparison(qgraf,qcd,in=gho,out=gho,glu,loops=3,form_options=ONEPI_,FLOOP_,qgraf_options=onepi,floop,options=forcecacheread)
+.end
+# The option does not fit into a 16-bit WORD.
+#require wordsize >= 4
+assert succeeded?
+assert nterms("F1", 0) == 664;
+assert nterms("F1") == 0;
+assert nterms("F2") == 0;
+*--#] qgraf_qcd_gho_ghoglu_3_onepifloop : 
+*--#[ qgraf_qcd_gluglu_gluglu_2_onepifloop :
+#include- diagrams/diagrams.h
+#call DoComparison(qgraf,qcd,in=glu,glu,out=glu,glu,loops=2,form_options=ONEPI_,FLOOP_,qgraf_options=onepi,floop,options=forcecacheread)
+.end
+# The option does not fit into a 16-bit WORD.
+#require wordsize >= 4
+assert succeeded?
+assert nterms("F1", 0) == 559;
+assert nterms("F1") == 0;
+assert nterms("F2") == 0;
+*--#] qgraf_qcd_gluglu_gluglu_2_onepifloop : 
