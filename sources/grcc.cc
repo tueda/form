@@ -202,7 +202,7 @@ Options::Options(void)
         fprintf(GRCC_Stderr, "*** Options: inconsistent default values\n");
         fprintf(GRCC_Stderr, "nOptDef=%d, GRCC_OPT_Size=%d\n",
                 nOptDef, GRCC_OPT_Size);
-        exit(1);
+        GRCC_ABORT();
     }
     
     model  = NULL;
@@ -224,7 +224,7 @@ Options::Options(void)
         fprintf(GRCC_Stderr, "*** Options: inconsistent default values\n");
         fprintf(GRCC_Stderr, "nOptQGDef=%d, GRCC_QGRAF_OPT_Size=%d\n",
                 nOptQGDef, GRCC_QGRAF_OPT_Size);
-        exit(1);
+        GRCC_ABORT();
     }
     nqgopt = 0;
     for (int j = 0; j < nOptQGDef; j++) {
@@ -6486,11 +6486,11 @@ void EGraph::fromDGraph(DGraph *dg)
 
     if (dg->nnodes > GRCC_MAXNODES) {
         fprintf(GRCC_Stderr, "*** too many nodes (GRCC_MAXNODES)\n");
-        exit(1);
+        GRCC_ABORT();
     }
     if (dg->nedges > GRCC_MAXEDGES) {
         fprintf(GRCC_Stderr, "*** too many edges (GRCC_MAXEDGES)\n");
-        exit(1);
+        GRCC_ABORT();
     }
 
     for (e = 0; e < dg->nedges; e++) {
@@ -6498,7 +6498,7 @@ void EGraph::fromDGraph(DGraph *dg)
             fprintf(GRCC_Stderr, "*** undefined node:");
             fprintf(GRCC_Stderr, "edge[%d] = {%d, %d}\n", 
                     e, dg->edges[e][0], dg->edges[e][0]);
-            exit(1);
+            GRCC_ABORT();
         }
     }
 
@@ -7064,7 +7064,7 @@ Bool EGraph::optQGrafM(Options *opt)
     }
     if (maxlegs >= GRCC_MAXEDGES) {
         printf("*** table overflow\n");
-        abort();
+        GRCC_ABORT();
     }
     for (int k = 0; k < GRCC_MAXEDGES; k++) {
         nopis[k] = 0;
