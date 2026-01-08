@@ -616,7 +616,6 @@ int CompileStatement(UBYTE *in)
 			AC.compiletype = STATEMENT;
 		}
 	  }
-	  else if ( k->type == MIXED2 ) {}
 	  else if ( k->type > AC.compiletype ) {
 		/*
 		 * We intentionally do NOT update "compiletype" for:
