@@ -161,7 +161,7 @@
 #define STATEMENT     4
 #define TOOUTPUT      5
 #define ATENDOFMODULE 6
-#define MIXED2        8
+#define MIXED2        8  /* unused */
 #define MIXED         9
 
 /*

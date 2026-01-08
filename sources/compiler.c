@@ -615,7 +615,6 @@ int CompileStatement(UBYTE *in)
 			AC.compiletype = STATEMENT;
 		}
 	  }
-	  else if ( k->type == MIXED2 ) {}
 	  else if ( k->type > AC.compiletype ) {
 		if ( StrCmp((UBYTE *)(k->name),(UBYTE *)"format") != 0 )
 			AC.compiletype = k->type;
