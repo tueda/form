@@ -187,10 +187,13 @@ typedef int (*TFUN)();
 typedef int (*TFUN1)();
 #endif
 
+/*
+	Flags used in the compiler's KEYWORD tables.
+*/
 
 #define NOAUTO 0
-#define PARTEST 1
-#define WITHAUTO 2
+#define PARTEST 1	/* parentheses test */
+#define WITHAUTO 2	/* auto-declaration */
 
 #define ALLVARIABLES -1
 #define SYMBOLONLY 1
