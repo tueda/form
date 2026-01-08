@@ -43,6 +43,7 @@
 */
 
 #include "form3.h"
+#include "comtool.h"
 
 /*
 	com1commands are the commands of which only part of the word has to
@@ -616,8 +617,28 @@ int CompileStatement(UBYTE *in)
 		}
 	  }
 	  else if ( k->type > AC.compiletype ) {
-		if ( StrCmp((UBYTE *)(k->name),(UBYTE *)"format") != 0 )
-			AC.compiletype = k->type;
+		/*
+		 * We intentionally do NOT update "compiletype" for:
+		 * - Format statements (type = TOOUTPUT)
+		 * - ModuleOption statements (type = ATENDOFMODULE)
+		 *   with local/maximum/minimum/sum (i.e., $-variable-related options)
+		 *
+		 * This relaxes the ordering constraint, allowing statements with
+		 * type >= the current "compiletype" to follow.
+		 */
+		if ( StrCmp((UBYTE *)(k->name),(UBYTE *)"format") == 0 )
+			goto NoUpdateCompileType;
+		if ( StrCmp((UBYTE *)(k->name),(UBYTE *)"moduleoption") == 0 ) {
+			UBYTE *ss = s;
+			SkipSpaces(&ss);
+			if (   ConsumeOption(&ss,"local")
+				|| ConsumeOption(&ss,"maximum")
+				|| ConsumeOption(&ss,"minimum")
+				|| ConsumeOption(&ss,"sum") ) goto NoUpdateCompileType;
+		}
+		AC.compiletype = k->type;
+NoUpdateCompileType:
+		;
 	  }
 	  else if ( k->type < AC.compiletype ) {
 		switch ( k->type ) {
