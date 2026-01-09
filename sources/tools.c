@@ -1918,6 +1918,14 @@ UBYTE *strDup1(UBYTE *instring, char *ifwrong)
  		#[ EndOfToken :
 */
 
+/**
+ * Skips alphanumeric characters to the end of the token.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first non-alphanumeric character (i.e., the
+ *                character immediately after the token), or to the null
+ *                terminator if the token reaches the end of the string.
+ */
 UBYTE *EndOfToken(UBYTE *s)
 {
 	UBYTE c;
@@ -1930,6 +1938,13 @@ UBYTE *EndOfToken(UBYTE *s)
  		#[ ToToken :
 */
 
+/**
+ * Skips non-alphanumeric characters to the start of a token.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first alphanumeric character (i.e., the start
+ *                of the token), or to the null terminator if none is found.
+ */
 UBYTE *ToToken(UBYTE *s)
 {
 	UBYTE c;
