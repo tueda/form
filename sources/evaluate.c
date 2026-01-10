@@ -33,7 +33,6 @@
 */
 
 #include "form3.h"
-#include <stdarg.h>
 #include <gmp.h>
 #include <mpfr.h>
 
