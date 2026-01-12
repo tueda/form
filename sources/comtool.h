@@ -58,13 +58,15 @@ static inline void SkipSpaces(UBYTE **s)
 }
 
 /**
- * Checks if the next word in the buffer is the given keyword, with ignoring
- * case. If found, the pointer is moved such that the keyword is consumed in the
- * buffer, and this function returns a non-zero value.
+ * Checks if the next word in the buffer is the given keyword, ignoring
+ * case. If found, the pointer is moved so that the keyword is consumed in the
+ * buffer (any following whitespace is also skipped), and this function returns 1.
  *
- * @param[in,out]  s    The pointer to the buffer. Changed if the keyword found.
- * @param          opt  The optional keyword.
- * @return              1 if the keyword found, otherwise 0.
+ * @param[in,out]  s    Pointer to the current buffer position. The buffer must
+ *                      be null-terminated. On return, updated if the keyword is
+ *                      found.
+ * @param          opt  Case-insensitive keyword.
+ * @return              1 if the keyword is found, otherwise 0.
  */
 static inline int ConsumeOption(UBYTE **s, const char *opt)
 {
@@ -76,10 +78,9 @@ static inline int ConsumeOption(UBYTE **s, const char *opt)
 	/* Check if `opt` ended. */
 	if ( !*opt ) {
 		/* Check if `*p` is a word boundary. */
-		if ( !*p || !(FG.cTable[(unsigned char)*p] == 0 ||
-		              FG.cTable[(unsigned char)*p] == 1 || *p == '_' ||
-		              *p == '$') ) {
-			/* Consume the option. Skip the trailing spaces. */
+		UINT c = FG.cTable[(unsigned char)*p];
+		if ( c != 0 && c != 1 && *p != '_' && *p != '$' ) {
+			/* Consume the option. Skip the trailing whitespace. */
 			*s = (UBYTE *)p;
 			SkipSpaces(s);
 			return(1);
