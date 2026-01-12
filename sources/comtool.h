@@ -42,10 +42,13 @@
 */
 
 /**
- * Skips white-spaces in the buffer. Here the white-spaces includes commas,
- * which is treated as a space in FORM.
+ * Skips over whitespace characters in the buffer, including commas,
+ * which are treated as whitespace characters in the FORM compiler.
  *
- * @param[in,out]  s  The pointer to the buffer.
+ * @note To avoid skipping commas, use `SKIPBLANKS(s)` instead.
+ *
+ * @param[in,out]  s  Pointer to the current buffer position. On return, it
+ *                    points to the first non-whitespace character.
  */
 static inline void SkipSpaces(UBYTE **s)
 {
