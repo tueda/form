@@ -1918,6 +1918,16 @@ UBYTE *strDup1(UBYTE *instring, char *ifwrong)
  		#[ EndOfToken :
 */
 
+/**
+ * Skips over alphanumeric characters to find the end of the token.
+ *
+ * @note This function does NOT handle formal names, e.g., `[x+a]`.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first non-alphanumeric character (i.e., the
+ *                character immediately after the token), or the null
+ *                terminator if the token reaches the end of the string.
+ */
 UBYTE *EndOfToken(UBYTE *s)
 {
 	UBYTE c;
