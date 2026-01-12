@@ -1940,6 +1940,15 @@ UBYTE *EndOfToken(UBYTE *s)
  		#[ ToToken :
 */
 
+/**
+ * Skips over non-alphanumeric characters to find the start of a token.
+ *
+ * @note This function does NOT handle formal names, e.g., `[x+a]`.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first alphanumeric character (i.e., the start
+ *                of the token), or the null terminator if none is found.
+ */
 UBYTE *ToToken(UBYTE *s)
 {
 	UBYTE c;
