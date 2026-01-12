@@ -39,6 +39,7 @@
 /*
   	#] Includes : 
   	#[ Inline functions :
+  	#[ SkipSpaces :
 */
 
 /**
@@ -56,6 +57,11 @@ static inline void SkipSpaces(UBYTE **s)
 	while ( *p == ' ' || *p == ',' || *p == '\t' ) p++;
 	*s = (UBYTE *)p;
 }
+
+/*
+  	#] SkipSpaces : 
+  	#[ ConsumeOption :
+*/
 
 /**
  * Checks if the next word in the buffer is the given keyword, ignoring
@@ -90,6 +96,7 @@ static inline int ConsumeOption(UBYTE **s, const char *opt)
 }
 
 /*
+  	#] ConsumeOption : 
   	#] Inline functions : 
 */
 #endif  /* FORM_COMTOOL_H_ */
