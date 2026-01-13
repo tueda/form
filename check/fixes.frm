@@ -4437,6 +4437,113 @@ assert result("testCF1") =~ expr("putfirst_(f,2,mu1)*putfirst_(e,2,mu1)*putfirst
 assert result("testCF2") =~ expr("d(mu2,mu1)*e(mu2,mu1)*f(mu2,mu1)")
 assert result("testCF3") =~ expr("d(mu2,mu1,mu3)*e(mu2,mu1,mu3)*f(mu2,mu1,mu3)")
 *--#] Issue750 :
+*--#[ Issue760 :
+* Segfault on invalid ModuleOption
+ModuleOption foo;
+.end
+assert compile_error?("Unrecognized module option: foo")
+*--#] Issue760 : 
+*--#[ Issue763 :
+* ModuleOption PolyRatFun with its inverse
+#-
+Off stats;
+CF [acc],[rat],[RAT];
+S x,y;
+
+#define t101 "ModuleOption"
+#define t102 "ModuleOption,PolyFun"
+#define t103 "ModuleOption PolyFun"
+#define t104 "ModuleOption , PolyFun"
+#define t105 "ModuleOption,PolyFun,Parallel"
+#define t106 "ModuleOption PolyFun Parallel"
+#define t107 "ModuleOption , PolyFun , Parallel"
+
+#define t111 ".sort()"
+#define t112 ".sort(PolyFun)"
+#define t113 ".sort(PolyFun,PolyFun)"
+#define t114 ".sort(PolyFun , PolyFun)"
+
+#define t121 "ModuleOption,PolyRatFun"
+#define t122 "ModuleOption PolyRatFun"
+#define t123 "ModuleOption , PolyRatFun"
+#define t124 "ModuleOption,PolyRatFun,Parallel"
+#define t125 "ModuleOption PolyRatFun Parallel"
+#define t126 "ModuleOption , PolyRatFun , Parallel"
+
+#define t131 ".sort(PolyRatFun)"
+#define t132 ".sort(PolyRatFun,PolyRatFun)"
+#define t133 ".sort(PolyRatFun , PolyRatFun)"
+
+#define t201 "ModuleOption,PolyFun,[acc]"
+#define t202 "ModuleOption PolyFun [acc]"
+#define t203 "ModuleOption PolyFun=[acc]"
+#define t204 "ModuleOption , PolyFun , [acc]"
+#define t205 "ModuleOption , PolyFun = [acc]"
+#define t206 "ModuleOption,PolyFun,[acc],Parallel"
+#define t207 "ModuleOption PolyFun [acc] Parallel"
+#define t208 "ModuleOption PolyFun=[acc] Parallel"
+#define t209 "ModuleOption , PolyFun , [acc] , Parallel"
+#define t210 "ModuleOption , PolyFun = [acc] , Parallel"
+
+#define t211 ".sort(PolyFun=[acc])"
+#define t212 ".sort(PolyFun = [acc])"
+
+#define t301 "ModuleOption,PolyRatFun,[rat]"
+#define t302 "ModuleOption PolyRatFun [rat]"
+#define t303 "ModuleOption PolyRatFun=[rat]"
+#define t304 "ModuleOption , PolyRatFun , [rat]"
+#define t305 "ModuleOption , PolyRatFun = [rat]"
+#define t306 "ModuleOption,PolyRatFun,[rat],Parallel"
+#define t307 "ModuleOption PolyRatFun [rat] Parallel"
+#define t308 "ModuleOption PolyRatFun=[rat] Parallel"
+#define t309 "ModuleOption , PolyRatFun , [rat] , Parallel"
+#define t310 "ModuleOption , PolyRatFun = [rat] , Parallel"
+
+#define t311 ".sort(PolyRatFun=[rat])"
+#define t312 ".sort(PolyRatFun = [rat])"
+
+#define t401 "ModuleOption,PolyRatFun,[rat],[RAT]"
+#define t402 "ModuleOption PolyRatFun [rat] [RAT]"
+#define t403 "ModuleOption PolyRatFun=[rat]+[RAT]"
+#define t404 "ModuleOption , PolyRatFun , [rat] , [RAT]"
+#define t405 "ModuleOption PolyRatFun = [rat] + [RAT]"
+#define t406 "ModuleOption,PolyRatFun,[rat],[RAT],Parallel"
+#define t407 "ModuleOption PolyRatFun [rat] [RAT] Parallel"
+#define t408 "ModuleOption PolyRatFun=[rat]+[RAT] Parallel"
+#define t409 "ModuleOption , PolyRatFun , [rat] , [RAT] , Parallel"
+#define t410 "ModuleOption PolyRatFun = [rat] + [RAT] , Parallel"
+
+#define t411 ".sort(PolyRatFun=[rat]+[RAT])"
+#define t412 ".sort(PolyRatFun = [rat] + [RAT])"
+
+#do i=1,499
+  #ifdef `t`i''
+    #message `i' : `t`i''
+    Drop;
+    L F`i' = [acc](2)*[acc](1)*[rat](3,1)*[rat](1,1)*[RAT](3,4);
+    ;`t`i'';
+    .sort
+    PolyFun;
+    PolyRatFun;
+    dropcoefficient;
+    if (count([acc],1) >= 2) id [acc](?a) = 1;
+    if (count([rat],1) >= 2) id [rat](?a) = 1;
+    id [acc](x?) = x;
+    id [rat](x?,y?) = x/y;
+    id [RAT](x?,y?) = 1;
+    P;
+    .sort
+  #endif
+#enddo
+.end
+assert succeeded?
+for i in 1..499 do
+  if result("F#{i}") != "" then
+    assert result("F#{i}") =~ expr("#{i / 100}"),
+      "assert failed for F#{i} = #{result("F#{i}")} != #{i / 100}"
+  end
+end
+*--#] Issue763 : 
 *--#[ Issue766 :
 * Unintended "&" in some warning messages
 CF f(s,s);

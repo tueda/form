@@ -159,7 +159,7 @@ int CoModuleOption(UBYTE *s)
 				continue;
 			}
 			else {
-				MesPrint("@Unrecognized module option: %s",s);
+				MesPrint("&Unrecognized module option: %s",s);
 				error = 1;
 				polyflag = 0;
 				*t = c;
@@ -170,14 +170,16 @@ int CoModuleOption(UBYTE *s)
 			SKIPBLANKS(t)
 			if ( (option->func)(t) ) error = 1;
 		}
-		if ( StrCmp((UBYTE *)(option->name),(UBYTE *)("polyfun")) == 0
-		 || StrCmp((UBYTE *)(option->name),(UBYTE *)("polyratfun")) == 0 ) {
+		if ( option && ( StrCmp((UBYTE *)(option->name),(UBYTE *)("polyfun")) == 0
+		 || StrCmp((UBYTE *)(option->name),(UBYTE *)("polyratfun")) == 0 ) ) {
+			SKIPBLANKS(t);
+			if ( *t == ',' || *t == '=' ) t++;
+			SKIPBLANKS(t);
+			if ( *t ) { tt = SkipAName(t); if ( tt ) t = tt; }
 			polyflag = 1;
-			t++;
-			t = SkipAName(t);
 		}
 		else polyflag = 0;
-		if ( option->flags > 0 ) return(error);
+		if ( option && option->flags > 0 ) return(error);
 		while ( *t ) {
 			if ( *t == ',' ) {
 				tt = t+1;
@@ -194,7 +196,7 @@ int CoModuleOption(UBYTE *s)
 		s = t;
 	} while ( *s == ',' );
 	if ( *s ) {
-		MesPrint("@Unrecognized module option: %s",s);
+		MesPrint("&Unrecognized module option: %s",s);
 		error = 1;
 	}
 	return(error);
@@ -392,6 +394,15 @@ void FullCleanUp(void)
  		#[ DoPolyfun :
 */
 
+#define AtOrAmpMesPrint(...) do { \
+	if ( AC.origin == FROMPOINTINSTRUCTION ) { \
+		MesPrint("@" __VA_ARGS__); \
+	} \
+	else { \
+		MesPrint("&" __VA_ARGS__); \
+	} \
+} while (0)
+
 int DoPolyfun(UBYTE *s)
 {
 	GETIDENTITY
@@ -414,27 +425,27 @@ int DoPolyfun(UBYTE *s)
 			return(0);
 		}
 		if ( *s != '=' && *s != ',' ) {
-			MesPrint("@Proper use is: PolyFun[{ ,=}functionname]");
+			MesPrint("&Proper use is: PolyFun[{ ,=}functionname]");
 			return(-1);
 		}
 		if ( *s == '=' ) eqsign = 1;
 	}
 	s++;
 	SKIPBLANKS(s)
-	t = EndOfToken(s);
+	t = SkipAName(s);
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-		if ( AC.origin != FROMPOINTINSTRUCTION && eqsign == 0 ) {
+		if ( eqsign == 0 ) {
 			AR.PolyFun = 0; AR.PolyFunType = 0;
 			return(0);
 		}
-		MesPrint("@ %s is not a properly declared function",s);
+		AtOrAmpMesPrint(" %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
 	}
 	if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) {
-		MesPrint("@The PolyFun must be a regular commuting function!");
+		AtOrAmpMesPrint("The PolyFun must be a regular commuting function!");
 		*t = c;
 		return(-1);
 	}
@@ -443,7 +454,7 @@ int DoPolyfun(UBYTE *s)
 	SKIPBLANKS(t)
 	if ( *t && *t != ',' && *t != ')' ) {
 		t++; c = *t; *t = 0;
-		MesPrint("@Improper ending of end-of-module instruction: %s",s);
+		AtOrAmpMesPrint("Improper ending of end-of-module instruction: %s",s);
 		*t = c;
 		return(-1);
 	}
@@ -459,7 +470,7 @@ int DoPolyratfun(UBYTE *s)
 {
 	GETIDENTITY
 	UBYTE *t, c;
-	WORD funnum;
+	WORD funnum, eqsign = 0;
 	if ( AC.origin == FROMPOINTINSTRUCTION ) {
 		if ( *s == 0 || *s == ',' || *s == ')' ) {
 			AR.PolyFun = 0; AR.PolyFunType = 0; AR.PolyFunInv = 0; AR.PolyFunExp = 0;
@@ -469,6 +480,7 @@ int DoPolyratfun(UBYTE *s)
 			MesPrint("@Proper use in point instructions is: PolyRatFun[=functionname[+functionname]]");
 			return(-1);
 		}
+		eqsign = 1;
 	}
 	else {
 		if ( *s == 0 ) {
@@ -476,24 +488,29 @@ int DoPolyratfun(UBYTE *s)
 			return(0);
 		}
 		if ( *s != '=' && *s != ',' ) {
-			MesPrint("@Proper use is: PolyRatFun[{ ,=}functionname[+functionname]]");
+			MesPrint("&Proper use is: PolyRatFun[{ ,=}functionname[{ ,+}functionname]]");
 			return(-1);
 		}
+		if ( *s == '=' ) eqsign = 1;
 	}
 	s++;
 	SKIPBLANKS(s)
-	t = EndOfToken(s);
+	t = SkipAName(s);
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
+		if ( eqsign == 0 ) {
+			AR.PolyFun = 0; AR.PolyFunType = 0; AR.PolyFunInv = 0; AR.PolyFunExp = 0;
+			return(0);
+		}
 Error1:;
-		MesPrint("@ %s is not a properly declared function",s);
+		AtOrAmpMesPrint(" %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
 	}
 	if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) {
 Error2:;
-		MesPrint("@The PolyRatFun must be a regular commuting function!");
+		AtOrAmpMesPrint("The PolyRatFun must be a regular commuting function!");
 		*t = c;
 		return(-1);
 	}
@@ -502,19 +519,36 @@ Error2:;
 	AR.PolyFunExp = 0;
 	AC.PolyRatFunChanged = 1;
 	*t = c;
-	if ( *t == '+' ) {
-		t++; s = t;
-		t = EndOfToken(s);
+	SKIPBLANKS(t)
+	if ( *t == '+' || ( AC.origin == FROMMODULEOPTION && *t == ',' ) ) {
+		UBYTE *t1 = t;
+		int plussign = *t == '+';
+		t++; SKIPBLANKS(t); s = t;
+		t = SkipAName(s);
 		c = *t; *t = 0;
-		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) goto Error1;
-		if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
-		AR.PolyFunInv = funnum+FUNCTION;
-		*t = c;
+		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
+			if ( plussign == 0 ) {
+				/* Treat this token as the next option keyword. */
+				t = t1;
+			}
+			else {
+				goto Error1;
+			}
+		}
+		else {
+			if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
+			AR.PolyFunInv = funnum+FUNCTION;
+			*t = c;
+			if ( plussign == 0 ) {
+				/* The callers work with '+' but not with ','. */
+				*t1 = '+';
+			}
+		}
 	}
 	SKIPBLANKS(t)
 	if ( *t && *t != ',' && *t != ')' ) {
 		t++; c = *t; *t = 0;
-		MesPrint("@Improper ending of end-of-module instruction: %s",s);
+		AtOrAmpMesPrint("Improper ending of end-of-module instruction: %s",s);
 		*t = c;
 		return(-1);
 	}
