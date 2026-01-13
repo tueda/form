@@ -486,7 +486,6 @@ int DoPolyratfun(UBYTE *s)
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-Error1:;
 		MesPrint("@ %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
@@ -502,14 +501,24 @@ Error2:;
 	AR.PolyFunExp = 0;
 	AC.PolyRatFunChanged = 1;
 	*t = c;
-	if ( *t == '+' ) {
+	if ( *t == '+' || *t == ',' ) {
+		UBYTE *t1 = t;
 		t++; s = t;
 		t = EndOfToken(s);
 		c = *t; *t = 0;
-		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) goto Error1;
-		if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
-		AR.PolyFunInv = funnum+FUNCTION;
-		*t = c;
+		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
+			/* Treat this token as the next option keyword. */
+			t = t1;
+		}
+		else {
+			if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
+			AR.PolyFunInv = funnum+FUNCTION;
+			*t = c;
+			if ( *t1 == ',' ) {
+				/* The callers work with '+' but not with ','. */
+				*t1 = '+';
+			}
+		}
 	}
 	SKIPBLANKS(t)
 	if ( *t && *t != ',' && *t != ')' ) {
