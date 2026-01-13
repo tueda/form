@@ -672,7 +672,7 @@ UBYTE * DoModDollar(UBYTE *s, int type)
 			number = GetDollar(name);
 			if ( number < 0 ) {
 				number = AddDollar(s,0,0,0);
-				Warning("&Undefined $-variable in module statement");
+				Warning("Undefined $-variable in module statement");
 			}
 			md = (MODOPTDOLLAR *)FromList(&AC.ModOptDolList);
 			md->number = number;
