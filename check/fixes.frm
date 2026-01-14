@@ -4437,6 +4437,40 @@ assert result("testCF1") =~ expr("putfirst_(f,2,mu1)*putfirst_(e,2,mu1)*putfirst
 assert result("testCF2") =~ expr("d(mu2,mu1)*e(mu2,mu1)*f(mu2,mu1)")
 assert result("testCF3") =~ expr("d(mu2,mu1,mu3)*e(mu2,mu1,mu3)*f(mu2,mu1,mu3)")
 *--#] Issue750 :
+*--#[ Issue763_1 :
+CF rat,RAT;
+L F = RAT(3,2)/2;
+ModuleOption polyratfun rat,RAT,parallel;
+P;
+.end
+assert succeeded?
+assert result("F") =~ expr("rat(1,3)")
+*--#] Issue763_1 : 
+*--#[ Issue763_2 :
+CF rat,RAT;
+L F = RAT(3,2)/2;
+ModuleOption polyratfun rat+RAT,parallel;
+P;
+.end
+assert succeeded?
+assert result("F") =~ expr("rat(1,3)")
+*--#] Issue763_2 : 
+*--#[ Issue763_3 :
+CF rat,RAT;
+L F = RAT(3,2)/2;
+P;
+.end(polyratfun=rat+RAT);
+assert succeeded?
+assert result("F") =~ expr("rat(1,3)")
+*--#] Issue763_3 : 
+*--#[ Issue763_4 :
+CF rat,RAT;
+L F = RAT(3,2)/2;
+P;
+.end(polyratfun=rat,RAT);
+assert succeeded?
+assert result("F") =~ expr("rat(1,3)")
+*--#] Issue763_4 : 
 *--#[ Issue766 :
 CF f(s,s);
 ModuleOption local,$a;
