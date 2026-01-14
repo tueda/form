@@ -392,6 +392,16 @@ void FullCleanUp(void)
  		#[ DoPolyfun :
 */
 
+#define AtOrAmpMesPrint(...) \
+	do { \
+		if ( AC.origin == FROMPOINTINSTRUCTION ) { \
+			MesPrint("@" __VA_ARGS__); \
+		} \
+		else { \
+			MesPrint("&" __VA_ARGS__); \
+		} \
+	} while (0)
+
 int DoPolyfun(UBYTE *s)
 {
 	GETIDENTITY
@@ -414,7 +424,7 @@ int DoPolyfun(UBYTE *s)
 			return(0);
 		}
 		if ( *s != '=' && *s != ',' ) {
-			MesPrint("@Proper use is: PolyFun[{ ,=}functionname]");
+			MesPrint("&Proper use is: PolyFun[{ ,=}functionname]");
 			return(-1);
 		}
 		if ( *s == '=' ) eqsign = 1;
@@ -429,12 +439,12 @@ int DoPolyfun(UBYTE *s)
 			AR.PolyFun = 0; AR.PolyFunType = 0;
 			return(0);
 		}
-		MesPrint("@ %s is not a properly declared function",s);
+		AtOrAmpMesPrint(" %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
 	}
 	if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) {
-		MesPrint("@The PolyFun must be a regular commuting function!");
+		AtOrAmpMesPrint("The PolyFun must be a regular commuting function!");
 		*t = c;
 		return(-1);
 	}
@@ -443,7 +453,7 @@ int DoPolyfun(UBYTE *s)
 	SKIPBLANKS(t)
 	if ( *t && *t != ',' && *t != ')' ) {
 		t++; c = *t; *t = 0;
-		MesPrint("@Improper ending of end-of-module instruction: %s",s);
+		AtOrAmpMesPrint("Improper ending of end-of-module instruction: %s",s);
 		*t = c;
 		return(-1);
 	}
@@ -476,7 +486,7 @@ int DoPolyratfun(UBYTE *s)
 			return(0);
 		}
 		if ( *s != '=' && *s != ',' ) {
-			MesPrint("@Proper use is: PolyRatFun[{ ,=}functionname[+functionname]]");
+			MesPrint("&Proper use is: PolyRatFun[{ ,=}functionname[{ ,+}functionname]]");
 			return(-1);
 		}
 	}
@@ -486,13 +496,13 @@ int DoPolyratfun(UBYTE *s)
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-		MesPrint("@ %s is not a properly declared function",s);
+		AtOrAmpMesPrint(" %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
 	}
 	if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) {
 Error2:;
-		MesPrint("@The PolyRatFun must be a regular commuting function!");
+		AtOrAmpMesPrint("The PolyRatFun must be a regular commuting function!");
 		*t = c;
 		return(-1);
 	}
@@ -523,7 +533,7 @@ Error2:;
 	SKIPBLANKS(t)
 	if ( *t && *t != ',' && *t != ')' ) {
 		t++; c = *t; *t = 0;
-		MesPrint("@Improper ending of end-of-module instruction: %s",s);
+		AtOrAmpMesPrint("Improper ending of end-of-module instruction: %s",s);
 		*t = c;
 		return(-1);
 	}
