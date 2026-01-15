@@ -4444,9 +4444,9 @@ CF [acc],[rat],[RAT];
 S x,y;
 
 #define t101 "ModuleOption"
-* #define t102 "ModuleOption,PolyFun"
-* #define t103 "ModuleOption PolyFun"
-* #define t104 "ModuleOption , PolyFun"
+#define t102 "ModuleOption,PolyFun"
+#define t103 "ModuleOption PolyFun"
+#define t104 "ModuleOption , PolyFun"
 #define t105 "ModuleOption,PolyFun,Parallel"
 #define t106 "ModuleOption PolyFun Parallel"
 #define t107 "ModuleOption , PolyFun , Parallel"
@@ -4456,9 +4456,9 @@ S x,y;
 #define t113 ".sort(PolyFun,PolyFun)"
 #define t114 ".sort(PolyFun , PolyFun)"
 
-* #define t121 "ModuleOption,PolyRatFun"
-* #define t122 "ModuleOption PolyRatFun"
-* #define t123 "ModuleOption , PolyRatFun"
+#define t121 "ModuleOption,PolyRatFun"
+#define t122 "ModuleOption PolyRatFun"
+#define t123 "ModuleOption , PolyRatFun"
 #define t124 "ModuleOption,PolyRatFun,Parallel"
 #define t125 "ModuleOption PolyRatFun Parallel"
 #define t126 "ModuleOption , PolyRatFun , Parallel"
