@@ -1918,6 +1918,17 @@ UBYTE *strDup1(UBYTE *instring, char *ifwrong)
  		#[ EndOfToken :
 */
 
+/**
+ * Skips over alphanumeric characters to find the end of the token.
+ *
+ * @note This function does not handle formal names (e.g., `[x+a]`).
+ * To handle them, use `SkipAName` instead.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first non-alphanumeric character (i.e., the
+ *                character immediately after the token), or the null
+ *                terminator if the token reaches the end of the string.
+ */
 UBYTE *EndOfToken(UBYTE *s)
 {
 	UBYTE c;
@@ -1930,6 +1941,17 @@ UBYTE *EndOfToken(UBYTE *s)
  		#[ ToToken :
 */
 
+/**
+ * Skips over non-alphanumeric characters to find the start of a token.
+ *
+ * @note This function does not handle formal names (e.g., `[x+a]`).
+ * To handle them, consider simply skipping whitespace, e.g., by using
+ * `SkipSpaces`.
+ *
+ * @param[in]  s  Pointer to a null-terminated input buffer.
+ * @return        Pointer to the first alphanumeric character (i.e., the start
+ *                of the token), or the null terminator if none is found.
+ */
 UBYTE *ToToken(UBYTE *s)
 {
 	UBYTE c;
@@ -1940,11 +1962,17 @@ UBYTE *ToToken(UBYTE *s)
 /*
  		#] ToToken : 
  		#[ SkipField :
-
-	Skips from s to the end of a declaration field.
-	par is the number of parentheses that still has to be closed.
 */
- 
+
+/**
+ * Skips from `s` to the end of a declaration field
+ * (e.g., `x`, `1+2*[x+a]`, or `f({x,[x+a]},1)`).
+ *
+ * @param[in]  s      Pointer to a null-terminated input buffer.
+ * @param[in]  level  Number of parentheses that still have to be closed.
+ * @return            Pointer to the character after the field, which is either
+ *                    a comma at level 0 or the null terminator.
+ */
 UBYTE *SkipField(UBYTE *s, int level)
 {
 	while ( *s ) {
