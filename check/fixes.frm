@@ -4444,6 +4444,7 @@ ModuleOption foo;
 assert compile_error?("Unrecognized module option: foo")
 *--#] Issue760 : 
 *--#[ Issue763 :
+* ModuleOption PolyRatFun with its inverse
 #-
 Off stats;
 CF [acc],[rat],[RAT];
