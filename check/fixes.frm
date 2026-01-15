@@ -4545,6 +4545,7 @@ for i in 1..499 do
 end
 *--#] Issue763 : 
 *--#[ Issue766 :
+* Unintended "&" in some warning messages
 CF f(s,s);
 ModuleOption local,$a;
 .end
