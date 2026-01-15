@@ -424,19 +424,32 @@ int ParenthesesTest(UBYTE *sin)
 /*
  		#] ParenthesesTest : 
  		#[ SkipAName :
-
-		Skips a name and gives a pointer to the object after the name.
-		If there is not a proper name, it returns a zero pointer.
-		In principle the brackets match already, so the `if ( *s == 0 )'
-		code is not really needed, but you never know how the program
-		is extended later.
 */
 
+/**
+ * Skips a name and gives a pointer to the character after the name.
+ * If there is not a proper name, it emits a compiler message and then returns
+ * a null pointer.
+ * This function supports formal names (e.g., `[x+a]`) and $-variables
+ * in addition to ordinary identifiers.
+ *
+ * @note The brackets are assumed to be matched already.
+ *
+ * @param[in]  s  Pointer to a null-terminated input string that starts
+ *                with a name.
+ * @return        Pointer to the character after the name, or a null pointer
+ *                if the name is invalid.
+ */
 UBYTE *SkipAName(UBYTE *s)
 {
 	UBYTE *t = s;
 	if ( *s == '[' ) {
 		SKIPBRA1(s)
+/*
+		In principle the brackets match already, so the `if ( *s == 0 )'
+		code is not really needed, but you never know how the program
+		is extended later.
+*/
 		if ( *s == 0 ) {
 			MesPrint("&Illegal name: '%s'",t);
 			return(0);
