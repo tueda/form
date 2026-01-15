@@ -172,9 +172,11 @@ int CoModuleOption(UBYTE *s)
 		}
 		if ( StrCmp((UBYTE *)(option->name),(UBYTE *)("polyfun")) == 0
 		 || StrCmp((UBYTE *)(option->name),(UBYTE *)("polyratfun")) == 0 ) {
+			SKIPBLANKS(t);
+			if ( *t == ',' || *t == '=' ) t++;
+			SKIPBLANKS(t);
+			if ( *t ) { tt = SkipAName(t); if ( tt ) t = tt; }
 			polyflag = 1;
-			t++;
-			t = SkipAName(t);
 		}
 		else polyflag = 0;
 		if ( option->flags > 0 ) return(error);
