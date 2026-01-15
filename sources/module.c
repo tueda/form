@@ -430,11 +430,11 @@ int DoPolyfun(UBYTE *s)
 	}
 	s++;
 	SKIPBLANKS(s)
-	t = EndOfToken(s);
+	t = SkipAName(s);
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-		if ( AC.origin != FROMPOINTINSTRUCTION && eqsign == 0 ) {
+		if ( eqsign == 0 ) {
 			AR.PolyFun = 0; AR.PolyFunType = 0;
 			return(0);
 		}
@@ -468,7 +468,7 @@ int DoPolyratfun(UBYTE *s)
 {
 	GETIDENTITY
 	UBYTE *t, c;
-	WORD funnum;
+	WORD funnum, eqsign = 0;
 	if ( AC.origin == FROMPOINTINSTRUCTION ) {
 		if ( *s == 0 || *s == ',' || *s == ')' ) {
 			AR.PolyFun = 0; AR.PolyFunType = 0; AR.PolyFunInv = 0; AR.PolyFunExp = 0;
@@ -478,6 +478,7 @@ int DoPolyratfun(UBYTE *s)
 			MesPrint("@Proper use in point instructions is: PolyRatFun[=functionname[+functionname]]");
 			return(-1);
 		}
+		eqsign = 1;
 	}
 	else {
 		if ( *s == 0 ) {
@@ -488,13 +489,19 @@ int DoPolyratfun(UBYTE *s)
 			MesPrint("&Proper use is: PolyRatFun[{ ,=}functionname[{ ,+}functionname]]");
 			return(-1);
 		}
+		if ( *s == '=' ) eqsign = 1;
 	}
 	s++;
 	SKIPBLANKS(s)
-	t = EndOfToken(s);
+	t = SkipAName(s);
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
+		if ( eqsign == 0 ) {
+			AR.PolyFun = 0; AR.PolyFunType = 0; AR.PolyFunInv = 0; AR.PolyFunExp = 0;
+			return(0);
+		}
+Error1:;
 		AtOrAmpMesPrint(" %s is not a properly declared function",s);
 		*t = c;
 		return(-1);
@@ -510,14 +517,20 @@ Error2:;
 	AR.PolyFunExp = 0;
 	AC.PolyRatFunChanged = 1;
 	*t = c;
-	if ( *t == '+' || *t == ',' ) {
+	if ( *t == '+' || ( AC.origin == FROMMODULEOPTION && *t == ',' ) ) {
 		UBYTE *t1 = t;
+		int plussign = *t == '+';
 		t++; s = t;
-		t = EndOfToken(s);
+		t = SkipAName(s);
 		c = *t; *t = 0;
 		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-			/* Treat this token as the next option keyword. */
-			t = t1;
+			if ( plussign == 0 ) {
+				/* Treat this token as the next option keyword. */
+				t = t1;
+			}
+			else {
+				goto Error1;
+			}
 		}
 		else {
 			if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
