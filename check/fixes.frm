@@ -4440,9 +4440,12 @@ assert result("testCF3") =~ expr("d(mu2,mu1,mu3)*e(mu2,mu1,mu3)*f(mu2,mu1,mu3)")
 *--#[ Issue766 :
 * Unintended "&" in some warning messages
 CF f(s,s);
+CF f>=x<=x;
 ModuleOption local,$a;
 .end
+assert return_value == 0
 assert warning?("Excess information in symmetric properties")
+assert warning?("Illegal information in number of arguments properties")
 assert warning?("Undefined $-variable")
 *--#] Issue766 : 
 *--#[ PullReq535 :
