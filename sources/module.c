@@ -517,10 +517,11 @@ Error2:;
 	AR.PolyFunExp = 0;
 	AC.PolyRatFunChanged = 1;
 	*t = c;
+	SKIPBLANKS(t)
 	if ( *t == '+' || ( AC.origin == FROMMODULEOPTION && *t == ',' ) ) {
 		UBYTE *t1 = t;
 		int plussign = *t == '+';
-		t++; s = t;
+		t++; SKIPBLANKS(t); s = t;
 		t = SkipAName(s);
 		c = *t; *t = 0;
 		if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
@@ -536,7 +537,7 @@ Error2:;
 			if ( functions[funnum].spec > 0 || functions[funnum].commute != 0 ) goto Error2;
 			AR.PolyFunInv = funnum+FUNCTION;
 			*t = c;
-			if ( *t1 == ',' ) {
+			if ( plussign == 0 ) {
 				/* The callers work with '+' but not with ','. */
 				*t1 = '+';
 			}
