@@ -159,7 +159,7 @@ int CoModuleOption(UBYTE *s)
 				continue;
 			}
 			else {
-				MesPrint("@Unrecognized module option: %s",s);
+				MesPrint("&Unrecognized module option: %s",s);
 				error = 1;
 				polyflag = 0;
 				*t = c;
@@ -196,7 +196,7 @@ int CoModuleOption(UBYTE *s)
 		s = t;
 	} while ( *s == ',' );
 	if ( *s ) {
-		MesPrint("@Unrecognized module option: %s",s);
+		MesPrint("&Unrecognized module option: %s",s);
 		error = 1;
 	}
 	return(error);
