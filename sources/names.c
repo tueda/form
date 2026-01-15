@@ -1548,7 +1548,6 @@ retry:;
 				|| ( StrICont(par,(UBYTE *)"args") == 0 ) ) {}
 				else {
 					Warning("Illegal information in number of arguments properties currently ignored");
-					error = 1;
 				}
 				*s = cc;
 			}
@@ -1572,7 +1571,6 @@ retry:;
 				|| ( StrICont(par,(UBYTE *)"args") == 0 ) ) {}
 				else {
 					Warning("Illegal information in number of arguments properties currently ignored");
-					error = 1;
 				}
 				*s = cc;
 			}

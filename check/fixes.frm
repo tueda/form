@@ -4547,9 +4547,12 @@ end
 *--#[ Issue766 :
 * Unintended "&" in some warning messages
 CF f(s,s);
+CF f>=x<=x;
 ModuleOption local,$a;
 .end
+assert return_value == 0
 assert warning?("Excess information in symmetric properties")
+assert warning?("Illegal information in number of arguments properties")
 assert warning?("Undefined $-variable")
 *--#] Issue766 : 
 *--#[ PullReq535 :
