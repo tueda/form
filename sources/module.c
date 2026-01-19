@@ -436,8 +436,9 @@ int DoPolyfun(UBYTE *s)
 	c = *t; *t = 0;
 
 	if ( GetName(AC.varnames,s,&funnum,WITHAUTO) != CFUNCTION ) {
-		if ( eqsign == 0 ) {
+ 		if ( eqsign == 0 ) {
 			AR.PolyFun = 0; AR.PolyFunType = 0;
+			*t = c;
 			return(0);
 		}
 		AtOrAmpMesPrint(" %s is not a properly declared function",s);
