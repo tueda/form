@@ -729,13 +729,6 @@ label notreplaced;
     #redefine momenta "`momenta',q`i'"
   #enddo
 
-  #ifdef `momenta'
-  #else
-*   Currently, an empty set of external momenta doesn't work properly.
-*   See: https://github.com/form-dev/form/issues/758.
-    #redefine momenta "parg_"
-  #endif
-
 * Construct the cache key.
 
   #define opt1 "`formoptions'"
