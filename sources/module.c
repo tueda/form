@@ -659,6 +659,7 @@ UBYTE * DoModDollar(UBYTE *s, int type)
 	UBYTE *name, c;
 	WORD number;
 	MODOPTDOLLAR *md;
+	int nummodopt;
 	while ( *s == '$' ) {
 /*
 		Read the name of the dollar
@@ -671,8 +672,22 @@ UBYTE * DoModDollar(UBYTE *s, int type)
 			c = *s; *s = 0;
 			number = GetDollar(name);
 			if ( number < 0 ) {
+				UBYTE *s1;
 				number = AddDollar(s,0,0,0);
-				Warning("Undefined $-variable in module statement");
+				s1 = strDup1((UBYTE *)"Undefined $-variable in module option; option ignored: $","Undefined $-variable in ModuleOption");
+				s1 =  AddToString(s1,name,0);
+				Warning((char *)s1);
+				M_free(s1,"Undefined $-variable in ModuleOption");
+			}
+			for ( nummodopt = 0; nummodopt < NumModOptdollars; nummodopt++ ) {
+				if ( number == ModOptdollars[nummodopt].number && type != ModOptdollars[nummodopt].type ) {
+					UBYTE *s1;
+					s1 = strDup1((UBYTE *)"Conflicting module options for $-variable; later option ignored: $","Conflicting $-variable in ModuleOption");
+					s1 = AddToString(s1,name,0);
+					Warning((char *)s1);
+					M_free(s1,"Conflicting $-variable in ModuleOption");
+					break;
+				}
 			}
 			md = (MODOPTDOLLAR *)FromList(&AC.ModOptDolList);
 			md->number = number;
