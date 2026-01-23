@@ -2357,6 +2357,23 @@ discard;
 .end
 assert succeeded?
 *--#] ModuleOption_dollar_order : 
+*--#[ ModuleOption_dollar_warnings_1 :
+$a = 0;
+ModuleOption local,$a;
+ModuleOption local,$a;
+.end
+assert succeeded?
+*--#] ModuleOption_dollar_warnings_1 : 
+*--#[ ModuleOption_dollar_warnings_2 :
+ModuleOption local,$a;
+$b = 0;
+ModuleOption local,$b;
+ModuleOption sum,$b;
+.end
+assert return_value == 0
+assert warning?("Undefined $-variable in module option; option ignored: $a")
+assert warning?("Conflicting module options for $-variable; later option ignored: $b")
+*--#] ModuleOption_dollar_warnings_2 : 
 *--#[ Issue49 :
 * Add mul_ function for polynomial multiplications
 Symbols x,y,z;
