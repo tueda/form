@@ -2878,6 +2878,15 @@ assert result("F3") =~ expr("+D")
 .end
 assert succeeded?
 *--#] Issue434 :
+*--#[ Issue445 :
+* Tensors with zeros as arguments vanish
+T t;
+L F = t(0);
+P;
+.end
+assert succeeded?
+assert result("F") =~ expr("t(0)")
+*--#] Issue445 : 
 *--#[ Issue460_1 :
 * Improve format mathematica, for powers of dot products
 Vector p,q;

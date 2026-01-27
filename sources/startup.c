@@ -1017,6 +1017,7 @@ void StartVariables(void)
 	AM.resetTimeOnClear = 1;
 	AM.gnumextrasym = AM.ggnumextrasym = 0;
 	AM.havesortdir = 0;
+	AM.vectorzero = -1;
 	AM.SpectatorFiles = 0;
 	AM.NumSpectatorFiles = 0;
 	AM.SizeForSpectatorFiles = 0;
