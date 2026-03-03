@@ -1,6 +1,16 @@
 // { ( [
 //**************************************************************
 // grcc.cc
+/**
+ * @file grcc.cc
+ * @brief Implementation of GRCC graph generation and assignment pipeline.
+ * @details High-level flow:
+ * 1) Build model/process metadata and node classes.
+ * 2) Generate topology graphs (MGraph) with canonical filtering.
+ * 3) Convert to edge-object graphs (EGraph) and analyze connectivity/momenta.
+ * 4) Assign concrete particles/interactions (Assign) via backtracking.
+ * 5) Apply QGRAF-style filters and emit final accepted graphs.
+ */
 
 /* #[ License : */
 /*
@@ -157,9 +167,14 @@ static int      prlevel = 2;
 static ErExit  *erExit  = NULL;
 static void    *erExitArg  = NULL;
 
+// prlevel controls diagnostic verbosity; erExit is an optional callback
+// used by embedding code (FORM) to forward fatal errors.
+
 //**************************************************************
 // Utility functions
 //==============================================================
+/** @brief Map: local helpers for containers/sorting/set-like operations,
+ * permutation enumeration, and diagnostics used across all sections. */
 
 static void   grcc_fprintf(FILE* out, const char* fmt, ...);
 static void   erEnd(const char *msg);
@@ -229,6 +244,8 @@ Options::Options(void)
     }
     nqgopt = 0;
     for (int j = 0; j < nOptQGDef; j++) {
+        // Each logical QGRAF option is registered in both positive and
+        // complementary form (e.g. onepi / onepr) with sign = +/- 1.
         qgref[nqgopt].name  = optQGDef[j].name;
         qgref[nqgopt].index = j;
         qgref[nqgopt].sign  = +1;
@@ -1661,6 +1678,13 @@ void Output::outModelP(void)
 //**************************************************************
 // model.cc
 
+/** @brief Map:
+ * Particle normalizes particle/antiparticle identity and type metadata.
+ * Interaction stores leg content and coupling-order signature.
+ * Model owns particles/interactions and builds class tables for process
+ * splitting and assignment pruning.
+ */
+
 //==============================================================
 
 static const char *ptypenames[]  = GRCC_PT_Table;
@@ -2622,6 +2646,13 @@ void Model::printIInput(IInput *iin)
 //**************************************************************
 // proc.cc
 
+/** @brief Map:
+ * PNodeClass provides class-level node constraints (deg/type/coupling).
+ * SProcess is a fixed topology subproblem; drives MGraph generation and
+ * delegates assignment.
+ * Process is user-level; expands into SProcesses and aggregates weights.
+ */
+
 //==============================================================
 // class PNodeClass
 //--------------------------------------------------------------
@@ -3208,6 +3239,10 @@ int SProcess::toMNodeClass(int *cltyp, int *cldeg, int *clnum, int *cmind, int *
     int j;
 
     for (j = 0; j < nclass; j++) {
+        // Internal classes are represented by the number of internal loops
+        // attached to the node class:
+        //   loop = (total coupling order - degree + 2) / 2.
+        // External classes are marked with -1 as a sentinel.
         if (isATExternal(pnclass->type[j])) {
             cltyp[j] = -1;
         } else {
@@ -3226,6 +3261,8 @@ void SProcess::assign(MGraph *mgr)
 {
     PNodeClass *pnc;
 
+    // Match the canonicalized MGraph class layout to this subprocess,
+    // then run particle/interaction assignment on that fixed topology.
     pnc = match(mgr);
 
     agraph = new Assign(this, mgr, pnc);
@@ -3717,6 +3754,12 @@ void Process::mkSProcess(void)
 //**************************************************************
 // mgraph.cc
 //==============================================================
+/** @brief Map:
+ * MNodeClass is an evolving partition for canonical generation.
+ * MGraph performs DFS topology construction with early pruning
+ * (connectivity/isomorphism/option filters).
+ * MOrbits provides optional orbit bookkeeping from symmetry permutations.
+ */
 //--------------------------------------------------------------
 MNodeClass::MNodeClass(int nnodes, int nclasses)
 {
@@ -4354,6 +4397,9 @@ Bool MGraph::isIsomorphic(MNodeClass *cl)
     nsym = ToBigInt(0);
     esym = ToBigInt(1);
 
+    // Enumerate permutations that preserve current node classes.
+    // Canonical criterion: current adjacency matrix must be lexicographically
+    // maximal among all class-preserving permutations.
     group->newGroup(nNodes, cl->nClasses, cl->clist);
 
 #ifdef ORBITS
@@ -4384,6 +4430,8 @@ Bool MGraph::isIsomorphic(MNodeClass *cl)
         permMat(nNodes, perm, adjMat, modmat);
         cmp = compMat(nNodes, adjMat, modmat);
         if (cmp < 0) {
+            // Found a larger representative in the same orbit.
+            // Current graph is non-canonical and must be discarded.
             return False;
         } else if (cmp == 0) {
             // if ngroup < 0, symmetry group is $S_{-group}$.
@@ -4979,7 +5027,9 @@ BigInt MGraph::generate(void)
 //---------------------------------------------------------------
 void MGraph::connectClass(MNodeClass *cl)
 {
-    // Connect nodes in a class to others
+    // Depth-first generation over class-ordered nodes.
+    // refineClass() tightens node partitioning and enforces canonical order
+    // so we prune isomorphic branches as early as possible.
 
     int sc, sn;
     MNodeClass *xcl;
@@ -5011,11 +5061,14 @@ void MGraph::connectNode(int so, int ss, MNodeClass *cl)
 
     sc = cl->clord[so];
     if (ss >= cl->flist[sc+1]) {
+        // Current class is exhausted: proceed with the next class.
         connectClass(cl);
         return;
     }
 
     for (sn = ss; sn < cl->flist[sc+1]; sn++) {
+        // Expand one node at a time; connectLeg() handles multiplicity and
+        // recursion to subsequent nodes/classes.
         connectLeg(so, sn, so, sn, cl);
         return;
     }
@@ -5062,6 +5115,8 @@ void MGraph::connectLeg(int so, int sn, int to, int ts, MNodeClass *cl)
             ts1 = cl->flist[tc];
         }
 #ifdef MINMAXLEG
+    // Optional pruning: skip candidate targets whose degree range cannot
+    // satisfy min/max constraints inferred from interaction structure.
         if (ts1 >= nNodes) {
             continue;
         }
@@ -5454,6 +5509,8 @@ void MOrbits::toOrbits(void)
 //**************************************************************
 // n-edge connected components
 //============================================================
+/** @brief Map: MConn and related structs capture bridges/blocks/1PI
+ * components extracted from generated graphs and reused by topology filters. */
 // class MCEdge
 //------------------------------------------------------------
 MCEdge::MCEdge(void)
@@ -5867,6 +5924,8 @@ void MConn::prEdges(void)
 //**************************************************************
 // sgroup.cc
 //==============================================================
+/** @brief Map: class-preserving permutation generator and storage for
+ * symmetry elements used by canonical representative tests and factors. */
 // compile options
 //============================================================
 // table of group elements
@@ -6015,6 +6074,11 @@ int *SGroup::nextElem(void)
 // egraph.cc
 // Generate scalar connected Feynman graphs.
 //==============================================================
+/** @brief Map:
+ * ENode/EEdge are object forms of topology with momentum annotations.
+ * EGraph runs biconnectivity + momentum assignment + QGRAF-style filters
+ * before/after particle assignment.
+ */
 static const char *GRCC_ND_names[] = GRCC_ND_NAMES;
 static const char *GRCC_ED_names[] = GRCC_ED_NAMES;
 
@@ -6589,7 +6653,7 @@ void EGraph::fromDGraph(DGraph *dg)
 void EGraph::fromMGraph(MGraph *mg)
 {
     // construct EGraph from adjacency matrix.
-    // This function should be called after
+    // Precondition:
     //   EGraph(), setExtLoop() and endSetExtLoop().
 
     int n0, n1, m0, m1, ed, e;
@@ -7075,6 +7139,11 @@ Bool EGraph::optQGrafM(Options *opt)
         nopis[econn->opics[j].nlegs]++;
     }
 
+    // qgopt[] uses tri-state semantics per option:
+    //   >0 : require condition,
+    //   <0 : require complementary condition,
+    //    0 : ignore condition.
+
     //  
     if (qgopt[GRCC_QGRAF_OPT_ONEPI] > 0) {
         if (econn->nopic != 1) {
@@ -7497,7 +7566,11 @@ void EGraph::biconnE(void)
     int extlst[GRCC_MAXEDGES], intlst[GRCC_MAXEDGES];
     int opiext, opiloop;
 
+    // Count edges directly connecting two degree-2 vertices.
+    // This statistic is used by some topology rejection options.
     nadj2ptv = 0;
+    // Repeatedly pick an unvisited root and decompose each connected
+    // component into 1PI information while assigning momentum structure.
     for (e = 0; e < nEdges; e++) {
         if (nodes[edges[e]->nodes[0]]->deg == 2 &&
             nodes[edges[e]->nodes[1]]->deg == 2 &&
@@ -7559,8 +7632,8 @@ void EGraph::biinitE(void)
 {
     int n, j, e;
 
-    bicount = 0;                  // counter of visiting node
-    loopm   = 0;                  // # of independent loop momentum 
+    bicount = 0;                  // DFS discovery counter
+    loopm   = 0;                  // # of independent loop momenta
 
     nopicomp = 0;
     opi2plp  = 0;
@@ -7630,7 +7703,9 @@ void EGraph::bisearchE(int nd, int *extlst, int *intlst, int *opiext, int *opilo
         intlst[j] = False;
     }
 
-    // go to children : nd --> ed --> td
+    // DFS over incident edges: nd --ed--> td.
+    // bidef[]/bilow[] play the usual Tarjan lowlink role to detect cut points
+    // and bridges while momentum labels are accumulated on unwind.
     for (e = 0; e < nodes[nd]->deg; e++) {
         ed = V2Iedge(nodes[nd]->edges[e]);
 
@@ -7676,7 +7751,8 @@ void EGraph::bisearchE(int nd, int *extlst, int *intlst, int *opiext, int *opilo
             intlst[ed] = True;
             (*opiloop)++;
     
-            // create new loop momentum
+            // Back edge closes one independent cycle => create one loop basis
+            // momentum and attach it to this edge with orientation 'dir'.
             k = loopm++;
             nodes[nd]->klow[k] = Min(nodes[nd]->klow[k], nodes[td]->klow[k]);
             edges[ed]->setLMom(k, dir);
@@ -7696,7 +7772,7 @@ void EGraph::bisearchE(int nd, int *extlst, int *intlst, int *opiext, int *opilo
                 extlst[j] = extlst[j] || extlst1[j];
             }
     
-            // loop momenta
+            // Propagate loop-momentum support from child subtree to parent.
             for (k = 0; k < nLoops; k++) {
                 if (nodes[td]->klow[k] <= nodes[nd]->klow[k]) {
                     // inside loop 'k'
@@ -7739,6 +7815,8 @@ void EGraph::bisearchE(int nd, int *extlst, int *intlst, int *opiext, int *opilo
 
                 if (!edges[ed]->ext) {
                     // internal bridge 
+                    // Internal bridges split 1PI components: finalize the
+                    // child-side component and restart accumulation at parent.
                     opiext1++;            // from bridge
                     for (ie = 0; ie < nEdges; ie++) {
                         if (intlst1[ie]) {
@@ -7925,12 +8003,12 @@ int  EGraph::fltrace(int fk, int nd0, int *fl)
     // fl  : list of signed edge on the fermion line.
     //       fl[j] : 
     //       (V2Iedge(fl[j]), V2Ileg(fl[j])) is the next node
-    //       fl[0] should be already defined
+    //       fl[0] is expected to be initialized by caller.
 
     int nfl, k, i, nd, nl, e, ed, el, fgcnt, fkind, lk;
 
     nfl = 1;
-    // maximal possible length of a fline is nEdges
+    // maximal traced length is bounded by nEdges
     for (k = 0; k < nEdges; k++) {
         if (k >= nfl) {
             grcc_fprintf(GRCC_Stdout, "*** fltrace:illegal contorl: k=%d, nEdges=%d\n", k, nEdges);
@@ -7982,8 +8060,8 @@ int  EGraph::fltrace(int fk, int nd0, int *fl)
                     edges[ed]->visited = True;
                 } else {
                     if (fkind == fk) {
-                        // i should be the neighbor of nl
-                        // (nl, i) or (i, nl) should be a pair of fkind
+                        // i is the neighbor position of nl on this vertex.
+                        // (nl, i) or (i, nl) forms one fkind pair.
                         // (nl, i) : lk = -1
                         // (i, nl) : lk =  1
                         if ((lk == 1 && nl == i+1) || (lk == -1 && nl == i-1)) {
@@ -8139,6 +8217,11 @@ void EGraph::addFLine(const FLType ft, int fk, int nfl, int *fl)
 //==============================================================
 // Assign particles to the edges and interactions to nodes.
 // Completed graph data is saved in the form of EGraph.
+/** @brief Map:
+ * NCand/ECand represent candidate sets for node interactions / edge particles.
+ * Assign is a backtracking solver with propagation, stack checkpoints,
+ * canonical-duplicate rejection, and EGraph materialization.
+ */
 
 // method : selection of assignable node
 
@@ -8576,6 +8659,9 @@ Bool Assign::selectLeg(int v, int lastlg)
         return ok;
     }
 
+    // Backtracking checkpoint before branching on candidate particle labels.
+    // sav0 restores the state local to this call, sav restores per-branch state.
+
     // make the list of possible particles, incoming to the vertex
     astack->checkPoint(sav0);
     nplist = candPart(v, ln, plist, GRCC_MAXMPARTICLES2);
@@ -8672,7 +8758,8 @@ Bool Assign::assignVertex(int v)
     astack->checkPoint(sav);
     saveCouple(savc0);
 
-    // assign to all vertices with only one candidate
+    // First perform deterministic propagation: vertices with a single
+    // interaction candidate are assigned eagerly to shrink the search tree.
     done = False;
     for (n = 0; n < nNodes; n++) {
 
@@ -8734,7 +8821,7 @@ Bool Assign::assignVertex(int v)
         return ok;
     }
 
-    // there are still several possibilities.
+    // Remaining ambiguity: branch over all candidates for vertex v.
 
     astack->checkPoint(sav1);
     saveCouple(savc1);
@@ -8801,7 +8888,7 @@ Bool Assign::allAssigned(void)
     }
 #endif
 
-    // check duplication by violating ordering condition
+    // Canonical leg ordering avoids duplicates from local relabelings.
     if (!isOrdLegs()) {
         return False;
     }
@@ -8809,7 +8896,7 @@ Bool Assign::allAssigned(void)
     // classification of nodes
     cl = mgraph->curcl;
 
-    // check isomorphism and calculate sfactor
+    // Global canonical test and symmetry factor extraction.
     nsym = 0;
     esym = 0;
 
@@ -8832,7 +8919,7 @@ Bool Assign::allAssigned(void)
 #ifdef CHECK
     checkAG("allAssigned");
 #endif
-    // fill information to resulting Egraph
+    // Persist assignment into EGraph; this also computes fermion sign.
     fillEGraph(nAGraphs, nsym, esym, nsym1);
 
 #ifdef OPTEXTONLY
@@ -8857,7 +8944,10 @@ Bool Assign::allAssigned(void)
 //---------------------------------------------------------------
 Bool Assign::fromMGraph(void)
 {
-    // Import from MGraph
+    // Import topology from MGraph into assignment structures:
+    //   - build ANode/AEdge views,
+    //   - seed candidate interactions/particles per node/edge,
+    //   - encode external nodes as already-fixed assignments.
 
     int     npall, *pall;
     int     np[1];
@@ -9388,13 +9478,11 @@ int Assign::candPart(int v, int ln, int *plist, const int size)
 //---------------------------------------------------------------
 int Assign::selUnAssVertexSimp(int lastv)
 {
-    //  Select a vertex for assignment to its leg.
-    //  We take one with minimum number of candidates
-    //
-    //  There may be better method.
+    // Select a vertex for assignment.
 
     int v0, v;
 
+    // SIMPSEL strategy: deterministic left-to-right traversal.
     // select vertex one by one in the sequential order of node number
     v0 = Max(lastv+1, nExtern);
     for (v = v0; v < nNodes; v++) {
@@ -9408,10 +9496,9 @@ int Assign::selUnAssVertexSimp(int lastv)
 //---------------------------------------------------------------
 int Assign::selUnAssVertex(void)
 {
-    //  Select a vertex for assignment to its leg.
-    //  We take one with minimum number of candidates
-    //
-    //  There may be better method.
+    // Select a vertex for assignment.
+    // Prefer an unresolved vertex with one candidate; otherwise choose
+    // the unresolved vertex with the smallest candidate set.
 
     int v0, v, nl;
 
@@ -9445,7 +9532,8 @@ int Assign::selUnAssLeg(int v, int lastlg)
     int n0, n1;
 #endif
 
-    // lg0 = Max(lastlg, lastlg + 1);
+    // Always continue after the previously assigned leg.
+    // (Equivalent to Max(lastlg, lastlg+1) but simpler.)
     lg0 = lastlg + 1;
 
     for (lg = lg0; lg < nodes[v]->deg; lg++) {
@@ -9508,7 +9596,7 @@ NCandSt Assign::assignIVertex(int v, int ia)
 
     // from interaction
     if (cmpArray(deg, lplist, deg, iplist) == 0) {
-        // orders of coupling constants should be checked ???
+        // Particle multiset matches interaction legs.
         astack->pushNode(v);
         nodes[v]->cand->st = AS_Assigned;
         nodes[v]->cand->nilist = 1;
@@ -9648,6 +9736,10 @@ Bool Assign::candPartClassify(int v, int *npdass, int *pdass, int *npuass, int *
 
     int lg, e, npl, ass, jd, ju, j, pt, pts;
 
+    // Build two multisets in leg-local orientation:
+    //   pdass: particles on already-determined edges,
+    //   puass: particles from still-ambiguous edges.
+    // They are later matched against interaction slists to prune candidates.
     jd = 0;
     ju = 0;
     for (lg = 0; lg < nodes[v]->deg; lg++) {
@@ -9725,6 +9817,9 @@ Bool Assign::updateCandNode(int v)
         return False;
     }
 
+    // Filter interaction candidates using multiset inclusion constraints:
+    //   pdass ⊆ slist ⊆ (pdass ∪ puass)
+    // Remaining slist\pdass contributes additional admissible edge particles.
     // from interaction : slist
     // Conditions :
     // 1. pdass \subset slist
@@ -9775,6 +9870,8 @@ Bool Assign::updateCandNode(int v)
 #endif
     }
 
+    // Intersect each adjacent edge candidate list with particles implied by
+    // surviving interaction candidates, then propagate newly fixed edges.
     // edge
     for (lg = 0; lg < nodes[v]->deg; lg++) {
         e = nodes[v]->aedges[lg];
@@ -10219,6 +10316,8 @@ void Assign::checkNode(int n, const char *msg)
 //==============================================================
 // Assign particles to the edges and interactions to nodes.
 // Completed graph data is saved in the form of EGraph.
+/** @brief Map: reversible state snapshots for node/edge candidate mutations,
+ * enabling deep backtracking without full object copies. */
 
 //=============================================================
 // stack operations
@@ -10447,6 +10546,8 @@ void AStack::prStack(void)
 //**************************************************************
 // class Fraction
 //==============================================================
+/** @brief Map: exact rational arithmetic for weighted graph sums,
+ * plus cached floating ratio for reporting. */
 Fraction::Fraction(BigInt n, BigInt d)
 {
     BigInt g;
@@ -10572,6 +10673,8 @@ Bool Fraction::isEq(Fraction f)
 //**************************************************************
 // common.cc
 //==============================================================
+/** @brief Map: portability glue (FORM host vs standalone) and generic
+ * utilities consumed by multiple algorithm sections above. */
 
 // Wrapper function for printing messages. This allows the use
 // of FORM MesPrint when compiled as part of FORM, and the
@@ -10956,7 +11059,7 @@ static int intSetAdd(int n, int *a, int v, const int size)
     // Add 'v' into 'a'.  
     // 'n' is the current # of element.
     // 'a' is assumed sorted without duplicated elements.
-    // Size of 'a' should be large enough.
+    // capacity is validated against 'size' below.
 
     int j, k;
 
@@ -10986,7 +11089,7 @@ static int intSListAdd(int n, int *a, int v, const int size)
     // Add 'v' into 'a'.  
     // 'n' is the current # of element.
     // 'a' is assumed sorted without duplicated elements.
-    // Size of 'a' should be large enough.
+    // capacity is validated against 'size' below.
 
     int j, k;
 

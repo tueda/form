@@ -44,6 +44,12 @@
 #define GRCC_MAXGROUP      1000
 #define GRCC_MAXPSLIST      500
 
+/**
+ * @brief Static limits for stack/array allocations throughout GRCC.
+ * @note Increasing these values raises memory usage and may require reviewing
+ * recursion and stack behavior in generation and assignment code.
+ */
+
 #define GRCC_MAXMPARTICLES2  (2*GRCC_MAXMPARTICLES-1)
 #define GRCC_MAXFLINES       GRCC_MAXEDGES
 
@@ -137,11 +143,18 @@ typedef struct {
 typedef struct {
     const char *name;
     int         index;
-    int         sign; 
+    int         sign;   /**< +1: option name, -1: complementary option name */
 } OptQGRef;
 
 /*---------------------------------------------------------------
  * QGRAF options
+ */
+/**
+ * @brief Runtime semantics in Options::qgopt[k].
+ * @details
+ * - >0 : require option k.
+ * - <0 : require complement of option k.
+ * - 0  : do not filter by option k.
  */
 #define GRCC_QGRAF_OPT_ONEPI       0
 #define GRCC_QGRAF_OPT_ONSHELL     1
@@ -165,6 +178,10 @@ typedef struct {
  * Conversion of 
  *     eind : index (ed) of EGraph.edges[ed]
  *     sind : value (v)  of EGraph.nodes[nd]->edges[j])
+ */
+/**
+ * @brief Signed edge encoding convention.
+ * @details abs(v)-1 gives edge index, sign(v) gives leg orientation.
  */
 #define   I2Vedge(eind, sign)    (((sign<=0)?(-1):(1))*((eind)+1))
 #define   V2Iedge(sind)          (abs(sind)-1)
@@ -206,7 +223,7 @@ typedef struct {
     /* used as input to MGraph() and SProcess() */
     int cldeg;  
     int clnum;
-    int cltyp;
+    int cltyp;  /* internal-loop marker per class; negative values denote external classes */
     int cmind;
     int cmaxd;
 
@@ -225,7 +242,7 @@ typedef struct {
     long          nfinal;              /* the number of final particles */
     const char   *finaln[GRCC_MAXNODES];    /* list of final particles (name) */
     int           finalc[GRCC_MAXNODES];    /* list of final particles (code) */
-    int           coupl[GRCC_MAXNCPLG];     /* list of orders of c. consts */
+    int           coupl[GRCC_MAXNCPLG];     /* total coupling orders for the process */
 } FGInput;
 
 /* class of node : input for SProcess */

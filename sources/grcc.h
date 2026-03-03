@@ -1,5 +1,12 @@
 #pragma once
 
+/**
+ * @file grcc.h
+ * @brief Public declarations for GRCC graph generation.
+ * @details Declares model/process/topology/assignment data structures and
+ * callback-oriented entry points used by FORM and standalone GRCC builds.
+ */
+
 /* #[ License : */
 /*
  *   Copyright (C) 2023-2026 T. Kaneko
@@ -29,6 +36,13 @@
 #include <time.h>
 
 #define CHECK
+
+/**
+ * @brief Object model for GRCC graph generation.
+ * @details Pipeline overview:
+ * Model/Process -> SProcess -> MGraph (topology) -> EGraph (edge objects)
+ * -> Assign (particle/interaction assignment) -> Output/callbacks.
+ */
 //==============================================================
 extern "C" {
 #include "grccparam.h"
@@ -97,7 +111,45 @@ typedef Bool OutEGB(EGraph *, void *);
 typedef void OutEG(EGraph *, void *);
 typedef void ErExit(const char *msg, void *);
 
+/**
+ * @brief Callback conventions.
+ * @details
+ * - OutEGB is used for MGraph-stage and end-of-MGraph hooks.
+ * - OutEG is used for accepted assigned graphs.
+ * - ErExit is a host-provided fatal error callback.
+ */
+
+/**
+ * @defgroup grcc_api Public API
+ * @brief Top-level configuration, callbacks, output, and shared numeric helpers.
+ */
+/**
+ * @defgroup grcc_model Model and interactions
+ * @brief Particle/interaction definitions and model-level lookup/classification.
+ */
+/**
+ * @defgroup grcc_process Process decomposition
+ * @brief Process splitting into constrained subprocesses and result aggregation.
+ */
+/**
+ * @defgroup grcc_mgraph Topology generation (MGraph)
+ * @brief Canonical topology construction, connectivity checks, and graph counters.
+ */
+/**
+ * @defgroup grcc_egraph Edge-object graphs (EGraph)
+ * @brief Edge/node object view with momentum bookkeeping and topology filters.
+ */
+/**
+ * @defgroup grcc_symmetry Symmetry/permutation utilities
+ * @brief Permutation-group helpers for canonical representatives and weights.
+ */
+/**
+ * @defgroup grcc_assign Particle assignment/backtracking
+ * @brief Candidate propagation, recursive assignment, and stack-based rollback.
+ */
+
 //==============================================================
+/** @ingroup grcc_api */
 class Options {
   public:
     
@@ -112,9 +164,19 @@ class Options {
     void       *argemg;      // additional argument to endmg
     void       *argag;       // additional argument to outag
 
+    /**
+     * @note Registered callbacks and their payload pointers are non-owning
+     * references managed by the caller.
+     */
+
     //switches for graph generation
+    /**
+     * @brief References for both positive and complementary QG option names.
+     * @details For example onepi/onepr with sign = +/-1.
+     */
     OptQGRef qgref[2*GRCC_QGRAF_OPT_Size]; // array of reference to QG-options
     int      values[GRCC_OPT_Size];        // array of options
+    /** @brief Tri-state QGRAF flags: +1(require), -1(require complement), 0(ignore). */
     int      qgopt[GRCC_QGRAF_OPT_Size];   // array of QGRAF options
 
     int      nqgopt;                       // effective length of qgref
@@ -131,9 +193,19 @@ class Options {
     void setDefaultValues(void);
     void setOldDefaultValues(void);
 
+    /** @brief Set one generation option by index. */
+    /** @param ind Option index (GRCC_OPT_*).
+     *  @param val Option value to store. */
     void setValue(int ind, int val);
+    /** @brief Get one generation option by index.
+     *  @param ind Option index (GRCC_OPT_*).
+     *  @return Stored option value.
+     */
     int  getValue(int ind);
 
+    /** @brief Set QGRAF-style filter flags.
+     *  @param qgopt Input array of size GRCC_QGRAF_OPT_Size.
+     */
     void setQGrafOpt(int *qgopt);
 
     void print(void);
@@ -143,26 +215,58 @@ class Options {
     void printLevel(int l);
 
     void printModel(void);
+    /** @brief Register callback for accepted MGraphs.
+     *  @param omg Callback function pointer (non-owning).
+     *  @param pt User payload passed back to callback (non-owning).
+     */
     void setOutMG(OutEGB *omg, void *pt);
+    /** @brief Register callback for accepted AGraphs.
+     *  @param oag Callback function pointer (non-owning).
+     *  @param pt User payload passed back to callback (non-owning).
+     */
     void setOutAG(OutEG  *oag, void *pt);
+    /** @brief Register callback at end of each MGraph branch.
+     *  @param omg Callback function pointer (non-owning).
+     *  @param pt User payload passed back to callback (non-owning).
+     */
     void setEndMG(OutEGB *omg, void *pt);
+    /** @brief Register fatal-error callback.
+     *  @param ere Error callback (non-owning).
+     *  @param pt User payload passed back to callback (non-owning).
+     */
     void setErExit(ErExit  *ere, void *pt);
     const OptDef *getDef(void);
     const OptDef *getOldDef(void);
     const OptQGDef *getQGDef(void);
 
+    /** @brief Mark begin of model-level generation context.
+     *  @param mdl Active model.
+     */
     void begin(Model *mdl);
     void end(void);
+    /** @brief Mark begin of process-level generation context.
+     *  @param prc Active process.
+     */
     void beginProc(Process *prc);
     void endProc(void);
+    /** @brief Mark begin of subprocess-level generation context.
+     *  @param sprc Active subprocess.
+     */
     void beginSubProc(SProcess *sprc);
     void endSubProc(void);
+    /** @brief Handle one accepted topology graph.
+     *  @param mgr Current MGraph.
+     */
     void newMGraph(MGraph *mgr);
+    /** @brief Handle one accepted assigned graph.
+     *  @param egr Current EGraph.
+     */
     void newAGraph(EGraph *egr);
     void outModel(void);
 };
 
 //==============================================================
+/** @ingroup grcc_api */
 class Output {
   public:
 
@@ -201,6 +305,7 @@ class Output {
 };
 
 //==============================================================
+/** @ingroup grcc_api */
 class Fraction {
   public:
     BigInt num, den;
@@ -224,6 +329,7 @@ class Fraction {
 // Model
 //==============================================================
 //--------------------------------------------------------------
+/** @ingroup grcc_model */
 class Particle {
   public:
     Model *mdl;             // the model
@@ -255,6 +361,7 @@ class Particle {
 };
 
 //--------------------------------------------------------------
+/** @ingroup grcc_model */
 class Interaction {
   public:
     Model *mdl;           // the model
@@ -281,6 +388,7 @@ class Interaction {
 };
 
 //--------------------------------------------------------------
+/** @ingroup grcc_model */
 class Model {
   public:
     char         *name;        // the name of this model
@@ -345,6 +453,7 @@ class Model {
 //**************************************************************
 // Process
 //===============================================================
+/** @ingroup grcc_process */
 class PNodeClass {
   public:
     SProcess *sproc;
@@ -357,6 +466,7 @@ class PNodeClass {
     int      *count;     // The number of nodes in the class
     int      *cl2nd;     // cl2nd[class] <= nd < cl2nd[class+1] = set of nodes
     int      *nd2cl;     // nd2cl[node]  = class
+    // Mapping from process-local class id to model interaction-class id.
     int      *cl2mcl;    // cl2mcl[class] = class defined in the model.
     int       nnodes;
     int       nclass;
@@ -370,6 +480,7 @@ class PNodeClass {
 };
 
 //===============================================================
+/** @ingroup grcc_process */
 class SProcess {
   //  In sprocess the number of nodes and edges are fixed.
   //  A node is considered as 
@@ -380,6 +491,7 @@ class SProcess {
     Model       *model;       // model
     Process     *proc;        // mother process 
     Options     *opt;         // options
+    // Fixed class specification for this subprocess; determines topology space.
     PNodeClass  *pnclass;     // list of classes (cpl and deg is determined)
     AStack      *astack;
 
@@ -409,6 +521,7 @@ class SProcess {
 
     BigInt       mgrcount;    // count generated mgraph
     BigInt       agrcount;    // count generated agraph
+    // Group size from external-state symmetrization (used in weights/output).
     BigInt       extperm;    // count generated agraph
 
     // the results of the graph generation
@@ -429,13 +542,38 @@ class SProcess {
     ~SProcess(void);
 
     void prSProcess(void);
+    /** @brief Generate all graphs for this subprocess.
+     *  @return Number of generated topology graphs.
+     */
     BigInt generate(void);
+    /** @brief Assign particles/interactions on one topology.
+     *  @param mgr Input topology graph.
+     */
     void assign(MGraph *mgr);
 
+    /** @brief Convert process classes to MGraph node-class arrays.
+     *  @param[out] ctyp Class type array (length >= nclass).
+     *  @param[out] cldeg Degree per class (length >= nclass).
+     *  @param[out] clnum Node multiplicity per class (length >= nclass).
+     *  @param[out] cmind Lower connectable-degree bound per class (length >= nclass).
+     *  @param[out] cmaxd Upper connectable-degree bound per class (length >= nclass).
+     *  @return Number of valid entries written to output arrays.
+     */
     int toMNodeClass(int *ctyp, int *cldeg, int *clnum, int *cmind, int *cmaxd);
+    /** @brief Match current MGraph classing to subprocess classing.
+     *  @param mgr Input topology graph.
+     *  @return Newly allocated matched PNodeClass.
+      *  @note Ownership is transferred to the caller.
+     */
     PNodeClass *match(MGraph *mgr);
 
+    /** @brief End-of-topology callback from MGraph pipeline.
+     *  @param mgr Current topology graph.
+     */
     void endMGraph(MGraph *mgr);
+    /** @brief End-of-assignment callback.
+     *  @param egr Current assigned graph.
+     */
     void endAGraph(EGraph *egr);
 
     void resultMGraph(BigInt nmgraphs, Fraction mwsum, BigInt nmopi, Fraction mwopi);
@@ -444,6 +582,7 @@ class SProcess {
 };
 
 //===============================================================
+/** @ingroup grcc_process */
 class Process {
   public:
     Model       *model;            // model used for this process
@@ -525,6 +664,7 @@ class Process {
 #define GRCC_ND_NAMES   {"Undef", "Deleted", "Init", "Final", "CPoint", "VBlock", "In_Block"}
 
 //--------------------------------------------------------------
+/** @ingroup grcc_egraph */
 class ENode {
   public:
     EGraph *egraph;
@@ -559,6 +699,7 @@ class ENode {
 };
 
 //--------------------------------------------------------------
+/** @ingroup grcc_egraph */
 class EEdge {
   // momentum is printed like: ("%s%d", (enode.ext)?"Q":"p", enode.momn)
   public:
@@ -571,7 +712,7 @@ class EEdge {
     int  nodes[2];         // nodes of bothsides
     int  nlegs[2];         // nodes of both side (agraph)
 
-    // for biconn
+    // for biconn / momentum bookkeeping
     int *emom;             // external momenta
     int *lmom;             // loop momenta
     int *extMom;           // set of external momenta.
@@ -609,6 +750,7 @@ class EEdge {
 typedef enum {FL_Open, FL_Closed} FLType;
 
 //--------------------------------------------------------------
+/** @ingroup grcc_egraph */
 class EFLine {
   public:
     int    elist[GRCC_MAXNODES];     // list of  (\pm [(edge index)+1])
@@ -621,6 +763,7 @@ class EFLine {
 };
 
 //--------------------------------------------------------------
+/** @ingroup grcc_egraph */
 class EGraph {
   public:
     Options    *opt;          // table of options
@@ -640,6 +783,9 @@ class EGraph {
     Bool   assigned;        // mgraph (False) or agraph (True)
 
     int    fsign;
+    // Symmetry decomposition:
+    //   nsym: node permutation factor, esym: edge permutation factor.
+    //   nsym1 stores node symmetry before external-state symmetrization.
     BigInt nsym, esym;      // symmetry factor with symm. ext.
     BigInt nsym1;           // symmetry factor without symm. ext.
     BigInt extperm;         // the order of group of symm. ext.
@@ -661,6 +807,7 @@ class EGraph {
 
     // biconnect
     int    nopicomp;
+    // opi2plp: maximum loop order observed among 2-point 1PI components.
     int    opi2plp;
     int    nopi2p;
     int    nadj2ptv;           // the no. of edges connecting 2point vertices
@@ -729,6 +876,7 @@ class EGraph {
 //**************************************************************
 //  Symmetry group of graphs
 //===============================================================
+/** @ingroup grcc_symmetry */
 class SGroup {
   public:
     BigInt  size;              // # of allocated elements
@@ -766,8 +914,8 @@ class SGroup {
 //**************************************************************
 // MGraph
 //==============================================================
-// class of nodes for MGraph
-
+/** @ingroup grcc_mgraph */
+/** @brief Node descriptor used by MGraph topology generation. */
 class MNode {
   public:
     int id;        // node id
@@ -784,12 +932,14 @@ class MNode {
     MNode(int id, int deg, int extloop, int clss, int cmind, int cmaxd);
 };
 
-//===============================================================
-//  class of scalar graph expressed by matrix form
-// 
-//  Input  : the classified set of nodes.
-//  Output : control passed to 'EGraph(self)'
-
+/** @ingroup grcc_mgraph */
+/**
+ * @brief Scalar topology graph represented by an adjacency matrix.
+ * @details Input is a classified set of nodes; accepted candidates are
+ * forwarded to EGraph for momentum analysis and assignment.
+ * @note Invariant: `adjMat` is symmetric. Diagonal entries encode twice the
+ * number of self-loops on each node.
+ */
 class MGraph {
 
   public:
@@ -894,9 +1044,8 @@ class MGraph {
     void   newGraph(MNodeClass *cl);
 };
 
-//===============================================================
-//  class of node-classes for MGraph
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Refinable partition of nodes used for canonical generation checks. */
 class MNodeClass {
   public:
     int   clmat[GRCC_MAXNODES][GRCC_MAXNODES];   // matrix used for classification
@@ -930,9 +1079,8 @@ class MNodeClass {
     void  reorder(MGraph *mg);
 };
 
-//===============================================================
-//  class of an edge
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Edge record used in connectivity-component analysis. */
 class MCEdge {
   public:
     Edge2n nodes;  // nodes at the both size of the edge (leaf --> root)
@@ -945,9 +1093,8 @@ class MCEdge {
     ~MCEdge(void);
 };
 
-//===============================================================
-//  class of 1PI component
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief One edge-connected (1PI-related) component summary. */
 class MCOpi {
   public:
     int *nodes;    // array of nodes in 
@@ -967,9 +1114,8 @@ class MCOpi {
     void init(void);
 };
 
-//===============================================================
-//  class of bridge
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Bridge summary between edge-connected components. */
 class MCBridge {
   public:
     Edge2n nodes;  // nodes at the both size of the bridge
@@ -979,9 +1125,8 @@ class MCBridge {
     ~MCBridge(void);
 };
 
-//===============================================================
-//  class of block
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Node-biconnected block summary. */
 class MCBlock {
   public:
     Edge2n *edges;   // array of edges in the block
@@ -996,9 +1141,8 @@ class MCBlock {
     void init(void);
 };
 
-//===============================================================
-//  class of table of MConn
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Workspace and counters for connectivity decomposition results. */
 class MConn {
   public:
     // 2-edge connected components
@@ -1061,9 +1205,8 @@ class MConn {
     void prEdges(void);
 };
 
-//===============================================================
-//  class of orbits of nodes
-//--------------------------------------------------------------
+/** @ingroup grcc_mgraph */
+/** @brief Orbit mapping of nodes under symmetry permutations. */
 class MOrbits {
   // Usage
   // 1. node ==> orbit
@@ -1103,9 +1246,9 @@ typedef enum {
 } NCandSt;
 
 //===============================================================
+/** @ingroup grcc_assign */
+/** @brief Candidate interactions for one vertex during assignment. */
 class NCand {
-  // List of candidates for the assignment of interactions to a vertex
-
   public:
     int      deg;                     // degree of the node
     NCandSt  st;                      // status
@@ -1121,9 +1264,9 @@ class NCand {
 };
 
 //===============================================================
+/** @ingroup grcc_assign */
+/** @brief Candidate particles for one edge during assignment. */
 class ECand {
-  // List of candidates for the assignment of particles to an edge
-
   public:
     Bool  det;                     // determined or not
     int   nplist;                  // size of the list of candidates
@@ -1137,15 +1280,13 @@ class ECand {
 };
 
 //===============================================================
+/** @ingroup grcc_assign */
+/**
+ * @brief Local node-side connectivity view used by the assignment solver.
+ * @details Stores adjacent nodes/edges per leg for incremental propagation.
+ * @note Invariant: `0 <= nlegs <= deg`.
+ */
 class ANode {
-  // Connection information of a node to others
-  //
-  //  (this node) -- (adjacent edge) -- (next node)
-  //    (n0, j)            e                n1
-  //
-  // e  = (aedges[j], aelegs[j])
-  // n1 = anodes[j]
-
   public:
     int    deg;              // degree of the node
     int    nlegs;            // the number of legs already assigned
@@ -1161,11 +1302,12 @@ class ANode {
 };
 
 //===============================================================
+/** @ingroup grcc_assign */
+/**
+ * @brief Local edge-side connectivity and particle state for assignment.
+ * @details Edge orientation is encoded by legs 0->1 for particle flow.
+ */
 class AEdge {
-// Connection information of an edge
-// (self) ==> nodes [(nodes[0], nlegs[0]), (nodes[1], nlegs[1])]
-// particle 'ptcl' flows from leg=0 to 1.
-
   public:
 
     ECand *cand;            // candidate
@@ -1180,9 +1322,16 @@ class AEdge {
 };
 
 //===============================================================
+/** @ingroup grcc_assign */
+/**
+ * @brief Backtracking solver for particle/interaction assignment on EGraph.
+ * @note Invariants in active solver state:
+ * - `0 <= nETotal <= nEdges`
+ * - `nodes` and `edges` tables are allocated with capacities `nNodes` and
+ *   `nEdges`, respectively
+ * - `cplleft[j]` is interpreted for `0 <= j < model->ncouple`
+ */
 class Assign {
-// Class for particle/interaction assignment.
-
   public:
 
     EGraph     *egraph;       // EGraph object
@@ -1213,6 +1362,14 @@ class Assign {
     int         cplleft[GRCC_MAXNCPLG];  // coupling constants left
 
     //===========================================
+    /** @brief Construct assignment solver for one subprocess and topology.
+     *  @param[in] sprc Active subprocess.
+     *  @param[in] mgr Input topology graph.
+     *  @param[in] pnc Matched node classes.
+     *  @note `sprc`, `mgr`, and `pnc` are borrowed (non-owning) references.
+     *  @note Current implementation executes the full assignment search during
+     *  construction.
+     */
     Assign(SProcess *sprc, MGraph *mgr, PNodeClass *pnc);
     ~Assign(void);
 
@@ -1226,42 +1383,92 @@ class Assign {
     //===========================================
     // control of assignment
 
-    // entry point of assignment
+    /** @brief Entry point of recursive assignment.
+     *  @pre fromMGraph() has initialized node/edge candidate tables.
+     *  @post Internal counters (`nAGraphs`, `wAGraphs`, `nAOPI`, `wAOPI`)
+     *  are updated for accepted assignments discovered during recursion.
+     *  @return True if at least one valid assignment path is found.
+     */
     Bool    assignAllVertices(void);
 
     // select a source node for assignment
     Bool    selectVertex(void);
     Bool    selectVertexSimp(int lastv);
 
-    // select a source leg of the node for assignment
+    /** @brief Recursively assign one leg of a selected vertex.
+     *  @param v Vertex index.
+     *  @param lastlg Last processed leg index (-1 at start).
+     *  @return True if search can continue from this branch.
+     */
     Bool    selectLeg(int v, int lastlg);
 
-    // assign a vertex a interaction
+    /** @brief Assign one interaction candidate to vertex.
+     *  @param v Vertex index.
+     *  @return True if assignment branch remains feasible.
+     */
     Bool    assignVertex(int v);
 
-    // assignment procedure is finished.  Needs check.
+    /** @brief Finalize one complete assignment and apply filters.
+     *  @return True if the completed assignment is accepted.
+     */
     Bool    allAssigned(void);
 
     //===========================================
     // Input and output
 
-    // Input from mgraph
+    /** @brief Initialize assignment structures from MGraph.
+     *  @pre `mgraph`, `egraph`, and `pnclass` are non-null and mutually
+     *  consistent for the current subprocess.
+     *  @post `nodes`/`edges` tables are populated and candidate lists are
+     *  initialized for subsequent assignment steps.
+     *  @return True on successful initialization.
+     */
     Bool    fromMGraph(void);
 
-    // add an edge
+    /** @brief Add one assignment-edge record.
+     *  @param[in] n0 Endpoint node 0.
+     *  @param[in] n1 Endpoint node 1.
+     *  @param[in] nplist Number of particle candidates in plist.
+     *  @param[in] plist Candidate particle codes in edge orientation.
+     */
     void    addEdge(int n0, int n1, int nplist, int *plist);
 
-    // connect nodes and edges.
+    /** @brief Connect node-leg and edge-leg incidences.
+     *  @param[in] n0 Node index at endpoint 0.
+     *  @param[in] l0 Leg index on node n0.
+     *  @param[in] eg Edge index.
+     *  @param[in] el Edge-side leg index (0 or 1).
+     *  @param[in] n1 Opposite endpoint node index.
+     *  @param[in] l1 Leg index on node n1.
+     */
     void    connect(int n0, int l0, int eg, int el, int n1, int l1);
 
-    // Output to egraph
+    /** @brief Materialize current assignment into EGraph.
+     *  @param[in] aid Assignment id inside current topology (1-based sequence).
+     *  @param[in] nsym Node symmetry factor.
+     *  @param[in] esym Edge symmetry factor.
+     *  @param[in] nsym1 Node symmetry factor without external symmetrization.
+     *  @return True on success.
+     */
     Bool    fillEGraph(int aid, BigInt nsym, BigInt esym, BigInt nsym1);
 
-    // reorder legs in accordance with the interaction definition
+    /** @brief Compute leg reorder map to match interaction leg order.
+     *  @param[in] n Number of legs.
+     *  @param[out] reord Permutation map (length >= n).
+     *  @param[in] plist Current particle list (length >= n).
+     *  @param[in,out] used Scratch marks for permutation construction (length >= n).
+     *  @return Pointer to reord.
+     */
     int    *reordLeg(int n, int *reord, int *plist, int *used);
 
     //===========================================
     // direction of particle on an edge and at (node, leg)
+
+    /**
+     * @note Signed-edge encoding follows I2Vedge/V2Iedge/V2Ileg in
+     * grccparam.h. Conversion helpers below expose this convention
+     * in assignment-oriented node-leg coordinates.
+     */
 
     // convert particle code
     //   at node-leg ('n', 'ln') <==> edge at ('n', 'ln')
@@ -1270,10 +1477,24 @@ class Assign {
     // convert particle 'pt' on the edge to ('n', 'ln')
     int     legEdgeParticle(int n, int ln, int pt);
 
-    // convert candidate list at ('v', 'lg') into in-coming direction
+    /** @brief Convert edge-oriented particle candidates to node-leg orientation.
+     *  @param[in] v Node index.
+     *  @param[in] lg Leg index on node v.
+     *  @param[in] nplst Input candidate count.
+     *  @param[in] plst Input candidate particles in edge orientation.
+     *  @param[out] rlist Output candidates in node-leg incoming orientation.
+     *  @param[in] size Capacity of rlist.
+     *  @return Number of entries written to rlist.
+     */
     int     legPart(int v, int lg, int nplst, int *plst, int *rlist, const int size);
 
-    // convert candidate list at ('v', 'lg') into in-coming direction
+    /** @brief Convenience wrapper of legPart for current edge candidates.
+     *  @param[in] v Node index.
+     *  @param[in] ln Leg index on node v.
+     *  @param[out] plist Output candidate particles in node-leg orientation.
+     *  @param[in] size Capacity of plist.
+     *  @return Number of entries written to plist.
+     */
     int     candPart(int v, int ln, int *plist, const int size);
 
     //===========================================
@@ -1289,18 +1510,32 @@ class Assign {
     // assign the interaction 'ia' to the vertex 'v'.
     NCandSt assignIVertex(int v, int ia);
 
-    // assign particle 'pt' the the leg 'ln' of the node 'n'.
+    // assign particle 'pt' to leg 'ln' of node 'n'.
     Bool    assignPLeg(int n, int ln, int pt);
     Bool    isOrdPLeg(int n, int ln, int pt);
     Bool    detEdge(int e);
 
     //===========================================
-    // canndidates
+    // candidates
 
-    // construct lists of assigned / unassigned particles at a node
+    /** @brief Partition node-leg candidates into decided and undecided sets.
+     *  @param[in] v Node index.
+     *  @param[out] npdass Count written to pdass.
+     *  @param[out] pdass Candidates from already-determined adjacent edges.
+     *  @param[out] npuass Count written to puass.
+     *  @param[out] puass Candidates from unresolved adjacent edges.
+     *  @param[in] size Capacity of pdass/puass arrays.
+     *  @return False if any adjacent edge has an empty candidate list.
+     */
     Bool    candPartClassify(int v, int *npdass, int *pdass, int *npuass, int *puass, const int size);
 
-    // update candidate list for a vertex 'v'.
+    /** @brief Propagate constraints and shrink candidate sets at one vertex.
+      *  @param[in] v Vertex index.
+      *  @pre Candidate lists for vertex `v` and adjacent edges are initialized.
+      *  @post Candidate lists may be reduced; newly singleton edge candidates
+      *  may be fixed via detEdge().
+     *  @return False if constraints become inconsistent.
+     */
     Bool    updateCandNode(int v);
 
     //===========================================
@@ -1308,13 +1543,44 @@ class Assign {
 
     Bool    checkOrderCpl(void);
     Bool    isOrdLegs(void);
+    /** @brief Canonical isomorphism check for completed assignment.
+     *  @param cl Refined MGraph node classes.
+     *  @param nsym Output node symmetry factor.
+     *  @param esym Output edge symmetry factor.
+     *  @param nsym1 Output node symmetry before external symmetrization.
+     *  @return True if this assignment is the canonical representative.
+     */
     Bool    isIsomorphic(MNodeClass *cl, BigInt *nsym, BigInt *esym, BigInt *nsym1);
+    /** @brief Compare current assignment with one permuted by p.
+     *  @param[in] p Node permutation array (length >= nNodes).
+     *  @param[in] cl Refined node-class information used for node ordering.
+     *  @return Negative/zero/positive according to lexicographic ordering.
+     */
     int     cmpPermGraph(int *p, MNodeClass *cl);
+    /** @brief Compare two assigned internal nodes under current ordering rules.
+     *  @param[in] nd0 First node index.
+     *  @param[in] nd1 Second node index.
+     *  @param[in] cn Refined node classes.
+     *  @return Negative/zero/positive according to node ordering.
+     */
     int     cmpNodes(int nd0, int nd1, MNodeClass *cn);
+    /** @brief Compute multiplicative symmetry factor from indistinguishable edges.
+     *  @return Edge permutation factor (>= 1 for valid assignments).
+     */
     BigInt  edgeSym(void);
 
+    /** @brief Save current remaining coupling-order counters.
+     *  @param[out] sav Output buffer, length >= model->ncouple.
+     */
     void    saveCouple(int *sav);
+    /** @brief Restore remaining coupling-order counters.
+     *  @param[in] sav Input buffer previously filled by saveCouple().
+     */
     void    restoreCouple(int *sav);
+    /** @brief Subtract one interaction coupling vector from remaining counters.
+     *  @param[in] cpl Coupling-order vector, length >= model->ncouple.
+     *  @return False if any component would become negative.
+     */
     Bool    subCouple(int *cpl);
 
 #ifdef CHECK
@@ -1329,9 +1595,9 @@ class Assign {
 //**************************************************************
 // Stack of candidate lists
 //===============================================================
+/** @ingroup grcc_assign */
+/** @brief Snapshot entry for node candidate rollback. */
 class NStack {
-// Stack for backtracking method for a node.
-
   public:
     int     noden;
     int     deg;
@@ -1347,9 +1613,9 @@ class NStack {
 };
 
 //===============================================================
+/** @ingroup grcc_assign */
+/** @brief Snapshot entry for edge candidate rollback. */
 class EStack {
-// Stack for backtracking method for an edge.
-
   public:
     int    edgen;
     int    det;
@@ -1364,9 +1630,9 @@ class EStack {
 
 
 //===============================================================
+/** @ingroup grcc_assign */
+/** @brief Stack manager for reversible assignment-state mutations. */
 class AStack {
-// Stack for backtracking method for an edge.
-
   public:
     Assign     *agraph;
 
