@@ -81,7 +81,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: src
 
@@ -152,7 +152,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: src
 
@@ -194,7 +194,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: src
 
@@ -255,7 +255,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
