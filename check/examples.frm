@@ -791,13 +791,17 @@ Print;
 ModuleOption local $i;
 .end
 assert succeeded?
-assert result("F") =~ expr("( 1 + y )
+assert stdout =~ exact_pattern("
+   F =
+         ( 1 + y )
        * ( 2 + y )
        * ( 3 + y )
        * ( 4 + y )
        * ( 5 + y );
 ")
-assert result("G") =~ expr("f(1 + y) + f(2 + y) + f(3 + y) + f(4 + y) + f(5 + y);")
+assert result("G") =~ expr("
+       f(1 + y) + f(2 + y) + f(3 + y) + f(4 + y) + f(5 + y)
+")
 *--#] Sta_Do_1 :
 *--#[ Sta_Drop_1 :
 Local F1 = 1;
