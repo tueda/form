@@ -219,6 +219,10 @@ jobs:
               case "$f" in
                 index.html|manual.html|manual.css|img*.svg)
                   ;;
+                crossref.png)
+                  echo "Error: unexpected file: $f. Check for undefined references." >&2
+                  exit 1
+                  ;;
                 *)
                   echo "Error: unexpected file: $f" >&2
                   exit 1
