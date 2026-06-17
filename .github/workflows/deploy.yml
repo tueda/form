@@ -220,7 +220,8 @@ jobs:
                 index.html|manual.html|manual.css|img*.svg)
                   ;;
                 crossref.png)
-                  echo "Error: unexpected file: $f. Check for undefined references." >&2
+                  echo "Error: unexpected file: $f" >&2
+                  echo 'This may indicate unresolved LaTeX cross-references. Check for missing or mistyped labels.' >&2
                   exit 1
                   ;;
                 *)
