@@ -2,7 +2,13 @@ version: 2
 
 updates:
   - package-ecosystem: github-actions
-    directory: /
+    directories:
+      - /
+      - /.github/actions/*
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
     schedule:
       interval: weekly
     cooldown:
