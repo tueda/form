@@ -19,24 +19,23 @@ executables and optional-library configurations.
 ## Task-Specific Guidance
 
 - Before creating or modifying project-maintained C or C++ source or header
-  files, or reviewing changes to them, read `doc/source-development.md` and
-  `doc/coding-style.md` completely during the current task and follow them.
-- Before modifying or reviewing maintained build-system inputs or related
-  generation and distribution logic, read `doc/build-system.md`.
-- Read `check/README.md` before adding, modifying, or reviewing tests, the
-  test runner, or marked manual examples covered by `check/examples.frm`.
+  files, read and follow `doc/source-development.md` and
+  `doc/coding-style.md`.
+- Before modifying maintained build-system inputs or related generation and
+  distribution logic, read `doc/build-system.md`.
+- Read `check/README.md` before adding or modifying tests, changing the test
+  runner, or changing marked manual examples covered by `check/examples.frm`.
+- Apply the same reading requirements when reviewing changes in these areas.
 - Read `doc/coding-style-rationale.md` only when proposing, reviewing, or
   changing the coding-style policy.
 - Read `README.md` and `INSTALL` before setting up a build or changing
   configuration, dependencies, installation, or supported platforms. Confirm
   current switches with `./configure --help`.
 - Treat `doc/manual/*.tex` as the intended user-facing specification for
-  FORM-language behavior in the checkout. Distinguish requested changes from
-  discrepancies among the manual, regression tests, and implementation. If
-  those artifacts disagree about current behavior, identify and report the
-  discrepancy before deciding what should change; do not assume that any one is
-  authoritative in isolation. Update the relevant source when changing
-  documented behavior or adding a feature that requires manual documentation.
+  FORM-language behavior. If the manual, regression tests, and implementation
+  disagree about current behavior, report the discrepancy before deciding what
+  to change. Update the relevant source when documented behavior changes or a
+  new feature requires manual documentation.
 - Consult the
   [official FORM resources](https://github.com/form-dev/form/wiki/FORM-Resources)
   when local documentation does not cover a current external tool, platform,
@@ -88,11 +87,10 @@ For the standard suite on every release executable enabled in the build:
 make -C build-agent check
 ```
 
-Do not treat this as a standard-suite pass unless `configure` detected Ruby and
-`test/unit`, and the log or summary confirms that the standard `.frm` tests ran
-for every intended executable. Seeing `check-help.sh` run is one indication.
-Without the Ruby harness, Automake omits the standard `.frm` suites and
-`make check` may succeed after running only the separate benchmark test.
+Do not count this as a standard-suite pass unless `configure` detected Ruby and
+`test/unit` and the log confirms that the standard `.frm` tests ran for every
+intended executable. Without the Ruby harness, Automake may run only the
+benchmark test.
 
 For changes to shared execution code, test at least `form` and `tform`, with a
 non-default TFORM worker count when concurrency could matter. Test `parform`
@@ -118,17 +116,12 @@ timeout. Once those prerequisites are present, its local form is:
 
 There is no approved repository-wide source formatter or separate local lint
 command. Compiler warnings produced by the configured build are the applicable
-local static check. Before finishing, inspect `git status --short` and run both
-`git diff --check` and `git diff --cached --check` for tracked changes. Ordinary
-`git diff` omits untracked files, so use
-`git ls-files --others --exclude-standard` to identify untracked files and
-inspect each text file that is part of the intended change separately for
-whitespace errors and conflict markers. If the task includes committed branch
-changes, determine the intended base branch rather than assuming its name and
-run `git diff --check <base>...HEAD` over the changes since the merge base. If a
-check reports intentional whitespace in a fold example, a closed fold marker,
-or Markdown hard line break, verify and report that exception instead of
-deleting meaningful whitespace.
+local static check. Before finishing, inspect `git status --short`; run
+`git diff --check` and `git diff --cached --check`; and inspect intended
+untracked text files for whitespace errors and conflict markers. For committed
+branch changes, identify the intended base branch and run
+`git diff --check <base>...HEAD`. Verify intentional whitespace in folds or
+Markdown rather than deleting it.
 
 For changes under `doc/manual/`, run each of the following targets that was
 enabled by `configure`:
@@ -154,23 +147,11 @@ tools, report it as not run.
 
 #### Commit Recommendation
 
-- End a repository change with a recommendation stating whether it is ready to
-  commit and why. Do not recommend incomplete work or work whose required
-  verification failed; state what remains. A recommendation is not
-  authorization to commit.
-- Recommend one commit or an ordered series based on independently reviewable
-  and revertible units. Do not split mechanically by file or propose commits
-  known to be broken or misleading.
-- For each ready commit, identify its files or hunks, give exact staging
-  commands, and propose the complete message. Show a useful message body in a
-  separate fenced block; `git commit -m "..."` is acceptable for a subject-only
-  message.
-- Stage only intended changes. Commands such as `git add -u` are appropriate
-  after confirming they cover only intended tracked changes; otherwise use
-  explicit pathspecs or `git add -p` for files with unrelated changes.
-- Follow the repository's message convention when one exists. Otherwise use a
-  concise descriptive message; do not invent a convention such as Conventional
-  Commits.
+- End a repository change by stating whether it is ready to commit and why; do
+  not call incomplete or failed work ready.
+- When commit preparation is requested, propose independently reviewable commit
+  units, exact staging commands, and complete messages, staging only intended
+  changes and following repository conventions.
 
 ## Repository Guide
 
@@ -193,14 +174,12 @@ tools, report it as not run.
 ## Working Principles
 
 Correctness and established FORM behavior come first. Among otherwise correct
-solutions with a real trade-off, prioritize runtime performance, user-facing
-usability, and code readability, in that order. A performance-driven increase
-in complexity must provide a material benefit for the affected workload, be
-supported by representative measurements or strong task-specific evidence, and
-be proportionate to the added complexity and maintenance cost. Do not
-generalize from a narrow benchmark or trade readability for speculative or
-negligible gains. Optimize the resulting code, not the speed of completing the
-task.
+solutions, prioritize runtime performance, user-facing usability, and
+readability, in that order when they genuinely conflict. Performance-driven
+complexity requires evidence of a material benefit on representative workloads
+proportionate to the added complexity and maintenance cost. Do not trade
+readability for speculative or negligible gains. Optimize the resulting code,
+not the speed of completing the task.
 
 In addition, the following repository-agnostic principles guard against common
 coding-agent failures.
@@ -225,7 +204,7 @@ unclear?
 - Implement the smallest clear solution that fully solves the task. Avoid
   speculative features, abstractions, dependencies, and extension points.
 - Add complexity only when it protects a real requirement, invariant,
-  testability need, or well-supported material performance benefit.
+  testability need, or material performance benefit.
 
 **Ask yourself:** Is this more complicated than the task requires?
 

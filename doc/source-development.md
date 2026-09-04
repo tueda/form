@@ -1,9 +1,9 @@
 # FORM Source Development
 
 Read this document completely before creating or modifying project-maintained
-C or C++ source or header files, or reviewing changes to them. It describes
-FORM-specific architecture and correctness invariants. Formatting, folds,
-Doxygen, and license rules are in `coding-style.md`.
+C or C++ source or header files. It describes FORM-specific architecture and
+correctness invariants. Formatting, folds, Doxygen, and license rules are in
+`coding-style.md`.
 
 ## Architecture
 

@@ -1,9 +1,9 @@
 # FORM Build-System Maintenance
 
 Read this document before modifying maintained build-system inputs or related
-generation and distribution logic, or reviewing changes to any of them. It is
-not required merely to configure, build, or test FORM; the shared commands and
-build-directory guidance are in `AGENTS.md`.
+generation and distribution logic. It is not required merely to configure,
+build, or test FORM; the shared commands and build-directory guidance are in
+`AGENTS.md`.
 
 ## Maintained Inputs and Generated Files
 
