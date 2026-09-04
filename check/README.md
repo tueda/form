@@ -17,10 +17,9 @@ or one may need to manually install
 
 ### From the build system
 
-To use the test suite from the automatic build system
-(see also the [INSTALL](../INSTALL) file),
-run the following command:
-
+If the prerequisites above were met when the build was configured,
+the test suite can be run from the automatic build system as follows
+(see also the [INSTALL](../INSTALL) file):
 ```bash
 # in the root build directory
 make check
@@ -45,8 +44,7 @@ To test another executable, specify its path as a command-line argument:
 ```
 
 One can also specify a TFORM (or ParFORM) executable in this way.
-TFORM and ParFORM will be run with 4 CPUs (can be changed by the `--cpu N`
-option).
+TFORM and ParFORM will be run with 4 CPUs. Use `--ncpu N` to change this number.
 
 By default, all test cases in all FORM files (`*.frm`) found in the `check`
 directory (not in subdirectories) are used. To select test cases or FORM files
@@ -70,6 +68,11 @@ Currently, the standard test set (run by default) includes:
 - `features.frm`: Test cases for newly added features.
 - `fixes.frm`: Test cases for bug fixes.
 - `user.frm`: Test cases contributed by users.
+
+Examples from the manual that are tested in `examples.frm` should be marked in
+the manual source with `THIS EXAMPLE IS PART OF THE TESTSUITE` and the
+corresponding test case name. Keep each marked manual example synchronised with
+its corresponding fold in `examples.frm` whenever either one is changed.
 
 Each test case in these files should finish in a short time: the timeout is set
 to 10 seconds. Bigger tests that take more time are put in subdirectories
