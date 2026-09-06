@@ -28,9 +28,10 @@ executables and optional-library configurations.
 - Apply the same reading requirements when reviewing changes in these areas.
 - Read `doc/coding-style-rationale.md` only when proposing, reviewing, or
   changing the coding-style policy.
-- Read `README.md` and `INSTALL` before setting up a build or changing
-  configuration, dependencies, installation, or supported platforms. Confirm
-  current switches with `./configure --help`.
+- Use the workflow below for routine build setup. Read `README.md` and `INSTALL`
+  before changing configuration, dependencies, installation, or supported
+  platforms, or when that workflow is insufficient. Confirm current switches
+  with `./configure --help`.
 - Treat `doc/manual/*.tex` as the intended user-facing specification for
   FORM-language behavior. If the manual, regression tests, and implementation
   disagree about current behavior, report the discrepancy before deciding what
@@ -136,7 +137,7 @@ tools, report it as not run.
 
 ### Version Control and External Actions
 
-- Inspect the worktree before editing and before finishing.
+- Inspect the worktree before editing.
 - Preserve unrelated changes. Do not use destructive Git operations without
   explicit authorization.
 - Do not commit, push, open or update a pull request, release, publish, or
