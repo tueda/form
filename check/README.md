@@ -25,7 +25,16 @@ the test suite can be run from the automatic build system as follows
 make check
 ```
 
-which tests the executables (release versions) compiled by the build system.
+This runs the standard `.frm` suite through `check.rb` for each release
+executable enabled in the build (`form`, `tform`, and/or `parform`). It also
+runs the FORM-unit benchmark (`formunit/fu.frm`) for the serial executable,
+if enabled. Debug executables (`vorm`, `tvorm`, and `parvorm`) must be tested
+directly with `check.rb`.
+
+Do not count `make check` as a standard-suite pass unless `configure`
+detected Ruby and `test/unit` and the log confirms that the standard `.frm`
+tests ran for every intended executable. Without the Ruby harness, Automake
+may run only the benchmark test.
 
 ### Testing in standalone mode
 
