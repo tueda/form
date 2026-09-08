@@ -240,7 +240,7 @@ jobs:
     name: 32-bit container check for ${{ matrix.bin }}${{ matrix.nthreads && format(' -w{0}', matrix.nthreads) || '' }}
     runs-on: ubuntu-latest
     container:
-      image: i386/debian:11.5
+      image: i386/debian:12.15
     strategy:
       fail-fast: false
       matrix:
