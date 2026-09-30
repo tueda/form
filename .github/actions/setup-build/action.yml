@@ -419,19 +419,19 @@ runs:
       uses: msys2/setup-msys2@v2
       with:
         update: true
-        msystem: mingw64
+        msystem: ucrt64
         install: >-
           make
           ${{ steps.setup.outputs.automake == 'true' && 'autoconf automake' || '' }}
           ${{ steps.setup.outputs.git == 'true' && 'git' || '' }}
-          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-x86_64-diffutils' || '' }}
-          ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-x86_64-gcc' || '' }}
-          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-x86_64-gmp' || '' }}
-          ${{ steps.setup.outputs.hyperfine == 'true' && 'mingw-w64-x86_64-hyperfine' || '' }}
-          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-x86_64-mpfr' || '' }}
-          ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-x86_64-ruby' || '' }}
-          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-x86_64-zlib' || '' }}
-          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-x86_64-zstd' || '' }}
+          ${{ steps.setup.outputs.diffutils == 'true' && 'mingw-w64-ucrt-x86_64-diffutils' || '' }}
+          ${{ steps.setup.outputs.gcc == 'true' && 'mingw-w64-ucrt-x86_64-gcc' || '' }}
+          ${{ steps.setup.outputs.gmp == 'true' && 'mingw-w64-ucrt-x86_64-gmp' || '' }}
+          ${{ steps.setup.outputs.hyperfine == 'true' && 'mingw-w64-ucrt-x86_64-hyperfine' || '' }}
+          ${{ steps.setup.outputs.mpfr == 'true' && 'mingw-w64-ucrt-x86_64-mpfr' || '' }}
+          ${{ steps.setup.outputs.ruby == 'true' && 'mingw-w64-ucrt-x86_64-ruby' || '' }}
+          ${{ steps.setup.outputs.zlib == 'true' && 'mingw-w64-ucrt-x86_64-zlib' || '' }}
+          ${{ steps.setup.outputs.zstd == 'true' && 'mingw-w64-ucrt-x86_64-zstd' || '' }}
 
     - name: Install dependencies (Windows/arm64)
       if: runner.os == 'Windows' && runner.arch == 'ARM64' && steps.setup.outputs.msys2 == 'true'
